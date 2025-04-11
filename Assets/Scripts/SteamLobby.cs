@@ -9,7 +9,6 @@ public class LobbyManager : MonoBehaviour
 	[ContextMenu("Create")]
 	private void DebugCreate() => CreateLobby();
 	private const int MaxLobbyMembers = 4; // Maximum number of players in the lobby
-
 	private void Awake()
 	{
 		if (!SteamManager.Initialized)
@@ -17,8 +16,7 @@ public class LobbyManager : MonoBehaviour
 			Debug.LogError("Steamworks is not initialized!");
 			return;
 		}
-		Callback<LobbyCreated_t>.Create(
-		(LobbyCreated_t callback) =>
+		Callback<LobbyCreated_t>.Create(callback =>
 			{
 				if (callback.m_eResult == EResult.k_EResultOK)
 					Debug.Log($"Lobby created successfully! Lobby ID: {callback.m_ulSteamIDLobby}");
@@ -26,15 +24,14 @@ public class LobbyManager : MonoBehaviour
 					Debug.LogError($"Failed to create lobby. Error: {callback.m_eResult}");
 			}
 		);
-		Callback<LobbyEnter_t>.Create(
-		(LobbyEnter_t callback) =>
+		Callback<LobbyEnter_t>.Create(callback =>
 			Debug.Log($"Successfully entered lobby! Lobby ID: {callback.m_ulSteamIDLobby}")
 		);
-		Callback<LobbyChatUpdate_t>.Create((LobbyChatUpdate_t callback) => {
+		Callback<LobbyChatUpdate_t>.Create(callback => {
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
 			Debug.Log($"{callback.m_ulSteamIDUserChanged} just {action}");
 		});
-		Callback<GameLobbyJoinRequested_t>.Create((GameLobbyJoinRequested_t callback)=>{
+		Callback<GameLobbyJoinRequested_t>.Create(callback => {
 			SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
 		});
 	}
