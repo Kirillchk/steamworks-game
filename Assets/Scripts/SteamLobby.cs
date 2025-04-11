@@ -2,6 +2,11 @@ using UnityEngine;
 using Steamworks;
 public class LobbyManager : MonoBehaviour
 {
+	[SerializeField]ulong ID = 0;
+	[ContextMenu("Join")]
+	private void DebugJoin() => JoinLobby(new(ID));
+	[ContextMenu("Create")]
+	private void DebugCreate() => CreateLobby();
 	private const int MaxLobbyMembers = 4; // Maximum number of players in the lobby
 
 	private Callback<LobbyCreated_t> lobbyCreatedCallback;
