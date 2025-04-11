@@ -15,7 +15,7 @@ public class LobbyManager : MonoBehaviour
 	private Callback<LobbyChatUpdate_t> lobbyChatUpdate;
 	private Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
 
-	private void Start()
+	private void Awake()
 	{
 		if (!SteamManager.Initialized)
 		{
@@ -40,7 +40,6 @@ public class LobbyManager : MonoBehaviour
 			Debug.Log($"{callback.m_ulSteamIDUserChanged} just {action}");
 		});
 		gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create((GameLobbyJoinRequested_t callback)=>{
-			Debug.Log($"{callback} just requested");
 			SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
 		});
 	}
