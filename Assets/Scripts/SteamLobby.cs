@@ -11,6 +11,7 @@ public class LobbyManager : MonoBehaviour
 
 	private Callback<LobbyCreated_t> lobbyCreatedCallback;
 	private Callback<LobbyEnter_t> lobbyEnterCallback;
+	private Callback<LobbyChatUpdate_t> lobbyChatUpdate;
 
 	private void Start()
 	{
@@ -19,8 +20,22 @@ public class LobbyManager : MonoBehaviour
 			Debug.LogError("Steamworks is not initialized!");
 			return;
 		}
-		lobbyCreatedCallback = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
-		lobbyEnterCallback = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
+		lobbyCreatedCallback = Callback<LobbyCreated_t>.Create(
+		(LobbyCreated_t callback) =>
+			{
+				if (callback.m_eResult == EResult.k_EResultOK)
+					Debug.Log($"Lobby created successfully! Lobby ID: {callback.m_ulSteamIDLobby}");
+				else
+					Debug.LogError($"Failed to create lobby. Error: {callback.m_eResult}");
+			}
+		);
+		lobbyEnterCallback = Callback<LobbyEnter_t>.Create(
+		(LobbyEnter_t callback) =>
+			Debug.Log($"Successfully entered lobby! Lobby ID: {callback.m_ulSteamIDLobby}")
+		);
+		lobbyChatUpdate = Callback<LobbyChatUpdate_t>.Create((LobbyChatUpdate_t callback) => {
+			Debug.Log($"{callback.m_ulSteamIDUserChanged} did {callback.m_rgfChatMemberStateChange}");
+		});
 	}
 
 	public void CreateLobby()
@@ -33,23 +48,6 @@ public class LobbyManager : MonoBehaviour
 	{
 		Debug.Log($"Joining lobby: {lobbyID}");
 		SteamMatchmaking.JoinLobby(lobbyID);
-	}
-
-	private void OnLobbyCreated(LobbyCreated_t callback)
-	{
-		if (callback.m_eResult == EResult.k_EResultOK)
-		{
-			Debug.Log($"Lobby created successfully! Lobby ID: {callback.m_ulSteamIDLobby}");
-		}
-		else
-		{
-			Debug.LogError($"Failed to create lobby. Error: {callback.m_eResult}");
-		}
-	}
-
-	private void OnLobbyEntered(LobbyEnter_t callback)
-	{
-		Debug.Log($"Successfully entered lobby! Lobby ID: {callback.m_ulSteamIDLobby}");
 	}
 }
 
