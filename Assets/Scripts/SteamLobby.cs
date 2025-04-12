@@ -47,5 +47,13 @@ public class LobbyManager : MonoBehaviour
 		Debug.Log($"Joining lobby: {lobbyID}");
 		SteamMatchmaking.JoinLobby(lobbyID);
 	}
+	public void JoinLobbyButton()
+	{
+		SteamFriends.ActivateGameOverlay("Friends");
+	}
+	public void HostLobbyButton()
+	{
+		CreateLobby();
+	}
 }
 
