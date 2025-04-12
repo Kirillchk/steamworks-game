@@ -27,6 +27,7 @@ public class LobbyManager : MonoBehaviour
 				{
 					Debug.Log($"Lobby created successfully! Lobby ID: {callback.m_ulSteamIDLobby}");
 					lobbyId=new CSteamID(callback.m_ulSteamIDLobby);
+					Debug.Log($"my steam id{SteamUser.GetSteamID()}");
 				}
 
 				else
