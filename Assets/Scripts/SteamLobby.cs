@@ -10,8 +10,12 @@ public class LobbyManager : MonoBehaviour
 	[ContextMenu("Create")]
 	private void DebugCreate() => CreateLobby();
 	private const int MaxLobbyMembers = 4; // Maximum number of players in the lobby
+	public CSteamID lobbyId;
+	private DataSender dataSender = new DataSender();
+	private DataReceiver dataReceiver = new DataReceiver();
 	private void Awake()
 	{
+
 		if (!SteamManager.Initialized)
 		{
 			Debug.LogError("Steamworks is not initialized!");
@@ -20,7 +24,11 @@ public class LobbyManager : MonoBehaviour
 		Callback<LobbyCreated_t>.Create(callback =>
 			{
 				if (callback.m_eResult == EResult.k_EResultOK)
+				{
 					Debug.Log($"Lobby created successfully! Lobby ID: {callback.m_ulSteamIDLobby}");
+					lobbyId=new CSteamID(callback.m_ulSteamIDLobby);
+				}
+
 				else
 					Debug.LogError($"Failed to create lobby. Error: {callback.m_eResult}");
 			}
@@ -41,7 +49,6 @@ public class LobbyManager : MonoBehaviour
 		Callback<GameLobbyJoinRequested_t>.Create(callback => {
 			SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
 		});
-		
 	}
 
 	public void CreateLobby()
@@ -60,6 +67,17 @@ public class LobbyManager : MonoBehaviour
 	{
 		CreateLobby();
 		SceneManager.LoadScene("Lobby");
+	}
+	[ContextMenu("send")]
+	public void SendData()
+	{
+		byte[] data = new byte[111];
+		dataSender.SendToAllPlayers(data);
+	}
+	[ContextMenu("receive")]
+	public void ReceiveData()
+	{
+
 	}
 }
 
