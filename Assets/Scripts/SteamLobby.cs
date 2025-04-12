@@ -26,7 +26,7 @@ public class LobbyManager : MonoBehaviour
 				if (callback.m_eResult == EResult.k_EResultOK)
 				{
 					Debug.Log($"Lobby created successfully! Lobby ID: {callback.m_ulSteamIDLobby}");
-					lobbyId=new CSteamID(callback.m_ulSteamIDLobby);
+					lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 					Debug.Log($"my steam id{SteamUser.GetSteamID()}");
 				}
 
@@ -38,6 +38,7 @@ public class LobbyManager : MonoBehaviour
 		Callback<LobbyEnter_t>.Create(callback =>
 		{
 			Debug.Log($"Successfully entered lobby! Lobby ID: {callback.m_ulSteamIDLobby}");
+			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 			if(SceneManager.GetActiveScene()!= SceneManager.GetSceneByName("Lobby"))
 				SceneManager.LoadScene("Lobby");
 		});
