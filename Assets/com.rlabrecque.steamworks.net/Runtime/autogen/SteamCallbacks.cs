@@ -1136,7 +1136,7 @@ namespace Steamworks {
 	[StructLayout(LayoutKind.Sequential, Pack = Packsize.value)]
 	[CallbackIdentity(Constants.k_iSteamMatchmakingCallbacks + 6)]
 	public struct LobbyChatUpdate_t {
-		public const int k_iCallback = Constants.k_iSteamMatchmakingCallbacks + 6;
+		public const int k_iCallback = Constants.k_iSteamMatchmakingCallbacks + 6;								
 		
 		public ulong m_ulSteamIDLobby;			// Lobby ID
 		public ulong m_ulSteamIDUserChanged;		// user who's status in the lobby just changed - can be recipient

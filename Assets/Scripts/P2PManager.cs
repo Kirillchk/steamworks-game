@@ -4,75 +4,49 @@ using System;
 using System.Runtime.InteropServices;
 public class P2PManager : MonoBehaviour
 {
-    HSteamListenSocket listenSocket = HSteamListenSocket.Invalid;
-    HSteamNetConnection connection = HSteamNetConnection.Invalid;
-
+	HSteamListenSocket listenSocket;
     [SerializeField] ulong ID = 76561198831185061;
-
     [ContextMenu("listen")]
     void Listen()
     {
-        listenSocket = SteamNetworkingSockets.CreateListenSocketP2P(0, 0, null);
-        Debug.Log("Listening...");
+		SteamNetworkingConfigValue_t[] configuration = new SteamNetworkingConfigValue_t[1];
+		configuration[0].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_TimeoutConnected;
+		configuration[0].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
+		configuration[0].m_val.m_int32 = 500;
+		SteamNetworkingSockets.CreateListenSocketP2P(0, 0, configuration);
     }
 
     [ContextMenu("connect")]
     void Connect()
     {
-        SteamNetworkingIdentity peerIdentity = new();
-        peerIdentity.SetSteamID(new CSteamID(ID));
-        connection = SteamNetworkingSockets.ConnectP2P(ref peerIdentity, 0, 0, null);
-        Debug.Log("Connecting...");
+		SteamNetworkingConfigValue_t[] configuration = new SteamNetworkingConfigValue_t[1];
+		configuration[0].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_TimeoutConnected;
+		configuration[0].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
+		configuration[0].m_val.m_int32 = 2000;
+		CSteamID playerID = new(76561199060165244);
+		SteamNetworkingIdentity identity = new();
+		identity.SetSteamID(playerID);
+		Debug.Log(identity.IsInvalid()?"invalid":"valid");
+		SteamNetworkingSockets.ConnectP2P(ref identity, 0, 0, configuration);
     }
 
     [ContextMenu("send")]
     void Send()
     {
-        if (connection == HSteamNetConnection.Invalid)
-        {
-            Debug.LogError("No valid connection to send data");
-            return;
-        }
-
-        // Create a byte array with a single number (42 in this example)
-        byte[] data = { 42 };
-        
-        // Allocate unmanaged memory and copy the bytes
-        IntPtr ptr = Marshal.AllocHGlobal(data.Length);
-        Marshal.Copy(data, 0, ptr, data.Length);
-        
-        // Send the data
-        SteamNetworkingSockets.SendMessageToConnection(connection, ptr, (uint)data.Length, 0, out _);
-        Debug.Log("Sent number: " + data[0]);
-        
-        // Free the unmanaged memory
-        Marshal.FreeHGlobal(ptr);
+		
     }
 
     void Awake()
     {
+		SteamNetworkingUtils.InitRelayNetworkAccess();
         DontDestroyOnLoad(gameObject);
+		Callback<SteamNetConnectionStatusChangedCallback_t>.Create(callback=> {
+			Debug.Log("SteamNetConnectionStatusChanged Callback was trigered " + callback.m_info.m_eEndReason + " \n" + callback.m_info.m_eState);
+		});
     }
 
     void Update()
     {
-        SteamNetworkingSockets.RunCallbacks();
 
-        if (connection != HSteamNetConnection.Invalid)
-        {
-            IntPtr[] messages = new IntPtr[1];
-            int messageCount = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, 1);
-            
-            if (messageCount > 0)
-            {
-                SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[0]);
-                byte[] receivedData = new byte[message.m_cbSize];
-                Marshal.Copy(message.m_pData, receivedData, 0, message.m_cbSize);
-                
-                Debug.Log("Received number: " + receivedData[0]);
-                
-                SteamNetworkingMessage_t.Release(messages[0]);
-            }
-        }
     }
 }
