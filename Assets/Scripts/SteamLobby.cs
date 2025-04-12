@@ -1,7 +1,7 @@
 using UnityEngine;
 using Steamworks;
 using System.Collections.Generic;
-using System;
+using UnityEngine.SceneManagement;
 public class LobbyManager : MonoBehaviour
 {
 	[SerializeField]ulong ID = 76561198831185061;
@@ -27,15 +27,22 @@ public class LobbyManager : MonoBehaviour
 			}
 		);
 		Callback<LobbyEnter_t>.Create(callback =>
-			Debug.Log($"Successfully entered lobby! Lobby ID: {callback.m_ulSteamIDLobby}")
-		);
+		{
+			Debug.Log($"Successfully entered lobby! Lobby ID: {callback.m_ulSteamIDLobby}");
+			if(SceneManager.GetActiveScene()!= SceneManager.GetSceneByName("Lobby"))
+			{
+				SceneManager.LoadScene("Lobby");
+			}
+		});
 		Callback<LobbyChatUpdate_t>.Create(callback => {
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
 			Debug.Log($"{callback.m_ulSteamIDUserChanged} just {action}");
+			
 		});
 		Callback<GameLobbyJoinRequested_t>.Create(callback => {
 			SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
 		});
+		
 	}
 
 	public void CreateLobby()
@@ -48,6 +55,12 @@ public class LobbyManager : MonoBehaviour
 	{
 		Debug.Log($"Joining lobby: {lobbyID}");
 		SteamMatchmaking.JoinLobby(lobbyID);
+	}
+	public void JoinLobbyButton()=>SteamFriends.ActivateGameOverlay("Friends");	
+	public void HostLobbyButton()
+	{
+		CreateLobby();
+		SceneManager.LoadScene("Lobby");
 	}
 }
 

@@ -48,6 +48,7 @@ public class P2PManager : MonoBehaviour
             if (handle.IsAllocated)
                 handle.Free();
         }
+        
     }
 
     void Update()
