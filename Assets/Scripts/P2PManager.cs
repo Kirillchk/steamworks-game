@@ -12,7 +12,7 @@ public class P2PManager : MonoBehaviour
 		SteamNetworkingConfigValue_t[] configuration = new SteamNetworkingConfigValue_t[1];
 		configuration[0].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_TimeoutConnected;
 		configuration[0].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
-		configuration[0].m_val.m_int32 = 2000;
+		configuration[0].m_val.m_int32 = 500;
 		SteamNetworkingSockets.CreateListenSocketP2P(0, 0, configuration);
     }
 
