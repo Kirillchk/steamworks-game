@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 public class LobbyManager : MonoBehaviour
 {
-	[SerializeField]ulong ID = 76561198831185061;
+	[SerializeField]ulong ID = 0;
 	[ContextMenu("Join")]
 	private void DebugJoin() => JoinLobby(new(ID));
 	[ContextMenu("Create")]
@@ -39,9 +39,7 @@ public class LobbyManager : MonoBehaviour
 		{
 			Debug.Log($"Successfully entered lobby! Lobby ID: {callback.m_ulSteamIDLobby}");
 			if(SceneManager.GetActiveScene()!= SceneManager.GetSceneByName("Lobby"))
-			{
 				SceneManager.LoadScene("Lobby");
-			}
 		});
 		Callback<LobbyChatUpdate_t>.Create(callback => {
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";

@@ -4,8 +4,8 @@ using System;
 using System.Runtime.InteropServices;
 public class P2PManager : MonoBehaviour
 {
+	CSteamID lobbyID;
 	HSteamListenSocket listenSocket;
-    [SerializeField] ulong ID = 76561198831185061;
     [ContextMenu("listen")]
     void Listen()
     {
@@ -19,11 +19,13 @@ public class P2PManager : MonoBehaviour
     [ContextMenu("connect")]
     void Connect()
     {
+		Debug.Log(lobbyID);
 		SteamNetworkingConfigValue_t[] configuration = new SteamNetworkingConfigValue_t[1];
 		configuration[0].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_TimeoutConnected;
 		configuration[0].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
 		configuration[0].m_val.m_int32 = 2000;
-		CSteamID playerID = new(76561199060165244);
+		CSteamID playerID = SteamMatchmaking.GetLobbyMemberByIndex(lobbyID, 0);
+		Debug.Log(playerID);
 		SteamNetworkingIdentity identity = new();
 		identity.SetSteamID(playerID);
 		Debug.Log(identity.IsInvalid()?"invalid":"valid");
@@ -33,7 +35,7 @@ public class P2PManager : MonoBehaviour
     [ContextMenu("send")]
     void Send()
     {
-		
+		// SteamNetworkingSockets.SendMessageToConnection()
     }
 
     void Awake()
@@ -44,6 +46,7 @@ public class P2PManager : MonoBehaviour
 			Debug.Log("SteamNetConnectionStatusChanged Callback was trigered " + callback.m_info.m_eEndReason + " \n" + callback.m_info.m_eState);
 			SteamNetworkingSockets.AcceptConnection(callback.m_hConn);
 		});
+		lobbyID = GetComponent<LobbyManager>().lobbyId;
     }
 
     void Update()
