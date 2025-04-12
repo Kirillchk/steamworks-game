@@ -11,11 +11,11 @@ public class LobbyManager : MonoBehaviour
 	private void DebugCreate() => CreateLobby();
 	private const int MaxLobbyMembers = 4; // Maximum number of players in the lobby
 	public CSteamID lobbyId;
-	private DataSender dataSender = new DataSender();
-	private DataReceiver dataReceiver = new DataReceiver();
+	private DataSender dataSender;
 	private void Awake()
 	{
-
+		dataSender = GetComponent<DataSender>();
+		DontDestroyOnLoad(gameObject);
 		if (!SteamManager.Initialized)
 		{
 			Debug.LogError("Steamworks is not initialized!");
@@ -73,11 +73,6 @@ public class LobbyManager : MonoBehaviour
 	{
 		byte[] data = new byte[111];
 		dataSender.SendToAllPlayers(data);
-	}
-	[ContextMenu("receive")]
-	public void ReceiveData()
-	{
-
 	}
 }
 
