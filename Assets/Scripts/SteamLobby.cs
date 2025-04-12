@@ -1,9 +1,10 @@
 using UnityEngine;
 using Steamworks;
 using System.Collections.Generic;
+using System;
 public class LobbyManager : MonoBehaviour
 {
-	[SerializeField]ulong ID = 0;
+	[SerializeField]ulong ID = 76561198831185061;
 	[ContextMenu("Join")]
 	private void DebugJoin() => JoinLobby(new(ID));
 	[ContextMenu("Create")]
@@ -22,6 +23,7 @@ public class LobbyManager : MonoBehaviour
 					Debug.Log($"Lobby created successfully! Lobby ID: {callback.m_ulSteamIDLobby}");
 				else
 					Debug.LogError($"Failed to create lobby. Error: {callback.m_eResult}");
+				Debug.Log(SteamUser.GetSteamID());
 			}
 		);
 		Callback<LobbyEnter_t>.Create(callback =>
