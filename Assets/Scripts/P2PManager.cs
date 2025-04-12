@@ -41,7 +41,7 @@ public class P2PManager : MonoBehaviour
 		SteamNetworkingUtils.InitRelayNetworkAccess();
         DontDestroyOnLoad(gameObject);
 		Callback<SteamNetConnectionStatusChangedCallback_t>.Create(callback=> {
-			Debug.Log("SteamNetConnectionStatusChanged Callback was trigered " + callback.m_info.m_eEndReason);
+			Debug.Log("SteamNetConnectionStatusChanged Callback was trigered " + callback.m_info.m_eEndReason + " \n" + callback.m_info);
 		});
     }
 
