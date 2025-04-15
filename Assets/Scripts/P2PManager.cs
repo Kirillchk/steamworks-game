@@ -15,7 +15,7 @@ public class P2PManager : MonoBehaviour
 		configuration[0].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_TimeoutConnected;
 		configuration[0].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
 		configuration[0].m_val.m_int32 = 500;
-		SteamNetworkingSockets.CreateListenSocketP2P(0, 0, configuration);
+		listenSocket = SteamNetworkingSockets.CreateListenSocketP2P(0, 0, configuration);
     }
 
     [ContextMenu("connect")]
@@ -26,9 +26,8 @@ public class P2PManager : MonoBehaviour
 		configuration[0].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_TimeoutConnected;
 		configuration[0].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
 		configuration[0].m_val.m_int32 = 2000;
-		Debug.LogWarning(lobby.lobbyId);
-		Debug.LogWarning(SteamMatchmaking.GetLobbyMemberByIndex(lobby.lobbyId, 0).m_SteamID);
 		CSteamID playerID = SteamMatchmaking.GetLobbyMemberByIndex(lobby.lobbyId, 0);
+		Debug.Log("is host"+playerID.m_SteamID);
 		SteamNetworkingIdentity identity = new();
 		identity.SetSteamID(playerID);
 		Debug.Log(identity.IsInvalid()?"invalid":"valid");
@@ -42,9 +41,26 @@ public class P2PManager : MonoBehaviour
 		byte[] data = System.Text.Encoding.UTF8.GetBytes("Hello Steam!");
 		SendMessageToP2PConection(connection, data, 1|8);
     }
-
+	public void SendMessageToP2PConection(HSteamNetConnection hConn, byte[] data, int nSendFlags)
+	{
+		GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
+		try {
+			IntPtr pData = handle.AddrOfPinnedObject();
+			EResult result = SteamNetworkingSockets.SendMessageToConnection(
+				hConn,
+				pData,    // Pointer to data
+				(uint)data.Length, // Size in bytes
+				nSendFlags,
+				out long _         // Optional: message number (ignored here)
+			);
+			if (result != EResult.k_EResultOK)
+				Debug.Log($"Send failed: {result}");
+		} finally {
+			handle.Free();
+		}
+	}
     [ContextMenu("receive")]
-	void Recive(){
+	void Receive(){
 		IntPtr[] ptr = new IntPtr[1999];
 		int incoming = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, ptr, 1999);
 		for (int i = 0; i < ptr.Length; i++)
@@ -71,24 +87,7 @@ public class P2PManager : MonoBehaviour
     void Update()
     {
 		if(oibla)
-			Recive();
+			Receive();
     }
-	public void SendMessageToP2PConection(HSteamNetConnection hConn, byte[] data, int nSendFlags)
-	{
-		GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-		try {
-			IntPtr pData = handle.AddrOfPinnedObject();
-			EResult result = SteamNetworkingSockets.SendMessageToConnection(
-				hConn,
-				pData,    // Pointer to data
-				(uint)data.Length, // Size in bytes
-				nSendFlags,
-				out long _         // Optional: message number (ignored here)
-			);
-			if (result != EResult.k_EResultOK)
-				Console.WriteLine($"Send failed: {result}");
-		} finally {
-			handle.Free();
-		}
-	}
+	
 }
