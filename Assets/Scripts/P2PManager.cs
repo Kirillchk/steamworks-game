@@ -55,7 +55,8 @@ public class P2PManager : MonoBehaviour
 				Debug.Log($"ptr[{i}] = {value}");
 			}
 		}
-		Debug.Log($"incoming:{incoming}");
+		if (incoming!=0)
+			Debug.Log($"incoming:{incoming}");
 	}
     void Awake()
     {
