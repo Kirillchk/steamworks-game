@@ -6,9 +6,11 @@ using System.Text;
 using System.Collections.Generic;
 public class P2PBase : MonoBehaviour
 {
-    private const int k_nSteamNetworkingSend_Unreliable = 0;
-    private const int k_nSteamNetworkingSend_NoNagle = 1;
-    private const int k_nSteamNetworkingSend_Reliable = 8;
+	// wtf is this?
+	private const int k_nSteamNetworkingSend_Unreliable = 0;
+	private const int k_nSteamNetworkingSend_Reliable = 1;
+	private const int k_nSteamNetworkingSend_NoNagle = 2;
+	private const int k_nSteamNetworkingSend_NoDelay = 4;
     internal HSteamNetConnection connection;
     private Queue<string> messageQueue = new Queue<string>();
     internal bool isActive = false;
@@ -21,18 +23,18 @@ public class P2PBase : MonoBehaviour
     [ContextMenu("Send")]
     void Send()
     {
+		//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
+        byte[] data = { (byte)EPackagePurpuse.SEX };
+		SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
+    }
+
+    private void SendMessageToConnection(in byte[] data, in int nSendFlags)
+    {
         if (!isActive || connection == HSteamNetConnection.Invalid)
         {
             Debug.LogError("Cannot send - no active connection!");
             return;
         }
-		//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
-        byte[] data = { (byte)EPackagePurpuse.SEX };
-		SendMessageToConnection(data, 13 | 23);
-    }
-
-    public void SendMessageToConnection( byte[] data, int nSendFlags)
-    {
         if (connection == HSteamNetConnection.Invalid)
         {
             Debug.LogError("Invalid connection handle!");
@@ -59,12 +61,7 @@ public class P2PBase : MonoBehaviour
             handle.Free();
         }
     }
-	
-    void Update()
-    {
-        // Process any queued messages
-		while (messageQueue.Count > 0)
-			Debug.Log("Processing message: " + messageQueue.Dequeue());
+	private void TryRecive(){
         if (!isActive || connection == HSteamNetConnection.Invalid)
             return;
         // Receive messages
@@ -81,9 +78,6 @@ public class P2PBase : MonoBehaviour
                 
                 byte[] data = new byte[message.m_cbSize];
                 Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
-        
-                // string receivedText = Encoding.UTF8.GetString(data);
-				// messageQueue.Enqueue(receivedText);
 
                 Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: {(EPackagePurpuse)data[0]}");
             }
@@ -96,6 +90,10 @@ public class P2PBase : MonoBehaviour
                 SteamNetworkingMessage_t.Release(messages[i]);
             }
         }
+	}
+    void Update()
+    {
+		TryRecive();
     }
 
     void Awake()
@@ -106,12 +104,9 @@ public class P2PBase : MonoBehaviour
             return;
         }
 
-        try
-        {
+        try {
             SteamNetworkingUtils.InitRelayNetworkAccess();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Debug.LogError($"Network initialization error: {e}");
         }
 
