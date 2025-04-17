@@ -1,12 +1,9 @@
-using Steamworks;
-using UnityEditor.Rendering.BuiltIn.ShaderGraph;
 using UnityEngine;
-
+using Steamworks;
 public class VoiceChatManager : MonoBehaviour
 {
-    public byte[] buffer = new byte[1024];
-    public uint bufferSize = 1024;
-    public uint bytesWritten = 0;
+    private uint compressedSize = 0;
+    private uint bytesWritten = 0;
     [ContextMenu("Record Voice")]
     private void StartRecord()
     {
@@ -20,6 +17,18 @@ public class VoiceChatManager : MonoBehaviour
     [ContextMenu("Get voice")]
     private void GetRecordedVoice()
     {
-        Debug.Log(SteamUser.GetVoice(true, buffer,bufferSize, out bytesWritten));
+        EVoiceResult voiceResult = SteamUser.GetAvailableVoice(out compressedSize);
+        if(voiceResult==EVoiceResult.k_EVoiceResultOK && compressedSize>0)
+        {
+            byte[] compressedVoiceBuffer = new byte[compressedSize];
+            voiceResult = SteamUser.GetVoice(true,compressedVoiceBuffer,compressedSize,out bytesWritten);
+            if(voiceResult==EVoiceResult.k_EVoiceResultOK && bytesWritten>0)
+            {
+                uint decompressedSize = SteamUser.GetVoiceOptimalSampleRate();
+                byte[] decompressedBuffer = new byte[compressedSize];
+                EVoiceResult result = SteamUser.DecompressVoice(compressedVoiceBuffer,compressedSize,);
+            }
+        }
     }
+
 }
