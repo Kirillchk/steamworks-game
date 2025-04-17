@@ -1,9 +1,5 @@
 using UnityEngine;
 using Steamworks;
-using System;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Collections.Generic;
 
 public class P2PHost : P2PBase
 {

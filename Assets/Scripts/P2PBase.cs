@@ -12,7 +12,11 @@ public class P2PBase : MonoBehaviour
     internal HSteamNetConnection connection;
     private Queue<string> messageQueue = new Queue<string>();
     internal bool isActive = false;
-    private object messageLock = new object();
+	enum EPackagePurpuse : byte {
+		Transform,
+		Event,
+		SEX
+	}
 
     [ContextMenu("Send")]
     void Send()
@@ -22,9 +26,9 @@ public class P2PBase : MonoBehaviour
             Debug.LogError("Cannot send - no active connection!");
             return;
         }
-
-        byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
-        SendMessageToConnection(connection, data, k_nSteamNetworkingSend_Reliable | k_nSteamNetworkingSend_NoNagle);
+		//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
+        byte[] data = { (byte)EPackagePurpuse.SEX };
+		SendMessageToConnection(connection, data, k_nSteamNetworkingSend_Reliable | k_nSteamNetworkingSend_NoNagle);
     }
 
     public void SendMessageToConnection(HSteamNetConnection hConn, byte[] data, int nSendFlags)
@@ -45,22 +49,13 @@ public class P2PBase : MonoBehaviour
                 nSendFlags,
                 out long messageNumber
             );
-            
             if (result != EResult.k_EResultOK)
-            {
-                Debug.LogError($"Failed to send message: {result}");
-            }
-            else
-            {
-                Debug.Log($"Message sent successfully (ID: {messageNumber}, Size: {data.Length} bytes)");
-            }
-        }
-        catch (Exception e)
-        {
+				Debug.LogError($"Failed to send message: {result}");
+            else 
+				Debug.Log($"Message sent successfully (ID: {messageNumber}, Size: {data.Length} bytes)");
+        } catch (Exception e) {
             Debug.LogError($"Error sending message: {e}");
-        }
-        finally
-        {
+        } finally {
             handle.Free();
         }
     }
@@ -68,26 +63,16 @@ public class P2PBase : MonoBehaviour
     void Update()
     {
         // Process any queued messages
-        lock (messageLock)
-        {
-            while (messageQueue.Count > 0)
-            {
-                Debug.Log("Processing message: " + messageQueue.Dequeue());
-            }
-        }
-
+		while (messageQueue.Count > 0)
+			Debug.Log("Processing message: " + messageQueue.Dequeue());
         if (!isActive || connection == HSteamNetConnection.Invalid)
             return;
-
         // Receive messages
         IntPtr[] messages = new IntPtr[10];
         int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
         
         if (numMessages > 0)
-        {
-            Debug.Log($"Received {numMessages} messages this frame");
-        }
-
+			Debug.Log($"Received {numMessages} messages this frame");
         for (int i = 0; i < numMessages; i++)
         {
             try
@@ -95,16 +80,12 @@ public class P2PBase : MonoBehaviour
                 SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
                 
                 byte[] data = new byte[message.m_cbSize];
-                Marshal.Copy(message.m_pData, data, 0, (int)message.m_cbSize);
-                
-                string receivedText = Encoding.UTF8.GetString(data);
-                
-                lock (messageLock)
-                {
-                    messageQueue.Enqueue(receivedText);
-                }
+                Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
+        
+                // string receivedText = Encoding.UTF8.GetString(data);
+				// messageQueue.Enqueue(receivedText);
 
-                Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: {receivedText}");
+                Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: {(EPackagePurpuse)data[0]}");
             }
             catch (Exception e)
             {
@@ -142,10 +123,10 @@ public class P2PBase : MonoBehaviour
     private void OnConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t callback)
     {
         Debug.Log($"Connection status changed:\n" +
-                 $"State: {callback.m_info.m_eState}\n" +
-                 $"Reason: {callback.m_info.m_eEndReason}\n" +
-                 $"Remote: {callback.m_info.m_identityRemote.GetSteamID()}\n" +
-                 $"OldState: {callback.m_eOldState}");
+				$"State: {callback.m_info.m_eState}\n" +
+				$"Reason: {callback.m_info.m_eEndReason}\n" +
+				$"Remote: {callback.m_info.m_identityRemote.GetSteamID()}\n" +
+				$"OldState: {callback.m_eOldState}");
 
         switch (callback.m_info.m_eState)
         {
