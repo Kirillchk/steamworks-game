@@ -18,7 +18,6 @@ public class P2PManager : MonoBehaviour
     private bool isActive = false;
     private Queue<string> messageQueue = new();
     private object messageLock = new object();
-
     [ContextMenu("Listen")]
     void Listen()
     {

@@ -118,7 +118,53 @@ public class P2PClient : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
         
-        //Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
+        Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
     }
+	
+    private void OnConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t callback)
+    {
+        Debug.Log($"Connection status changed:\n" +
+                 $"State: {callback.m_info.m_eState}\n" +
+                 $"Reason: {callback.m_info.m_eEndReason}\n" +
+                 $"Remote: {callback.m_info.m_identityRemote.GetSteamID()}\n" +
+                 $"OldState: {callback.m_eOldState}");
 
+        switch (callback.m_info.m_eState)
+        {
+            case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connecting:
+                if (callback.m_info.m_identityRemote.GetSteamID() != CSteamID.Nil && !isActive)
+				{
+                    if (SteamNetworkingSockets.AcceptConnection(callback.m_hConn) == EResult.k_EResultOK)
+                    {
+                        connection = callback.m_hConn;
+                        isActive = true;
+                        Debug.Log("Accepted incoming connection");
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to accept connection");
+                        // SteamNetworkingSockets.CloseConnection(callback.m_hConn, 0, "Failed to accept", false);
+                    }
+				}
+                break;
+                
+            case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
+				if (isActive) 
+					Debug.Log("already active");
+				else {
+					bool result = SteamNetworkingSockets.AcceptConnection(callback.m_hConn) == EResult.k_EResultOK;
+					Debug.Log(result?"Successfully acepted":"failed wtf");
+				}
+                break;
+                
+            case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
+                Debug.Log("Connection closed");
+				break;
+            case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
+                Debug.Log("Connection closed: " + callback.m_info.m_szEndDebug);
+                SteamNetworkingSockets.CloseConnection(callback.m_hConn, 0, "Connection closed", false);
+                isActive = false;
+                break;
+        }
+    }
 }
