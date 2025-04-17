@@ -16,7 +16,7 @@ public class P2PManager : MonoBehaviour
     private HSteamListenSocket listenSocket;
     private LobbyManager lobby;
     private bool isActive = false;
-    private Queue<string> messageQueue = new();
+    private Queue<string> messageQueue = new Queue<string>();
     private object messageLock = new object();
 
     [ContextMenu("Listen")]
