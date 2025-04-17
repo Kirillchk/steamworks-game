@@ -12,7 +12,6 @@ public class P2PBase : MonoBehaviour
 	private const int k_nSteamNetworkingSend_NoNagle = 2;
 	private const int k_nSteamNetworkingSend_NoDelay = 4;
     internal HSteamNetConnection connection;
-    private Queue<string> messageQueue = new Queue<string>();
     internal bool isActive = false;
 	enum EPackagePurpuse : byte {
 		Transform,
@@ -24,10 +23,9 @@ public class P2PBase : MonoBehaviour
     void Send()
     {
 		//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
-        byte[] data = { (byte)EPackagePurpuse.SEX };
+        byte[] data = { (byte)EPackagePurpuse.Transform };
 		SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
     }
-
     private void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
         if (!isActive || connection == HSteamNetConnection.Invalid)
@@ -35,12 +33,6 @@ public class P2PBase : MonoBehaviour
             Debug.LogError("Cannot send - no active connection!");
             return;
         }
-        if (connection == HSteamNetConnection.Invalid)
-        {
-            Debug.LogError("Invalid connection handle!");
-            return;
-        }
-
         GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
         try {
             IntPtr pData = handle.AddrOfPinnedObject();
@@ -72,24 +64,33 @@ public class P2PBase : MonoBehaviour
 			Debug.Log($"Received {numMessages} messages this frame");
         for (int i = 0; i < numMessages; i++)
         {
-            try
-            {
+            try {
                 SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
                 
                 byte[] data = new byte[message.m_cbSize];
                 Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
 
-                Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: {(EPackagePurpuse)data[0]}");
-            }
-            catch (Exception e)
-            {
+				ProcesData(data, message);
+            } catch (Exception e) {
                 Debug.LogError($"Error processing message: {e}");
-            }
-            finally
-            {
+            } finally {
                 SteamNetworkingMessage_t.Release(messages[i]);
             }
         }
+	}
+	private void ProcesData(in byte[]data, SteamNetworkingMessage_t message) {	
+		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
+		switch (purpose){
+			case EPackagePurpuse.Transform:
+				Debug.Log($"Transform was sent");
+				break;
+			case EPackagePurpuse.SEX:
+				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");
+				break;
+			default:
+				Debug.LogError("unsupported purpose");
+				break;
+		}
 	}
     void Update()
     {
