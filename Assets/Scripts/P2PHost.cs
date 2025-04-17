@@ -4,7 +4,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-
 public class P2PHost : MonoBehaviour
 {
     // Send flags
@@ -17,6 +16,7 @@ public class P2PHost : MonoBehaviour
     private bool isActive = false;
     private Queue<string> messageQueue = new();
     private object messageLock = new object();
+
     [ContextMenu("Listen")]
     void Listen()
     {
@@ -35,7 +35,6 @@ public class P2PHost : MonoBehaviour
         listenSocket = SteamNetworkingSockets.CreateListenSocketP2P(0, configuration.Length, configuration);
         Debug.Log("Listening for P2P connections");
     }
-
     [ContextMenu("Send")]
     void Send()
     {

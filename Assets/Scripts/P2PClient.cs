@@ -4,20 +4,14 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-
 public class P2PClient : MonoBehaviour
 {
-    // Send flags
     private const int k_nSteamNetworkingSend_Unreliable = 0;
     private const int k_nSteamNetworkingSend_NoNagle = 1;
     private const int k_nSteamNetworkingSend_Reliable = 8;
-    
-    private HSteamNetConnection connection;
-    private HSteamListenSocket listenSocket;
     private LobbyManager lobby;
+    private HSteamNetConnection connection;
     private bool isActive = false;
-    private Queue<string> messageQueue = new();
-    private object messageLock = new object();
     [ContextMenu("Connect")]
     void Connect()
     {
@@ -105,60 +99,7 @@ public class P2PClient : MonoBehaviour
             handle.Free();
         }
     }
-
-    void Update()
-    {
-        // Process any queued messages
-        lock (messageLock)
-        {
-            while (messageQueue.Count > 0)
-            {
-                Debug.Log("Processing message: " + messageQueue.Dequeue());
-            }
-        }
-
-        if (!isActive || connection == HSteamNetConnection.Invalid)
-            return;
-
-        // Receive messages
-        IntPtr[] messages = new IntPtr[10];
-        int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
-        
-        if (numMessages > 0)
-        {
-            Debug.Log($"Received {numMessages} messages this frame");
-        }
-
-        for (int i = 0; i < numMessages; i++)
-        {
-            try
-            {
-                SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
-                
-                byte[] data = new byte[message.m_cbSize];
-                Marshal.Copy(message.m_pData, data, 0, (int)message.m_cbSize);
-                
-                string receivedText = Encoding.UTF8.GetString(data);
-                
-                lock (messageLock)
-                {
-                    messageQueue.Enqueue(receivedText);
-                }
-
-                Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: {receivedText}");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error processing message: {e}");
-            }
-            finally
-            {
-                SteamNetworkingMessage_t.Release(messages[i]);
-            }
-        }
-    }
-
-    void Awake()
+	void Awake()
     {
         if (!SteamManager.Initialized)
         {
@@ -179,7 +120,7 @@ public class P2PClient : MonoBehaviour
         
         Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
     }
-
+	
     private void OnConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t callback)
     {
         Debug.Log($"Connection status changed:\n" +
@@ -224,35 +165,6 @@ public class P2PClient : MonoBehaviour
                 SteamNetworkingSockets.CloseConnection(callback.m_hConn, 0, "Connection closed", false);
                 isActive = false;
                 break;
-        }
-    }
-
-    void OnDestroy()
-    {
-        if (listenSocket != HSteamListenSocket.Invalid)
-        {
-            SteamNetworkingSockets.CloseListenSocket(listenSocket);
-            listenSocket = HSteamListenSocket.Invalid;
-        }
-        
-        if (connection != HSteamNetConnection.Invalid)
-        {
-            SteamNetworkingSockets.CloseConnection(connection, 0, "Shutting down", false);
-            connection = HSteamNetConnection.Invalid;
-        }
-    }
-
-    void OnGUI()
-    {
-        if (isActive)
-        {
-            GUI.Label(new Rect(10, 10, 300, 20), $"Connection: {(connection == HSteamNetConnection.Invalid ? "Invalid" : "Active")}");
-            
-            // Basic connection status display
-            if (connection != HSteamNetConnection.Invalid)
-            {
-                GUI.Label(new Rect(10, 30, 300, 20), $"Messages in queue: {messageQueue.Count}");
-            }
         }
     }
 }
