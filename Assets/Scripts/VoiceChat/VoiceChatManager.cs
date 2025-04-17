@@ -8,17 +8,17 @@ public class VoiceChatManager : MonoBehaviour
     public uint bufferSize = 1024;
     public uint bytesWritten = 0;
     [ContextMenu("Record Voice")]
-    private void Record()
+    private void StartRecord()
     {
         SteamUser.StartVoiceRecording();
     }
     [ContextMenu("Stop recording")]
-    private void Stop()
+    private void StopRecording()
     {
         SteamUser.StopVoiceRecording();
     }
     [ContextMenu("Get voice")]
-    private void GetVoice()
+    private void GetRecordedVoice()
     {
         Debug.Log(SteamUser.GetVoice(true, buffer,bufferSize, out bytesWritten));
     }
