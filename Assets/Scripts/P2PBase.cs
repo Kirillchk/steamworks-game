@@ -28,12 +28,12 @@ public class P2PBase : MonoBehaviour
         }
 		//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
         byte[] data = { (byte)EPackagePurpuse.SEX };
-		SendMessageToConnection(connection, data, k_nSteamNetworkingSend_Reliable | k_nSteamNetworkingSend_NoNagle);
+		SendMessageToConnection(data, 13 | 23);
     }
 
-    public void SendMessageToConnection(HSteamNetConnection hConn, byte[] data, int nSendFlags)
+    public void SendMessageToConnection( byte[] data, int nSendFlags)
     {
-        if (hConn == HSteamNetConnection.Invalid)
+        if (connection == HSteamNetConnection.Invalid)
         {
             Debug.LogError("Invalid connection handle!");
             return;
@@ -43,7 +43,7 @@ public class P2PBase : MonoBehaviour
         try {
             IntPtr pData = handle.AddrOfPinnedObject();
             EResult result = SteamNetworkingSockets.SendMessageToConnection(
-                hConn,
+                connection,
                 pData,
                 (uint)data.Length,
                 nSendFlags,
