@@ -4,8 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-
-public class P2PManager : MonoBehaviour
+public class P2PHost : MonoBehaviour
 {
     // Send flags
     private const int k_nSteamNetworkingSend_Unreliable = 0;
@@ -14,7 +13,6 @@ public class P2PManager : MonoBehaviour
     
     private HSteamNetConnection connection;
     private HSteamListenSocket listenSocket;
-    private LobbyManager lobby;
     private bool isActive = false;
     private Queue<string> messageQueue = new();
     private object messageLock = new object();
@@ -37,44 +35,6 @@ public class P2PManager : MonoBehaviour
         listenSocket = SteamNetworkingSockets.CreateListenSocketP2P(0, configuration.Length, configuration);
         Debug.Log("Listening for P2P connections");
     }
-
-    [ContextMenu("Connect")]
-    void Connect()
-    {
-        lobby = GetComponent<LobbyManager>();
-        if (lobby == null || lobby.lobbyId == CSteamID.Nil)
-        {
-            Debug.LogError("Lobby not initialized!");
-            return;
-        }
-
-        CSteamID playerID = SteamMatchmaking.GetLobbyMemberByIndex(lobby.lobbyId, 0);
-        if (playerID == CSteamID.Nil)
-        {
-            Debug.LogError("No members in lobby!");
-            return;
-        }
-
-        SteamNetworkingConfigValue_t[] configuration = new SteamNetworkingConfigValue_t[2];
-        
-        // Connection timeout
-        configuration[0].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_TimeoutConnected;
-        configuration[0].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
-        configuration[0].m_val.m_int32 = 5000;
-        
-        // Larger buffer size
-        configuration[1].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_SendBufferSize;
-        configuration[1].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
-        configuration[1].m_val.m_int32 = 65536;
-
-        SteamNetworkingIdentity identity = new SteamNetworkingIdentity();
-        identity.SetSteamID(playerID);
-        
-        connection = SteamNetworkingSockets.ConnectP2P(ref identity, 0, configuration.Length, configuration);
-        isActive = true;
-        Debug.Log($"Connecting to {playerID}");
-    }
-
     [ContextMenu("Send")]
     void Send()
     {
