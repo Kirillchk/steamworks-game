@@ -91,12 +91,12 @@ public class P2PBase : MonoBehaviour
 	}
 	private void ProcesData(in byte[]data, SteamNetworkingMessage_t message) {	
 		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
-		Debug.Log(purpose);
 		switch (purpose){
 			case EPackagePurpuse.Transform:
 				string sus = "";
 				for(int i = 1; i<29; i+=4)
 					sus += $"float{(i-1)/4}:" + BitConverter.ToSingle(data[i..(i+4)]);
+				Debug.Log(sus);
 				break;
 			case EPackagePurpuse.SEX:
 				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");
