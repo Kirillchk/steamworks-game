@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class CubeBehavior : MonoBehaviour
 {
+	Vector3 lastPosition;
+	Quaternion lastRotation;
     public P2PBase manager;
 	bool sync = false;
-    void Start()
-    {
-        manager = GameObject.FindWithTag("MainManager").GetComponent<P2PBase>();
-    }
+    void Start() =>manager = GameObject.FindWithTag("MainManager").GetComponent<P2PBase>();
     void Update()
     {
-		if (!sync) return;
+		if (!sync || lastRotation == transform.rotation || lastPosition == transform.position) 
+		{
+			lastRotation = transform.rotation;
+			lastPosition = transform.position;
+			return;
+		}
 		byte[] data = new byte[29];
 		data[0] = 0;
 		
