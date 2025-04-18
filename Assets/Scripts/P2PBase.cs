@@ -26,7 +26,6 @@ public class P2PBase : MonoBehaviour
     {
 		//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
 		byte[] data = new byte[29];
-		
 		data[0] = (byte)EPackagePurpuse.Transform;
 		
 		Vector3 posit = new(0.1123f, 0.132f, 2);
@@ -40,7 +39,7 @@ public class P2PBase : MonoBehaviour
 	
 		SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
     }
-    private void SendMessageToConnection(in byte[] data, in int nSendFlags)
+    public void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
         if (!isActive || connection == HSteamNetConnection.Invalid)
         {
@@ -95,10 +94,9 @@ public class P2PBase : MonoBehaviour
 		Debug.Log(purpose);
 		switch (purpose){
 			case EPackagePurpuse.Transform:
+				string sus = "";
 				for(int i = 1; i<29; i+=4)
-					Debug.Log("floats" + BitConverter.ToSingle(data[i..(i+4)]));
-				
-
+					sus += $"float{(i-1)/4}:" + BitConverter.ToSingle(data[i..(i+4)]);
 				break;
 			case EPackagePurpuse.SEX:
 				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");
