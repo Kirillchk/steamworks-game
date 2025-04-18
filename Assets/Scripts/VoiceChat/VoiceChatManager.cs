@@ -3,7 +3,7 @@ using Steamworks;
 public class VoiceChatManager : MonoBehaviour
 {
     [SerializeField]private AudioSource audioSource;
-    private uint compressedSize = 0;
+    private uint dataSize = 0;
     private uint bytesWritten = 0;
     [ContextMenu("Record Voice")]
     private void StartRecord()
@@ -18,27 +18,27 @@ public class VoiceChatManager : MonoBehaviour
     [ContextMenu("Get voice")]
     private void Update()
     {
-        EVoiceResult voiceResult = SteamUser.GetAvailableVoice(out compressedSize);
+        EVoiceResult voiceResult = SteamUser.GetAvailableVoice(out dataSize);
 
-        if (voiceResult == EVoiceResult.k_EVoiceResultOK && compressedSize > 0)
+        if (voiceResult == EVoiceResult.k_EVoiceResultOK && dataSize > 0)
         {
-            byte[] compressedBuffer = new byte[compressedSize];
+            byte[] data = new byte[dataSize];
             voiceResult = SteamUser.GetVoice(
                 true, //compressed?
-                compressedBuffer, //data 
-                compressedSize,  //data size
+                data, //data 
+                dataSize,  //data size
                 out bytesWritten); // bytes count
 
             if (voiceResult == EVoiceResult.k_EVoiceResultOK && bytesWritten > 0)
             {
                 uint sampleRate = 48000; // Steam's recommended rate
-                uint decompressedBufferSize = sampleRate;
-                byte[] decompressedBuffer = new byte[decompressedBufferSize];
+                uint decDataSize = sampleRate;
+                byte[] decData = new byte[decDataSize];
                 voiceResult = SteamUser.DecompressVoice(
-                    compressedBuffer,// data to decompress
+                    data,// data to decompress
                     bytesWritten,// how many bytes data has
-                    decompressedBuffer,// data of decompressed data
-                    decompressedBufferSize,// size of decompressed data
+                    decData,// data of decompressed data
+                    decDataSize,// size of decompressed data
                     out uint decompressedBytesWritten, // how many bytes in decompressed data
                     sampleRate);
                 Debug.Log(voiceResult);
@@ -50,7 +50,7 @@ public class VoiceChatManager : MonoBehaviour
 
                     for (int i = 0; i < sampleCount; i++)
                     {
-                        short pcmSample = (short)(decompressedBuffer[i * 2] | (decompressedBuffer[i * 2 + 1] << 8));
+                        short pcmSample = (short)(decData[i * 2] | (decData[i * 2 + 1] << 8));
                         floatData[i] = pcmSample / 32768.0f;
                     }
 
