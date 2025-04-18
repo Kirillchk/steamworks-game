@@ -4,6 +4,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using Unity.Mathematics;
 public class P2PBase : MonoBehaviour
 {
 	// wtf is this?
@@ -23,9 +25,19 @@ public class P2PBase : MonoBehaviour
     void Send()
     {
 		//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
-		Vector3 position = new(0.1123f, 0.132f, 2);
+		byte[] data = new byte[13];
 		
-        byte[] data = { (byte)EPackagePurpuse.Transform, (byte)position.x, (byte)position.y, (byte)position.z};
+		data[0] = (byte)EPackagePurpuse.Transform;
+		
+		Vector3 position = new(0.1123f, 0.132f, 2);
+		float[] farr = {
+			position.x,
+			position.y,
+			position.z
+		};
+        for (short i = 0; i < 3; i++)
+		    Array.Copy(BitConverter.GetBytes(farr[i]), 0, data, i * 4 + 1, 4);
+		
 		SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
     }
     private void SendMessageToConnection(in byte[] data, in int nSendFlags)
@@ -82,9 +94,11 @@ public class P2PBase : MonoBehaviour
 	}
 	private void ProcesData(in byte[]data, SteamNetworkingMessage_t message) {	
 		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
+		Debug.Log(purpose);
 		switch (purpose){
 			case EPackagePurpuse.Transform:
-				Debug.Log($"Transform was recived x:{data[1..9]} y:{data[10..17]} z:{data[18..25]}");
+				for(int i = 1; i<13; i+=4)
+					Debug.Log("floats" + BitConverter.ToSingle(data[i..(i+4)]));
 				break;
 			case EPackagePurpuse.SEX:
 				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");

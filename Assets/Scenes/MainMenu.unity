@@ -864,7 +864,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1997175887}
+      - m_Target: {fileID: 1997175891}
         m_TargetAssemblyTypeName: LobbyManager, Assembly-CSharp
         m_MethodName: HostLobbyButton
         m_Mode: 1
@@ -1402,7 +1402,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1997175887}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: LobbyManager, Assembly-CSharp
         m_MethodName: JoinLobbyButton
         m_Mode: 1
@@ -1917,10 +1917,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1997175889}
-  - component: {fileID: 1997175888}
-  - component: {fileID: 1997175887}
-  - component: {fileID: 1997175890}
   - component: {fileID: 1997175891}
+  - component: {fileID: 1997175890}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -1928,34 +1926,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1997175887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997175886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 506f0970803c5084da03b7922841175b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID: 0
-  lobbyId:
-    m_SteamID: 0
---- !u!114 &1997175888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997175886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78f30012b58f9c641b8b0f9e8d9b1e98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID: 0
 --- !u!4 &1997175889
 Transform:
   m_ObjectHideFlags: 0
@@ -1980,7 +1950,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1997175886}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c44d82b529d4c440aabe797301c65ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a82d3472faf00b4cbdc484cf6d436a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1997175891
@@ -1992,9 +1962,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1997175886}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfa216043dde0944891b8106eaddaefb, type: 3}
+  m_Script: {fileID: 11500000, guid: 506f0970803c5084da03b7922841175b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 0
+  lobbyId:
+    m_SteamID: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
