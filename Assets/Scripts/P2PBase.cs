@@ -25,19 +25,19 @@ public class P2PBase : MonoBehaviour
     void Send()
     {
 		//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
-		byte[] data = new byte[13];
+		byte[] data = new byte[29];
 		
 		data[0] = (byte)EPackagePurpuse.Transform;
 		
-		Vector3 position = new(0.1123f, 0.132f, 2);
-		float[] farr = {
-			position.x,
-			position.y,
-			position.z
+		Vector3 posit = new(0.1123f, 0.132f, 2);
+		Quaternion quatern = new(0.555f, 0.444f, 0.333f, 0.5f);
+		float[] farr = { 
+			posit.x, posit.y, posit.z,
+			quatern.x, quatern.y, quatern.z, quatern.w
 		};
-        for (short i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
 		    Array.Copy(BitConverter.GetBytes(farr[i]), 0, data, i * 4 + 1, 4);
-		
+	
 		SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
     }
     private void SendMessageToConnection(in byte[] data, in int nSendFlags)
@@ -80,10 +80,8 @@ public class P2PBase : MonoBehaviour
         {
             try {
                 SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
-                
                 byte[] data = new byte[message.m_cbSize];
                 Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
-
 				ProcesData(data, message);
             } catch (Exception e) {
                 Debug.LogError($"Error processing message: {e}");
@@ -97,8 +95,10 @@ public class P2PBase : MonoBehaviour
 		Debug.Log(purpose);
 		switch (purpose){
 			case EPackagePurpuse.Transform:
-				for(int i = 1; i<13; i+=4)
+				for(int i = 1; i<29; i+=4)
 					Debug.Log("floats" + BitConverter.ToSingle(data[i..(i+4)]));
+				
+
 				break;
 			case EPackagePurpuse.SEX:
 				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");
