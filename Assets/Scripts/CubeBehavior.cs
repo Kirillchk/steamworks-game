@@ -1,15 +1,18 @@
 using System;
+using TMPro;
 using UnityEngine;
 
 public class CubeBehavior : MonoBehaviour
 {
     public P2PBase manager;
+	bool sync = false;
     void Start()
     {
         manager = GameObject.FindWithTag("MainManager").GetComponent<P2PBase>();
     }
     void Update()
     {
+		if (!sync) return;
 		byte[] data = new byte[29];
 		data[0] = 0;
 		
@@ -23,4 +26,8 @@ public class CubeBehavior : MonoBehaviour
 		    Array.Copy(BitConverter.GetBytes(farr[i]), 0, data, i * 4 + 1, 4);
         manager.SendMessageToConnection(data, 0 | 2);
     }
+    [ContextMenu("Send")]
+	void toggle(){
+		sync = !sync;
+	}
 }
