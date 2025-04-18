@@ -35,7 +35,7 @@ public class P2PBase : MonoBehaviour
 			posit.x, posit.y, posit.z,
 			quatern.x, quatern.y, quatern.z, quatern.w
 		};
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 7; i++)
 		    Array.Copy(BitConverter.GetBytes(farr[i]), 0, data, i * 4 + 1, 4);
 	
 		SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
