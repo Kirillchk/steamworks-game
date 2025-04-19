@@ -1,13 +1,17 @@
 using UnityEngine;
 using Steamworks;
+using System;
 public class VoiceChatManager : MonoBehaviour
 {
     [SerializeField]private AudioSource audioSource;
     private uint dataSize = 0;
     private uint bytesWritten = 0;
+    private uint sampleRate;
+    public int check = 2;
     [ContextMenu("Record Voice")]
-    private void StartRecord()
+    private void Start()
     {
+        sampleRate = 48000;
         SteamUser.StartVoiceRecording();
     }
     [ContextMenu("Stop recording")]
@@ -31,7 +35,7 @@ public class VoiceChatManager : MonoBehaviour
 
             if (voiceResult == EVoiceResult.k_EVoiceResultOK && bytesWritten > 0)
             {
-                uint sampleRate = 48000; // Steam's recommended rate
+
                 uint decDataSize = sampleRate;
                 byte[] decData = new byte[decDataSize];
                 voiceResult = SteamUser.DecompressVoice(
@@ -39,18 +43,18 @@ public class VoiceChatManager : MonoBehaviour
                     bytesWritten,// how many bytes data has
                     decData,// data of decompressed data
                     decDataSize,// size of decompressed data
-                    out uint decompressedBytesWritten, // how many bytes in decompressed data
+                    out uint decBytesWritten, // how many bytes in decompressed data
                     sampleRate);
                 Debug.Log(voiceResult);
 
-                if (voiceResult == EVoiceResult.k_EVoiceResultOK && decompressedBytesWritten > 0)
+                if (voiceResult == EVoiceResult.k_EVoiceResultOK && decBytesWritten > 0)
                 {
-                    int sampleCount = (int)decompressedBytesWritten / 2;
+                    int sampleCount = (int)decBytesWritten / check;
                     float[] floatData = new float[sampleCount];
 
                     for (int i = 0; i < sampleCount; i++)
                     {
-                        short pcmSample = (short)(decData[i * 2] | (decData[i * 2 + 1] << 8));
+                        short pcmSample = (short)((decData[i * 2 + 1] << 8) | decData[i * 2]); 
                         floatData[i] = pcmSample / 32768.0f;
                     }
 
