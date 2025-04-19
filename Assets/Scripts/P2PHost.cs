@@ -31,4 +31,5 @@ public class P2PHost : P2PBase
             listenSocket = HSteamListenSocket.Invalid;
         }
     }
+	void Awake() => Listen();
 }

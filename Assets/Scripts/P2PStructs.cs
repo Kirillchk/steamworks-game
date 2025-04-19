@@ -2,6 +2,13 @@ using UnityEngine;
 using System;
 namespace P2PMessages
 {
+	// wtf is this?
+	public enum k_nSteamNetworkingSend : int{
+		Unreliable = 0,
+		Reliable = 1,
+		NoNagle = 2,
+		NoDelay = 4,
+	}
 	public enum EPackagePurpuse : byte {
 		Transform,
 		Event,

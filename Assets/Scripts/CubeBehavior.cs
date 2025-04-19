@@ -24,7 +24,7 @@ public class CubeBehavior : MonoBehaviour
 		if (!sync || !moved)
 			return;
 		P2PTransformMessage transformMessage = new(transform.position, transform.rotation, ID);
-        manager.SendMessageToConnection(transformMessage.GetBinaryRepresentation(), 0 | 2);
+        manager.SendMessageToConnection(transformMessage.GetBinaryRepresentation(), (int)(k_nSteamNetworkingSend.NoDelay | k_nSteamNetworkingSend.NoNagle));
     }
     [ContextMenu("Send")]
 	void toggle() => sync = !sync; 

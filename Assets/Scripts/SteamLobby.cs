@@ -28,8 +28,8 @@ public class LobbyManager : MonoBehaviour
 					Debug.Log($"Lobby created successfully! Lobby ID: {callback.m_ulSteamIDLobby}");
 					lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 					Debug.Log($"my steam id{SteamUser.GetSteamID()}");
+					gameObject.AddComponent<P2PHost>();
 				}
-
 				else
 					Debug.LogError($"Failed to create lobby. Error: {callback.m_eResult}");
 				Debug.Log(SteamUser.GetSteamID());
@@ -41,11 +41,12 @@ public class LobbyManager : MonoBehaviour
 			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 			if(SceneManager.GetActiveScene()!= SceneManager.GetSceneByName("Lobby"))
 				SceneManager.LoadScene("Lobby");
+			if(GetComponent<P2PBase>() == null)
+				gameObject.AddComponent<P2PClient>();
 		});
 		Callback<LobbyChatUpdate_t>.Create(callback => {
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
 			Debug.Log($"{callback.m_ulSteamIDUserChanged} just {action}");
-			
 		});
 		Callback<GameLobbyJoinRequested_t>.Create(callback => {
 			SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);

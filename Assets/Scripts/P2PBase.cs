@@ -10,11 +10,6 @@ using P2PMessages;
 public class P2PBase : MonoBehaviour
 {
 	public List<CubeBehavior> cubes = new();
-	// wtf is this?
-	private const int k_nSteamNetworkingSend_Unreliable = 0;
-	private const int k_nSteamNetworkingSend_Reliable = 1;
-	private const int k_nSteamNetworkingSend_NoNagle = 2;
-	private const int k_nSteamNetworkingSend_NoDelay = 4;
     internal HSteamNetConnection connection;
     internal bool isActive = false;
 	enum EPackagePurpuse : byte {
