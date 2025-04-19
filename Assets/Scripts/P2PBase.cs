@@ -6,6 +6,7 @@ using System.Text;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using Unity.Mathematics;
+using P2PMessages;
 public class P2PBase : MonoBehaviour
 {
 	public List<CubeBehavior> cubes = new();
@@ -22,24 +23,24 @@ public class P2PBase : MonoBehaviour
 		SEX
 	}
 
-    [ContextMenu("Send")]
-    void Send()
-    {
-		//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
-		byte[] data = new byte[29];
-		data[0] = (byte)EPackagePurpuse.Transform;
+    //[ContextMenu("Send")]
+    //void Send()
+    //{
+	//	//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
+	//	byte[] data = new byte[29];
+	//	data[0] = (byte)EPackagePurpuse.Transform;
 		
-		Vector3 posit = new(0.1123f, 0.132f, 2);
-		Quaternion quatern = new(0.555f, 0.444f, 0.333f, 0.5f);
-		float[] farr = { 
-			posit.x, posit.y, posit.z,
-			quatern.x, quatern.y, quatern.z, quatern.w
-		};
-        for (int i = 0; i < 7; i++)
-		    Array.Copy(BitConverter.GetBytes(farr[i]), 0, data, i * 4 + 1, 4);
+	//	Vector3 posit = new(0.1123f, 0.132f, 2);
+	//	Quaternion quatern = new(0.555f, 0.444f, 0.333f, 0.5f);
+	//	float[] farr = { 
+	//		posit.x, posit.y, posit.z,
+	//		quatern.x, quatern.y, quatern.z, quatern.w
+	//	};
+    //    for (int i = 0; i < 7; i++)
+	//	    Array.Copy(BitConverter.GetBytes(farr[i]), 0, data, i * 4 + 1, 4);
 	
-		SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
-    }
+	//	SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
+    //}
     public void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
         if (!isActive || connection == HSteamNetConnection.Invalid)
@@ -94,8 +95,8 @@ public class P2PBase : MonoBehaviour
 		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
 		switch (purpose){
 			case EPackagePurpuse.Transform:
-				TransformMessage transformMessage = new(data);
-				cubes[0].transform.position = transformMessage.pos;
+				P2PTransformMessage transformMessage = new(data);
+				cubes[transformMessage.ID].transform.position = transformMessage.pos;
 				cubes[0].transform.rotation = transformMessage.rot;
 				break;
 			case EPackagePurpuse.SEX:

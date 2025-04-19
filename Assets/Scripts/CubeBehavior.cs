@@ -1,11 +1,12 @@
 using System;
 using TMPro;
 using UnityEngine;
+using P2PMessages;
 
 public class CubeBehavior : MonoBehaviour
 {	
-	static long AutoID = 0;
-	[SerializeField] long ID; 
+	static int AutoID = 0;
+	[SerializeField] int ID; 
 	Vector3 lastPosition;
 	Quaternion lastRotation;
     public P2PBase manager;
@@ -22,7 +23,7 @@ public class CubeBehavior : MonoBehaviour
 		lastPosition = transform.position;
 		if (!sync || !moved)
 			return;
-		TransformMessage transformMessage = new(transform.position, transform.rotation);
+		P2PTransformMessage transformMessage = new(transform.position, transform.rotation, ID);
         manager.SendMessageToConnection(transformMessage.GetBinaryRepresentation(), 0 | 2);
     }
     [ContextMenu("Send")]
