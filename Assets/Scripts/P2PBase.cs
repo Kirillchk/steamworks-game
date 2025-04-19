@@ -97,12 +97,11 @@ public class P2PBase : MonoBehaviour
 			case EPackagePurpuse.Transform:
 				object[] dataArr = FromBytesToValuesByTypes(data[1..], 
 					typeof(float), typeof(float), typeof(float), 
-					typeof(float), typeof(float), typeof(float), typeof(float), 
-					typeof(long));
+					typeof(float), typeof(float), typeof(float), typeof(float));
 				foreach (object o in dataArr)
 					Debug.Log(" " + o);
 				float[] farr = dataArr[0..7].Cast<float>().ToArray();
-				long id = (long)dataArr[7];
+				// long id = (long)dataArr[7];
 				//for(int i = 1; i<29; i+=4)
 				//	farr[i/4] = BitConverter.ToSingle(data[i..(i+4)]);
 				cubes[0].transform.position = new(farr[0],farr[1],farr[2]);
