@@ -99,6 +99,8 @@ public class P2PBase : MonoBehaviour
 					typeof(float), typeof(float), typeof(float), 
 					typeof(float), typeof(float), typeof(float), typeof(float), 
 					typeof(long));
+				foreach (object o in dataArr)
+					Debug.Log(" " + o);
 				float[] farr = dataArr[0..7].Cast<float>().ToArray();
 				long id = (long)dataArr[7];
 				//for(int i = 1; i<29; i+=4)
