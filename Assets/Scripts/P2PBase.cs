@@ -6,7 +6,6 @@ using System.Text;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using Unity.Mathematics;
-using System.Linq;
 public class P2PBase : MonoBehaviour
 {
 	public List<CubeBehavior> cubes = new();
@@ -95,17 +94,9 @@ public class P2PBase : MonoBehaviour
 		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
 		switch (purpose){
 			case EPackagePurpuse.Transform:
-				object[] dataArr = FromBytesToValuesByTypes(data[1..], 
-					typeof(float), typeof(float), typeof(float), 
-					typeof(float), typeof(float), typeof(float), typeof(float));
-				foreach (object o in dataArr)
-					Debug.Log(" " + o);
-				float[] farr = dataArr[0..7].Cast<float>().ToArray();
-				// long id = (long)dataArr[7];
-				//for(int i = 1; i<29; i+=4)
-				//	farr[i/4] = BitConverter.ToSingle(data[i..(i+4)]);
-				cubes[0].transform.position = new(farr[0],farr[1],farr[2]);
-				cubes[0].transform.rotation = new(farr[3],farr[4],farr[5],farr[6]);
+				TransformMessage transformMessage = new(data);
+				cubes[0].transform.position = transformMessage.pos;
+				cubes[0].transform.rotation = transformMessage.rot;
 				break;
 			case EPackagePurpuse.SEX:
 				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");
@@ -114,20 +105,6 @@ public class P2PBase : MonoBehaviour
 				Debug.LogError("unsupported purpose");
 				break;
 		}
-	}
-	object?[] FromBytesToValuesByTypes(byte[] data, params Type[] types)
-	{
-		object?[] result = new object[types.Length];
-		int i = 0;
-		int pointer = 0;
-		foreach (Type type in types){
-			if(type == typeof(float))
-				result[i] = BitConverter.ToSingle(data[pointer..(pointer+=4)]);
-			else if(type == typeof(long))
-				result[i] = BitConverter.ToInt64(data[pointer..(pointer+=8)]);
-			i++;
-		}
-		return result;
 	}
 
     void Update()
@@ -209,4 +186,17 @@ public class P2PBase : MonoBehaviour
             connection = HSteamNetConnection.Invalid;
         }
     }
+}
+public struct TransformMessage {
+	public Vector3 pos;
+	public Quaternion rot;
+	public long ID;
+	public TransformMessage(in byte[] byteArr){
+		float[] farr = new float[7];
+		for(int i = 1; i<29; i+=4)
+			farr[i/4] = BitConverter.ToSingle(byteArr[i..(i+4)]);
+		pos = new(farr[0],farr[1],farr[2]);
+		rot = new(farr[3],farr[4],farr[5],farr[6]);
+		ID = 0;
+	}
 }
