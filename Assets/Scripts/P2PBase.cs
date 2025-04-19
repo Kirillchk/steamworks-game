@@ -100,7 +100,7 @@ public class P2PBase : MonoBehaviour
 				string sus = "";
 				foreach(float f in farr)
 					sus += "  "+ f;
-				Debug.Log(sus);
+				Debug.Log("RECIVED:" + sus);
 				cubes[0].transform.position = new(farr[0],farr[1],farr[2]);
 				cubes[0].transform.rotation = new(farr[3],farr[4],farr[5],farr[6]);
 				break;
