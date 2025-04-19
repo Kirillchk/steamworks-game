@@ -6,6 +6,7 @@ using System.Text;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using Unity.Mathematics;
+using System.Linq;
 public class P2PBase : MonoBehaviour
 {
 	public List<CubeBehavior> cubes = new();
@@ -94,9 +95,14 @@ public class P2PBase : MonoBehaviour
 		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
 		switch (purpose){
 			case EPackagePurpuse.Transform:
-				float[] farr = new float[7];
-				for(int i = 1; i<29; i+=4)
-					farr[i/4] = BitConverter.ToSingle(data[i..(i+4)]);
+				object[] dataArr = FromBytesToValuesByTypes(data[1..], 
+					typeof(float), typeof(float), typeof(float), 
+					typeof(float), typeof(float), typeof(float), typeof(float), 
+					typeof(long));
+				float[] farr = dataArr[0..7].Cast<float>().ToArray();
+				long id = (long)dataArr[7];
+				//for(int i = 1; i<29; i+=4)
+				//	farr[i/4] = BitConverter.ToSingle(data[i..(i+4)]);
 				cubes[0].transform.position = new(farr[0],farr[1],farr[2]);
 				cubes[0].transform.rotation = new(farr[3],farr[4],farr[5],farr[6]);
 				break;
@@ -108,6 +114,21 @@ public class P2PBase : MonoBehaviour
 				break;
 		}
 	}
+	object?[] FromBytesToValuesByTypes(byte[] data, params Type[] types)
+	{
+		object?[] result = new object[types.Length];
+		int i = 0;
+		int pointer = 0;
+		foreach (Type type in types){
+			if(type == typeof(float))
+				result[i] = BitConverter.ToSingle(data[pointer..(pointer+=4)]);
+			else if(type == typeof(long))
+				result[i] = BitConverter.ToInt64(data[pointer..(pointer+=8)]);
+			i++;
+		}
+		return result;
+	}
+
     void Update()
     {
 		TryRecive();
