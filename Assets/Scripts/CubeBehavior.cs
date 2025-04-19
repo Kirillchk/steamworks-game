@@ -11,7 +11,7 @@ public class CubeBehavior : MonoBehaviour
 	Quaternion lastRotation;
     public P2PBase manager;
 	bool sync = false;
-    void Start() {
+    void Awake() {
 		ID = AutoID++;
 		manager = GameObject.FindWithTag("MainManager").GetComponent<P2PBase>();
 		manager.cubes.Add(this);

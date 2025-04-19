@@ -4,9 +4,7 @@ using Steamworks;
 public class P2PHost : P2PBase
 {
     internal HSteamListenSocket listenSocket;
-	
-    [ContextMenu("Listen")]
-    void Listen()
+    public void Listen()
     {
         SteamNetworkingConfigValue_t[] configuration = new SteamNetworkingConfigValue_t[2];
         

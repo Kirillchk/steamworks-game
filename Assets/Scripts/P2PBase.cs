@@ -91,8 +91,9 @@ public class P2PBase : MonoBehaviour
 		switch (purpose){
 			case EPackagePurpuse.Transform:
 				P2PTransformMessage transformMessage = new(data);
-				cubes[transformMessage.ID].transform.position = transformMessage.pos;
-				cubes[0].transform.rotation = transformMessage.rot;
+				CubeBehavior cube = cubes[transformMessage.ID];
+				cube.transform.position = transformMessage.pos;
+				cube.transform.rotation = transformMessage.rot;
 				break;
 			case EPackagePurpuse.SEX:
 				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");

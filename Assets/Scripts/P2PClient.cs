@@ -5,8 +5,7 @@ public class P2PClient : P2PBase
 {
     // Send flags
     private LobbyManager lobby;
-    [ContextMenu("Connect")]
-    void Connect()
+    public void Connect()
     {
         lobby = GetComponent<LobbyManager>();
         if (lobby == null || lobby.lobbyId == CSteamID.Nil)
