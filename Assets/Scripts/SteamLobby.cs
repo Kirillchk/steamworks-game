@@ -37,6 +37,12 @@ public class LobbyManager : MonoBehaviour
 		Callback<LobbyEnter_t>.Create(callback =>
 		{
 			Debug.Log($"Successfully entered lobby! Lobby ID: {callback.m_ulSteamIDLobby}");
+			P2PClient client = GetComponent<P2PClient>();
+			P2PHost host = GetComponent<P2PHost>();
+			if(client != null)
+				client.Connect();
+			else if(host != null)
+				host.Listen();
 			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 			if(SceneManager.GetActiveScene()!= SceneManager.GetSceneByName("Lobby"))
 				SceneManager.LoadScene("Lobby");

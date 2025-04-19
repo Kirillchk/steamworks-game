@@ -3,7 +3,7 @@ using Steamworks;
 
 public class P2PHost : P2PBase
 {
-    internal HSteamListenSocket listenSocket;
+    HSteamListenSocket listenSocket;
     public void Listen()
     {
         SteamNetworkingConfigValue_t[] configuration = new SteamNetworkingConfigValue_t[2];
@@ -29,5 +29,4 @@ public class P2PHost : P2PBase
             listenSocket = HSteamListenSocket.Invalid;
         }
     }
-	void Awake() => Listen();
 }
