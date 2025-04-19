@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 using Unity.Mathematics;
 public class P2PBase : MonoBehaviour
 {
+	public List<CubeBehavior> cubes = new();
 	// wtf is this?
 	private const int k_nSteamNetworkingSend_Unreliable = 0;
 	private const int k_nSteamNetworkingSend_Reliable = 1;
@@ -93,10 +94,11 @@ public class P2PBase : MonoBehaviour
 		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
 		switch (purpose){
 			case EPackagePurpuse.Transform:
-				string sus = "";
+				float[] farr = new float[7];
 				for(int i = 1; i<29; i+=4)
-					sus += $"float{(i-1)/4}:" + BitConverter.ToSingle(data[i..(i+4)]);
-				Debug.Log(sus);
+					farr[i/4] = BitConverter.ToSingle(data[i..(i+4)]);
+				cubes[0].transform.position = new(farr[0],farr[1],farr[2]);
+				cubes[0].transform.rotation = new(farr[3],farr[4],farr[5],farr[6]);
 				break;
 			case EPackagePurpuse.SEX:
 				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");

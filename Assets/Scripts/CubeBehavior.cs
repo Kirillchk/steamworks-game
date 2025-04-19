@@ -8,7 +8,10 @@ public class CubeBehavior : MonoBehaviour
 	Quaternion lastRotation;
     public P2PBase manager;
 	bool sync = false;
-    void Start() =>manager = GameObject.FindWithTag("MainManager").GetComponent<P2PBase>();
+    void Start() {
+		manager = GameObject.FindWithTag("MainManager").GetComponent<P2PBase>();
+		manager.cubes.Add(this);
+	}
     void Update()
     {
 		if (!sync || lastRotation == transform.rotation || lastPosition == transform.position) 
@@ -31,7 +34,5 @@ public class CubeBehavior : MonoBehaviour
         manager.SendMessageToConnection(data, 0 | 2);
     }
     [ContextMenu("Send")]
-	void toggle(){
-		sync = !sync;
-	}
+	void toggle() => sync = !sync; 
 }
