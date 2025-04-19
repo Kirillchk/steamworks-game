@@ -41,7 +41,7 @@ public class LobbyManager : MonoBehaviour
 			P2PHost host = GetComponent<P2PHost>();
 			if(client != null)
 				client.Connect();
-			else if(host != null)
+			if(host != null)
 				host.Listen();
 			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 			if(SceneManager.GetActiveScene()!= SceneManager.GetSceneByName("Lobby"))
