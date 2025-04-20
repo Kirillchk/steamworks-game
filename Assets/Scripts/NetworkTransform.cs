@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using P2PMessages;
 
-public class CubeBehavior : MonoBehaviour
+public class NetworkTransform : MonoBehaviour
 {	
 	static int AutoID = 0;
 	[SerializeField] int ID; 

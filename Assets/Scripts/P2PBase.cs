@@ -7,9 +7,11 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using Unity.Mathematics;
 using P2PMessages;
+using System.Threading;
+using System.Threading.Tasks;
 public class P2PBase : MonoBehaviour
 {
-	public List<CubeBehavior> cubes = new();
+	public List<NetworkTransform> cubes = new();
     internal HSteamNetConnection connection;
     internal bool isActive = false;
 	enum EPackagePurpuse : byte {
@@ -63,7 +65,7 @@ public class P2PBase : MonoBehaviour
             handle.Free();
         }
     }
-	private void TryRecive(){
+	private async Task TryRecive(){
         if (!isActive || connection == HSteamNetConnection.Invalid)
             return;
         // Receive messages
@@ -91,7 +93,7 @@ public class P2PBase : MonoBehaviour
 		switch (purpose){
 			case EPackagePurpuse.Transform:
 				P2PTransformMessage transformMessage = new(data);
-				CubeBehavior cube = cubes[transformMessage.ID];
+				NetworkTransform cube = cubes[transformMessage.ID];
 				cube.transform.position = transformMessage.pos;
 				cube.transform.rotation = transformMessage.rot;
 				break;
@@ -103,12 +105,7 @@ public class P2PBase : MonoBehaviour
 				break;
 		}
 	}
-
-    void Update()
-    {
-		TryRecive();
-    }
-
+    // void Update() => TryRecive(); 
     void Awake()
     {
         if (!SteamManager.Initialized)
