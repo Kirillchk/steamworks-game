@@ -14,11 +14,6 @@ public class P2PBase : MonoBehaviour
 	public List<NetworkTransform> cubes = new();
     internal HSteamNetConnection connection;
     internal bool isActive = false;
-	enum EPackagePurpuse : byte {
-		Transform,
-		Event,
-		SEX
-	}
 
     //[ContextMenu("Send")]
     //void Send()
@@ -92,10 +87,15 @@ public class P2PBase : MonoBehaviour
 		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
 		switch (purpose){
 			case EPackagePurpuse.Transform:
-				P2PTransformMessage transformMessage = new(data);
+				P2PTransformPositionAndRotation transformMessage = new(data);
 				NetworkTransform cube = cubes[transformMessage.ID];
 				cube.transform.position = transformMessage.pos;
 				cube.transform.rotation = transformMessage.rot;
+				break;
+			case EPackagePurpuse.TransformPosition:
+				P2PTransformPosition transformPosition = new(data);
+				cube = cubes[transformPosition.ID];
+				cube.transform.position = transformPosition.pos;
 				break;
 			case EPackagePurpuse.SEX:
 				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");

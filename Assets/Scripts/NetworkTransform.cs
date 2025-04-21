@@ -23,7 +23,7 @@ public class NetworkTransform : MonoBehaviour
 		lastPosition = transform.position;
 		if (!sync || !moved)
 			return;
-		P2PTransformMessage transformMessage = new(transform.position, transform.rotation, ID);
+		P2PTransformPosition transformMessage = new(transform.position, ID);
         manager.SendMessageToConnection(transformMessage.GetBinaryRepresentation(), (int)(k_nSteamNetworkingSend.NoDelay | k_nSteamNetworkingSend.NoNagle));
     }
     [ContextMenu("Send")]
