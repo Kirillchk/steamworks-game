@@ -65,7 +65,7 @@ public class P2PBase : MonoBehaviour
             handle.Free();
         }
     }
-	private async Task TryRecive(){
+	private void TryRecive(){
         if (!isActive || connection == HSteamNetConnection.Invalid)
             return;
         // Receive messages
@@ -105,7 +105,7 @@ public class P2PBase : MonoBehaviour
 				break;
 		}
 	}
-    // void Update() => TryRecive(); 
+    void Update() => TryRecive(); 
     void Awake()
     {
         if (!SteamManager.Initialized)
