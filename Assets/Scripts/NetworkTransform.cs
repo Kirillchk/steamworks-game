@@ -7,8 +7,6 @@ public class NetworkTransform : MonoBehaviour
 {	
 	static int AutoID = 0;
 	[SerializeField] int ID; 
-	Vector3 lastPosition;
-	Quaternion lastRotation;
     public P2PBase manager;
 	bool sync = false;
     void Awake() {
@@ -18,10 +16,7 @@ public class NetworkTransform : MonoBehaviour
 	}
     void Update()
     {
-		bool moved = lastRotation != transform.rotation || lastPosition != transform.position;
-		lastRotation = transform.rotation;
-		lastPosition = transform.position;
-		if (!sync || !moved)
+		if (!sync || !transform.hasChanged)
 			return;
 		P2PTransformMessage transformMessage = new(transform.position, transform.rotation, ID);
         manager.SendMessageToConnection(transformMessage.GetBinaryRepresentation(), (int)(k_nSteamNetworkingSend.NoDelay | k_nSteamNetworkingSend.NoNagle));
