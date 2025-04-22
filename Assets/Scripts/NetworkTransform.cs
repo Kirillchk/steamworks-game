@@ -5,6 +5,7 @@ public class NetworkTransform : MonoBehaviour
 {	
 	const int Flags = (int)(k_nSteamNetworkingSend.NoDelay | k_nSteamNetworkingSend.NoNagle);
 	static int AutoID = 0;
+	[SerializeField] bool sync = true;
 	[SerializeField] int ID; 
 	Vector3 lastPosition;
 	Quaternion lastRotation;
@@ -28,7 +29,7 @@ public class NetworkTransform : MonoBehaviour
 
 		ITransformMessage transformMessage = null;
 
-		if (!(moved || rotated)) return;
+		if (!(moved || rotated) || sync) return;
 
 		if (moved && rotated)
 			transformMessage = new P2PTransformPositionAndRotation(currentPosition, currentRotation, ID);
@@ -39,4 +40,6 @@ public class NetworkTransform : MonoBehaviour
 
 		manager.SendMessageToConnection(transformMessage.GetBinaryRepresentation(), Flags);
     }
+	[ContextMenu("SYNC")]
+	void Toggle() => sync = !sync;
 }

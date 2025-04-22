@@ -42,12 +42,9 @@ namespace P2PMessages
 			byte[] data = new byte[33];
 			data[0] = (byte)purpose;
 			
-			// Create the float array
 			float[] farr = { pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w };
 			
-			// Get a span for the entire float array and copy it in one operation
 			MemoryMarshal.AsBytes(farr.AsSpan()).CopyTo(data.AsSpan(1, 28));
-			
 			Array.Copy(BitConverter.GetBytes(ID), 0, data, 29, 4); 
 			
 			return data;
