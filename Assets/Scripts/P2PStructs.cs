@@ -14,8 +14,9 @@ namespace P2PMessages
 		Transform,
 		TransformPosition,
 		TransformRotation,
-		Event,
-		SEX
+		Shift,
+		ShiftPosition,
+		ShiftRotation,
 	}
 	public struct P2PTransformPositionAndRotation : ITransformMessage {
 		EPackagePurpuse purpose => EPackagePurpuse.Transform; 
