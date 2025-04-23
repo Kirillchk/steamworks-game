@@ -27,9 +27,9 @@ public class NetworkTransform : MonoBehaviour
 		lastPosition = currentPosition;
 		lastRotation = currentRotation;
 
-		ITransformMessage transformMessage = null;
-
 		if (!(moved || rotated) || sync) return;
+		
+		ITransformMessage transformMessage = null;
 
 		if (moved && rotated)
 			transformMessage = new P2PTransformPositionAndRotation(currentPosition, currentRotation, ID);
