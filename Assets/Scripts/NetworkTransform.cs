@@ -3,13 +3,15 @@ using P2PMessages;
 
 public class NetworkTransform : MonoBehaviour
 {	
-	const int Flags = (int)(k_nSteamNetworkingSend.NoDelay | k_nSteamNetworkingSend.NoNagle);
+	const int Flags = (int)k_nSteamNetworkingSend.UnreliableNoDelay;
+
 	static int AutoID = 0;
-	bool sync = false;
 	[SerializeField] int ID; 
+	
 	Vector3 lastPosition;
 	Quaternion lastRotation;
     P2PBase manager;
+	bool sync = false;
     void Awake() 
 	{
 		ID = AutoID++;
