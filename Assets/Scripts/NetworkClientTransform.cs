@@ -3,20 +3,31 @@ using P2PMessages;
 
 public class NetworkClientTransform : NetworkTransform
 {	
-	const int Flags = (int)(k_nSteamNetworkingSend.NoDelay | k_nSteamNetworkingSend.NoNagle);
-	Vector3 lastPosition;
-    void Update()
-    {
-		Vector3 currentPosition = transform.position;
+	//const int Flags = (int)(k_nSteamNetworkingSend.NoDelay | k_nSteamNetworkingSend.NoNagle);
+	//Vector3 lastPosition;
+	//Quaternion lastRotation;
+    //void Update()
+    //{
+	//	Vector3 currentPosition = transform.position;
+	//	Quaternion currentRotation = transform.rotation;
 
-		bool moved = lastPosition != currentPosition;
+	//	bool moved = lastPosition != currentPosition;
+	//	bool rotated = lastRotation != currentRotation;
 
-		Vector3 positionShift = currentPosition - lastPosition;
-		lastPosition = currentPosition;
+	//	lastPosition = currentPosition;
+	//	lastRotation = currentRotation;
 
-		if (!moved || sync) return;
+	//	if (!(moved || rotated) || sync) return;
 		
-		P2PTransformPosition transformMessage = new (positionShift, ID);
-		manager.SendMessageToConnection(transformMessage.GetBinaryRepresentation(), Flags);
-    }
+	//	ITransformMessage transformMessage = null;
+
+	//	if (moved && rotated)
+	//		transformMessage = new P2PTransformPositionAndRotation(currentPosition, currentRotation, ID);
+	//	else if (moved && !rotated)
+	//		transformMessage = new P2PTransformPosition(currentPosition, ID);
+	//	else if (!moved && rotated)
+	//		transformMessage = new P2PTransformRotation(currentRotation, ID);
+
+	//	manager.SendMessageToConnection(transformMessage.GetBinaryRepresentation(), Flags);
+    //}
 }
