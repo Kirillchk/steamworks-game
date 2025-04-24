@@ -3,7 +3,7 @@ using P2PMessages;
 
 public class NetworkTransform : MonoBehaviour
 {	
-	const int Flags = (int)k_nSteamNetworkingSend.UnreliableNoDelay;
+	const int Flags = (int)k_nSteamNetworkingSend.ReliableNoNagle;
 
 	static int AutoID = 0;
 	[SerializeField] int ID; 
