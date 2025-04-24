@@ -10,6 +10,8 @@ namespace P2PMessages
 		NoDelay = 4,
 		Reliable = 8,
 		UnreliableNoNagle = Unreliable | NoNagle,
+		UnreliableNoDelay = Unreliable | NoDelay | NoNagle,
+		ReliableNoNagle = Reliable | NoNagle,
 	}
 	public enum EPackagePurpuse : byte {
 		Transform,
