@@ -90,22 +90,21 @@ public class P2PBase : MonoBehaviour
 			{
 				P2PTransformPositionAndRotation transformMessage = new(data);
 				NetworkTransform cube = cubes[transformMessage.ID];
-				cube.transform.position = transformMessage.pos;
-				cube.transform.rotation = transformMessage.rot;
+				cube.MoveToSync(transformMessage.rot, transformMessage.pos);
 				break;
 			} 
 			case EPackagePurpuse.TransformPosition: 
 			{
 				P2PTransformPosition transformPosition = new(data);
 				NetworkTransform cube = cubes[transformPosition.ID];
-				cube.transform.position = transformPosition.pos;
+				cube.MoveToSync(null, transformPosition.pos);
 				break;
 			}
 			case EPackagePurpuse.TransformRotation: 
 			{
 				P2PTransformRotation transformRotation = new(data);
 				NetworkTransform cube = cubes[transformRotation.ID];
-				cube.transform.rotation = transformRotation.rot;
+				cube.MoveToSync(transformRotation.rot);
 				break;
 			} 
 			case EPackagePurpuse.SEX: 
