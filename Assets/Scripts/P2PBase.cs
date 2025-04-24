@@ -2,13 +2,37 @@ using UnityEngine;
 using Steamworks;
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using Unity.Mathematics;
 using P2PMessages;
+using System.Threading;
+using System.Threading.Tasks;
 public class P2PBase : MonoBehaviour
 {
 	public List<NetworkTransform> cubes = new();
     internal HSteamNetConnection connection;
     internal bool isActive = false;
+
+    //[ContextMenu("Send")]
+    //void Send()
+    //{
+	//	//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
+	//	byte[] data = new byte[29];
+	//	data[0] = (byte)EPackagePurpuse.Transform;
+		
+	//	Vector3 posit = new(0.1123f, 0.132f, 2);
+	//	Quaternion quatern = new(0.555f, 0.444f, 0.333f, 0.5f);
+	//	float[] farr = { 
+	//		posit.x, posit.y, posit.z,
+	//		quatern.x, quatern.y, quatern.z, quatern.w
+	//	};
+    //    for (int i = 0; i < 7; i++)
+	//	    Array.Copy(BitConverter.GetBytes(farr[i]), 0, data, i * 4 + 1, 4);
+	
+	//	SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
+    //}
     public void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
         if (!isActive || connection == HSteamNetConnection.Invalid)
@@ -36,6 +60,67 @@ public class P2PBase : MonoBehaviour
             handle.Free();
         }
     }
+	private void TryRecive(){
+        if (!isActive || connection == HSteamNetConnection.Invalid)
+            return;
+        // Receive messages
+        IntPtr[] messages = new IntPtr[10];
+        int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
+        
+        if (numMessages > 0)
+			Debug.Log($"Received {numMessages} messages this frame");
+        for (int i = 0; i < numMessages; i++)
+        {
+            try {
+                SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
+                byte[] data = new byte[message.m_cbSize];
+                Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
+				ProcesData(data, message);
+            } catch (Exception e) {
+                Debug.LogError($"Error processing message: {e}");
+            } finally {
+                SteamNetworkingMessage_t.Release(messages[i]);
+            }
+        }
+	}
+	private void ProcesData(in byte[]data, SteamNetworkingMessage_t message) {	
+		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
+		switch (purpose){
+			case EPackagePurpuse.Transform: 
+			{
+				P2PTransformPositionAndRotation transformMessage = new(data);
+				NetworkTransform cube = cubes[transformMessage.ID];
+				cube.transform.position = transformMessage.pos;
+				cube.transform.rotation = transformMessage.rot;
+				break;
+			} 
+			case EPackagePurpuse.TransformPosition: 
+			{
+				P2PTransformPosition transformPosition = new(data);
+				NetworkTransform cube = cubes[transformPosition.ID];
+				cube.transform.position = transformPosition.pos;
+				break;
+			}
+			case EPackagePurpuse.TransformRotation: 
+			{
+				P2PTransformRotation transformRotation = new(data);
+				NetworkTransform cube = cubes[transformRotation.ID];
+				cube.transform.rotation = transformRotation.rot;
+				break;
+			} 
+			case EPackagePurpuse.SEX: 
+			{
+				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");
+				break;
+			}	
+			default:
+			{
+				Debug.LogError("unsupported purpose");
+				break;
+			}
+		}
+	}
+    void Update() => TryRecive(); 
     void Awake()
     {
         if (!SteamManager.Initialized)
