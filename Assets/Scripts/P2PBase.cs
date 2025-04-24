@@ -11,29 +11,10 @@ using System.Threading;
 using System.Threading.Tasks;
 public class P2PBase : MonoBehaviour
 {
-	public List<NetworkTransform> cubes = new();
-    internal HSteamNetConnection connection;
-    internal bool isActive = false;
-
-    //[ContextMenu("Send")]
-    //void Send()
-    //{
-	//	//byte[] data = Encoding.UTF8.GetBytes("Hello Steam! " + DateTime.Now.ToString("HH:mm:ss.fff"));
-	//	byte[] data = new byte[29];
-	//	data[0] = (byte)EPackagePurpuse.Transform;
-		
-	//	Vector3 posit = new(0.1123f, 0.132f, 2);
-	//	Quaternion quatern = new(0.555f, 0.444f, 0.333f, 0.5f);
-	//	float[] farr = { 
-	//		posit.x, posit.y, posit.z,
-	//		quatern.x, quatern.y, quatern.z, quatern.w
-	//	};
-    //    for (int i = 0; i < 7; i++)
-	//	    Array.Copy(BitConverter.GetBytes(farr[i]), 0, data, i * 4 + 1, 4);
-	
-	//	SendMessageToConnection(data, k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle);
-    //}
-    public void SendMessageToConnection(in byte[] data, in int nSendFlags)
+	internal List<NetworkTransform> cubes = new();
+    protected HSteamNetConnection connection;
+    protected bool isActive = false;
+    internal void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
         if (!isActive || connection == HSteamNetConnection.Invalid)
         {
@@ -60,7 +41,7 @@ public class P2PBase : MonoBehaviour
             handle.Free();
         }
     }
-	private void TryRecive(){
+	void TryRecive(){
         if (!isActive || connection == HSteamNetConnection.Invalid)
             return;
         // Receive messages
@@ -83,7 +64,7 @@ public class P2PBase : MonoBehaviour
             }
         }
 	}
-	private void ProcesData(in byte[]data, SteamNetworkingMessage_t message) {	
+	void ProcesData(in byte[]data, SteamNetworkingMessage_t message) {	
 		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
 		switch (purpose){
 			case EPackagePurpuse.Transform: 
@@ -105,11 +86,6 @@ public class P2PBase : MonoBehaviour
 				P2PTransformRotation transformRotation = new(data);
 				NetworkTransform cube = cubes[transformRotation.ID];
 				cube.MoveToSync(transformRotation.rot);
-				break;
-			} 
-			case EPackagePurpuse.SEX: 
-			{
-				Debug.Log($"Processed message from {message.m_identityPeer.GetSteamID()}: SEXXXXXXXXXXXXXXXXXXXX");
 				break;
 			}	
 			default:
@@ -139,7 +115,7 @@ public class P2PBase : MonoBehaviour
         Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
     }
 
-    private void OnConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t callback)
+    void OnConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t callback)
     {
         Debug.Log($"Connection status changed:\n" +
 				$"State: {callback.m_info.m_eState}\n" +

@@ -4,7 +4,7 @@ using Steamworks;
 public class P2PClient : P2PBase
 {
     // Send flags
-    private LobbyManager lobby;
+    LobbyManager lobby;
     public void Connect()
     {
         lobby = GetComponent<LobbyManager>();

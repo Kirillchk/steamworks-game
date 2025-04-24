@@ -3,19 +3,18 @@ using System;
 using System.Runtime.InteropServices;
 namespace P2PMessages
 {
-	// wtf is this?
+	// https://github.com/rlabrecque/SteamworksSDK/blob/main/public/steam/steamnetworkingtypes.h#L954
 	public enum k_nSteamNetworkingSend : int{
 		Unreliable = 0,
-		Reliable = 1,
-		NoNagle = 2,
+		NoNagle = 1,
 		NoDelay = 4,
+		Reliable = 8,
 	}
 	public enum EPackagePurpuse : byte {
 		Transform,
 		TransformPosition,
 		TransformRotation,
-		Event,
-		SEX
+		Event
 	}
 	public struct P2PTransformPositionAndRotation : ITransformMessage {
 		EPackagePurpuse purpose => EPackagePurpuse.Transform; 
