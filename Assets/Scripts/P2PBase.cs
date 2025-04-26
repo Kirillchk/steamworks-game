@@ -2,19 +2,29 @@ using UnityEngine;
 using Steamworks;
 using System;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using Unity.Mathematics;
 using P2PMessages;
-using System.Threading;
-using System.Threading.Tasks;
 public class P2PBase : MonoBehaviour
 {
-	internal List<NetworkTransform> cubes = new();
+	enum EBulkPackage : byte {
+		Transform,
+	}
+	internal static List<NetworkTransform> networkTransforms = new();
+	internal static List<ITransformMessage> transformMessages = new();
     protected HSteamNetConnection connection;
     protected bool isActive = false;
-    internal void SendMessageToConnection(in byte[] data, in int nSendFlags)
+	void LateUpdate()
+	{
+		//send
+		if(transformMessages.Count == 0) return;
+		List<byte> bulk = new(transformMessages.Count * 33 + 1);
+		bulk.Add(0);
+		foreach(ITransformMessage message in transformMessages)
+			bulk.AddRange(message.GetBinaryRepresentation());
+		SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.ReliableNoNagle);
+		transformMessages.Clear();
+	}
+	void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
         if (!isActive || connection == HSteamNetConnection.Invalid)
         {
@@ -45,7 +55,7 @@ public class P2PBase : MonoBehaviour
         if (!isActive || connection == HSteamNetConnection.Invalid)
             return;
         // Receive messages
-        IntPtr[] messages = new IntPtr[10];
+        IntPtr[] messages = new IntPtr[10];//why?
         int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
         
         if (numMessages > 0)
@@ -56,7 +66,7 @@ public class P2PBase : MonoBehaviour
                 SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
                 byte[] data = new byte[message.m_cbSize];
                 Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
-				ProcesData(data, message);
+				ProcesData((EBulkPackage)data[0], data[1..]);
             } catch (Exception e) {
                 Debug.LogError($"Error processing message: {e}");
             } finally {
@@ -64,39 +74,68 @@ public class P2PBase : MonoBehaviour
             }
         }
 	}
-	void ProcesData(in byte[]data, SteamNetworkingMessage_t message) {	
-		EPackagePurpuse purpose = (EPackagePurpuse)data[0];
-		switch (purpose){
-			case EPackagePurpuse.Transform: 
+	void ProcesData(EBulkPackage bulkPurpose, in byte[] bulkData) {	
+		switch(bulkPurpose){
+			case EBulkPackage.Transform:
 			{
-				P2PTransformPositionAndRotation transformMessage = new(data);
-				NetworkTransform cube = cubes[transformMessage.ID];
-				cube.MoveToSync(transformMessage.rot, transformMessage.pos);
-				break;
-			} 
-			case EPackagePurpuse.TransformPosition: 
-			{
-				P2PTransformPosition transformPosition = new(data);
-				NetworkTransform cube = cubes[transformPosition.ID];
-				cube.MoveToSync(null, transformPosition.pos);
+				int position = 0;
+				
+				while (position < bulkData.Length)
+				{
+					// First byte indicates the message type
+					EPackagePurpuse purpose = (EPackagePurpuse)bulkData[position];
+					
+					// Determine message size based on type
+					int messageSize = purpose switch
+					{
+						EPackagePurpuse.Transform => 33,
+						EPackagePurpuse.TransformPosition => 17,
+						EPackagePurpuse.TransformRotation => 21,
+						_ => throw new InvalidOperationException($"Unknown message type: {purpose}")
+					};
+					
+					// Check if we have enough bytes remaining
+					if (position + messageSize > bulkData.Length)
+						throw new InvalidOperationException("Incomplete message in bulk data");
+					
+					// Extract the message bytes
+					byte[] messageBytes = new byte[messageSize];
+					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
+					position += messageSize;
+
+					switch(purpose)
+					{
+						case EPackagePurpuse.Transform:
+						{
+							P2PTransformPositionAndRotation message = new (messageBytes);
+							networkTransforms[message.ID].MoveToSync(message.rot, message.pos);
+							break;
+						}
+						case EPackagePurpuse.TransformRotation:
+						{
+							P2PTransformRotation message = new (messageBytes);
+							networkTransforms[message.ID].MoveToSync(message.rot);
+							break;
+						}
+						case EPackagePurpuse.TransformPosition:
+						{
+							P2PTransformPosition message = new (messageBytes);
+							networkTransforms[message.ID].MoveToSync(null,message.pos);
+							break;
+						}
+					}
+				}
 				break;
 			}
-			case EPackagePurpuse.TransformRotation: 
+			default: 
 			{
-				P2PTransformRotation transformRotation = new(data);
-				NetworkTransform cube = cubes[transformRotation.ID];
-				cube.MoveToSync(transformRotation.rot);
-				break;
-			}	
-			default:
-			{
-				Debug.LogError("unsupported purpose");
+				Debug.LogError("UNSUPORTED BULK");
 				break;
 			}
 		}
 	}
-    void Update() => TryRecive(); 
-    void Awake()
+    void Update() => TryRecive();
+	void Awake()
     {
         if (!SteamManager.Initialized)
         {

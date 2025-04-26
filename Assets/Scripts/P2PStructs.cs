@@ -20,12 +20,13 @@ namespace P2PMessages
 		Event
 	}
 	public struct P2PTransformPositionAndRotation : ITransformMessage {
-		EPackagePurpuse purpose => EPackagePurpuse.Transform; 
+		const int messageSzie = 33;
+		static readonly EPackagePurpuse purpose = EPackagePurpuse.Transform; 
 		public int ID { get; } 
 		public Vector3 pos { get; }  
 		public Quaternion rot { get; }
 		public P2PTransformPositionAndRotation(in byte[] byteArr){
-			if (byteArr.Length < 33)
+			if (byteArr.Length < messageSzie)
 				throw new ArgumentException("Byte array too short");
 
 			ReadOnlySpan<byte> floatBytes = byteArr.AsSpan(1, 28);
@@ -41,7 +42,7 @@ namespace P2PMessages
 			ID = id;
 		}
 		public byte[] GetBinaryRepresentation(){
-			byte[] data = new byte[33];
+			byte[] data = new byte[messageSzie];
 			data[0] = (byte)purpose;
 			
 			float[] farr = { pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w };
@@ -51,13 +52,16 @@ namespace P2PMessages
 			
 			return data;
 		}
+		public void DebugWrite() =>
+			Debug.Log(purpose.ToString()+$"from{ID}"+": rot="+ rot + ", pos ="+ pos);
 	}
 	public struct P2PTransformPosition : ITransformMessage {
-		EPackagePurpuse purpose => EPackagePurpuse.TransformPosition;  
+		const int messageSzie = 17;
+		static readonly EPackagePurpuse purpose = EPackagePurpuse.TransformPosition;  
 		public int ID { get; }
 		public Vector3 pos { get; }
 		public P2PTransformPosition(in byte[] byteArr){
-			if (byteArr.Length < 17)
+			if (byteArr.Length < messageSzie)
 				throw new ArgumentException("Byte array too short");
 
 			ReadOnlySpan<byte> floatBytes = byteArr.AsSpan(1, 12);
@@ -71,7 +75,7 @@ namespace P2PMessages
 			ID = id;
 		}
 		public byte[] GetBinaryRepresentation(){
-			byte[] data = new byte[17];
+			byte[] data = new byte[messageSzie];
 			data[0] = (byte)purpose;
 			
 			float[] farr = { pos.x, pos.y, pos.z, };
@@ -81,14 +85,17 @@ namespace P2PMessages
 			
 			return data;
 		}
+		public void DebugWrite() =>
+			Debug.Log(purpose.ToString()+$"from{ID}"+": pos ="+ pos);
 	}
 	public struct P2PTransformRotation : ITransformMessage{
-		EPackagePurpuse purpose => EPackagePurpuse.TransformRotation; 
+		const int messageSzie = 21;
+		static readonly EPackagePurpuse purpose = EPackagePurpuse.TransformRotation; 
 		public int ID { get; }
 		public Quaternion rot { get; }
 		
 		public P2PTransformRotation(in byte[] byteArr) {
-			if (byteArr.Length < 21)
+			if (byteArr.Length < messageSzie)
 				throw new ArgumentException("Byte array too short");
 
 			ReadOnlySpan<byte> floatBytes = byteArr.AsSpan(1, 16);
@@ -104,7 +111,7 @@ namespace P2PMessages
 		}
 		
 		public byte[] GetBinaryRepresentation() {
-			byte[] data = new byte[21];
+			byte[] data = new byte[messageSzie];
 			data[0] = (byte)purpose;
 			
 			float[] farr = { rot.x, rot.y, rot.z, rot.w };
@@ -114,10 +121,14 @@ namespace P2PMessages
 			
 			return data;
 		}
+		public void DebugWrite() =>
+			Debug.Log(purpose.ToString()+$"from{ID}"+": rot="+ rot);
+		
 	}
 	public interface ITransformMessage{
-		EPackagePurpuse purpose => default; 
+		static readonly EPackagePurpuse purpose; 
 		public int ID { get; }
-		public byte[] GetBinaryRepresentation();	
+		public byte[] GetBinaryRepresentation();
+		public void DebugWrite();
 	}
 }
