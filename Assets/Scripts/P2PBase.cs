@@ -15,12 +15,13 @@ public class P2PBase : MonoBehaviour
     protected bool isActive = false;
 	void LateUpdate()
 	{
-		//send
 		if(transformMessages.Count == 0) return;
-		List<byte> bulk = new(transformMessages.Count * 33 + 1);
-		bulk.Add(0);
+		List<byte> bulk = new(transformMessages.Count * 33 + 1)
+		{
+			(byte)EBulkPackage.Transform
+		};
 		foreach(ITransformMessage message in transformMessages)
-			bulk.AddRange(message.GetBinaryRepresentation());
+			bulk.AddRange(message.GetBinaryRepresentation().ToArray());
 		SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.ReliableNoNagle);
 		transformMessages.Clear();
 	}
@@ -82,10 +83,8 @@ public class P2PBase : MonoBehaviour
 				
 				while (position < bulkData.Length)
 				{
-					// First byte indicates the message type
 					EPackagePurpuse purpose = (EPackagePurpuse)bulkData[position];
 					
-					// Determine message size based on type
 					int messageSize = purpose switch
 					{
 						EPackagePurpuse.Transform => 33,
@@ -94,11 +93,9 @@ public class P2PBase : MonoBehaviour
 						_ => throw new InvalidOperationException($"Unknown message type: {purpose}")
 					};
 					
-					// Check if we have enough bytes remaining
 					if (position + messageSize > bulkData.Length)
 						throw new InvalidOperationException("Incomplete message in bulk data");
 					
-					// Extract the message bytes
 					byte[] messageBytes = new byte[messageSize];
 					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
 					position += messageSize;

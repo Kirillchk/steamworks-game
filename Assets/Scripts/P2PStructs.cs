@@ -25,23 +25,22 @@ namespace P2PMessages
 		public int ID { get; } 
 		public Vector3 pos { get; }  
 		public Quaternion rot { get; }
-		public P2PTransformPositionAndRotation(in byte[] byteArr){
-			if (byteArr.Length < messageSzie)
+		public P2PTransformPositionAndRotation(ReadOnlySpan<byte> byteSpan){
+			if (byteSpan.Length < messageSzie)
 				throw new ArgumentException("Byte array too short");
 
-			ReadOnlySpan<byte> floatBytes = byteArr.AsSpan(1, 28);
-			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(floatBytes);
+			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(byteSpan.Slice(1, 28));
 			
 			pos = new(farr[0], farr[1], farr[2]);
 			rot = new(farr[3], farr[4], farr[5], farr[6]);
-			ID = MemoryMarshal.Read<int>(byteArr.AsSpan(29));
+			ID = MemoryMarshal.Read<int>(byteSpan.Slice(29));
 		}
 		public P2PTransformPositionAndRotation(in Vector3 position, in Quaternion rotation, in int id){
 			pos = position;
 			rot = rotation;
 			ID = id;
 		}
-		public byte[] GetBinaryRepresentation(){
+		public ReadOnlySpan<byte> GetBinaryRepresentation(){
 			byte[] data = new byte[messageSzie];
 			data[0] = (byte)purpose;
 			
@@ -52,29 +51,26 @@ namespace P2PMessages
 			
 			return data;
 		}
-		public void DebugWrite() =>
-			Debug.Log(purpose.ToString()+$"from{ID}"+": rot="+ rot + ", pos ="+ pos);
 	}
 	public struct P2PTransformPosition : ITransformMessage {
 		const int messageSzie = 17;
 		static readonly EPackagePurpuse purpose = EPackagePurpuse.TransformPosition;  
 		public int ID { get; }
 		public Vector3 pos { get; }
-		public P2PTransformPosition(in byte[] byteArr){
-			if (byteArr.Length < messageSzie)
+		public P2PTransformPosition(ReadOnlySpan<byte> byteSpan){
+			if (byteSpan.Length < messageSzie)
 				throw new ArgumentException("Byte array too short");
 
-			ReadOnlySpan<byte> floatBytes = byteArr.AsSpan(1, 12);
-			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(floatBytes);
+			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(byteSpan.Slice(1, 12));
 			
 			pos = new(farr[0], farr[1], farr[2]);
-			ID = MemoryMarshal.Read<int>(byteArr.AsSpan(13));
+			ID = MemoryMarshal.Read<int>(byteSpan.Slice(13));
 		}
 		public P2PTransformPosition(in Vector3 position, in int id){
 			pos = position;
 			ID = id;
 		}
-		public byte[] GetBinaryRepresentation(){
+		public ReadOnlySpan<byte> GetBinaryRepresentation(){
 			byte[] data = new byte[messageSzie];
 			data[0] = (byte)purpose;
 			
@@ -85,8 +81,6 @@ namespace P2PMessages
 			
 			return data;
 		}
-		public void DebugWrite() =>
-			Debug.Log(purpose.ToString()+$"from{ID}"+": pos ="+ pos);
 	}
 	public struct P2PTransformRotation : ITransformMessage{
 		const int messageSzie = 21;
@@ -94,15 +88,14 @@ namespace P2PMessages
 		public int ID { get; }
 		public Quaternion rot { get; }
 		
-		public P2PTransformRotation(in byte[] byteArr) {
-			if (byteArr.Length < messageSzie)
+		public P2PTransformRotation(ReadOnlySpan<byte> byteSpan) {
+			if (byteSpan.Length < messageSzie)
 				throw new ArgumentException("Byte array too short");
 
-			ReadOnlySpan<byte> floatBytes = byteArr.AsSpan(1, 16);
-			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(floatBytes);
+			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(byteSpan.Slice(1, 16));
 			
 			rot = new(farr[0], farr[1], farr[2], farr[3]);
-			ID = MemoryMarshal.Read<int>(byteArr.AsSpan(17));
+			ID = MemoryMarshal.Read<int>(byteSpan.Slice(17));
 		}
 		
 		public P2PTransformRotation(in Quaternion rotation, in int id) {
@@ -110,7 +103,7 @@ namespace P2PMessages
 			ID = id;
 		}
 		
-		public byte[] GetBinaryRepresentation() {
+		public ReadOnlySpan<byte> GetBinaryRepresentation() {
 			byte[] data = new byte[messageSzie];
 			data[0] = (byte)purpose;
 			
@@ -121,14 +114,11 @@ namespace P2PMessages
 			
 			return data;
 		}
-		public void DebugWrite() =>
-			Debug.Log(purpose.ToString()+$"from{ID}"+": rot="+ rot);
 		
 	}
 	public interface ITransformMessage{
 		static readonly EPackagePurpuse purpose; 
 		public int ID { get; }
-		public byte[] GetBinaryRepresentation();
-		public void DebugWrite();
+		public ReadOnlySpan<byte> GetBinaryRepresentation();
 	}
 }
