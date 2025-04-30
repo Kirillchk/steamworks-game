@@ -17,7 +17,6 @@ namespace P2PMessages
 		Transform,
 		TransformPosition,
 		TransformRotation,
-		Event
 	}
 	public struct P2PTransformPositionAndRotation : ITransformMessage {
 		const int messageSzie = 33;
@@ -26,9 +25,6 @@ namespace P2PMessages
 		public Vector3 pos { get; }  
 		public Quaternion rot { get; }
 		public P2PTransformPositionAndRotation(ReadOnlySpan<byte> byteSpan){
-			if (byteSpan.Length < messageSzie)
-				throw new ArgumentException("Byte array too short");
-
 			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(byteSpan.Slice(1, 28));
 			
 			pos = new(farr[0], farr[1], farr[2]);
@@ -58,9 +54,6 @@ namespace P2PMessages
 		public int ID { get; }
 		public Vector3 pos { get; }
 		public P2PTransformPosition(ReadOnlySpan<byte> byteSpan){
-			if (byteSpan.Length < messageSzie)
-				throw new ArgumentException("Byte array too short");
-
 			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(byteSpan.Slice(1, 12));
 			
 			pos = new(farr[0], farr[1], farr[2]);
@@ -89,9 +82,6 @@ namespace P2PMessages
 		public Quaternion rot { get; }
 		
 		public P2PTransformRotation(ReadOnlySpan<byte> byteSpan) {
-			if (byteSpan.Length < messageSzie)
-				throw new ArgumentException("Byte array too short");
-
 			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(byteSpan.Slice(1, 16));
 			
 			rot = new(farr[0], farr[1], farr[2], farr[3]);

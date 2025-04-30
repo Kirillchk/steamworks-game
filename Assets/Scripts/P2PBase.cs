@@ -8,6 +8,7 @@ public class P2PBase : MonoBehaviour
 {
 	enum EBulkPackage : byte {
 		Transform,
+		Action
 	}
 	internal static List<NetworkTransform> networkTransforms = new();
 	internal static List<ITransformMessage> transformMessages = new();
@@ -122,6 +123,11 @@ public class P2PBase : MonoBehaviour
 						}
 					}
 				}
+				break;
+			}
+			case EBulkPackage.Action:
+			{
+				
 				break;
 			}
 			default: 
