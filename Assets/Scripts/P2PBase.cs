@@ -100,23 +100,24 @@ public class P2PBase : MonoBehaviour
 					byte[] messageBytes = new byte[messageSize];
 					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
 					position += messageSize;
+
 					switch(purpose)
 					{
 						case EPackagePurpuse.Transform:
 						{
-							var message = MemoryMarshal.Read<P2PTransformPositionAndRotation>(messageBytes);
+							P2PTransformPositionAndRotation message = new (messageBytes);
 							networkTransforms[message.ID].MoveToSync(message.rot, message.pos);
 							break;
 						}
 						case EPackagePurpuse.TransformRotation:
 						{
-							var message = MemoryMarshal.Read<P2PTransformRotation>(messageBytes);
+							P2PTransformRotation message = new (messageBytes);
 							networkTransforms[message.ID].MoveToSync(message.rot);
 							break;
 						}
 						case EPackagePurpuse.TransformPosition:
 						{
-							var message = MemoryMarshal.Read<P2PTransformPosition>(messageBytes);
+							P2PTransformPosition message = new (messageBytes);
 							networkTransforms[message.ID].MoveToSync(null, message.pos);
 							break;
 						}
