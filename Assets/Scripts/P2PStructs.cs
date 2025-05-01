@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
+using Unity.Mathematics;
 namespace P2PMessages
 {
 	// https://github.com/rlabrecque/SteamworksSDK/blob/main/public/steam/steamnetworkingtypes.h#L954
@@ -25,10 +26,8 @@ namespace P2PMessages
 		public Vector3 pos { get; }  
 		public Quaternion rot { get; }
 		public P2PTransformPositionAndRotation(ReadOnlySpan<byte> byteSpan){
-			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(byteSpan.Slice(1, 28));
-			
-			pos = new(farr[0], farr[1], farr[2]);
-			rot = new(farr[3], farr[4], farr[5], farr[6]);
+			pos = MemoryMarshal.Read<Vector3>(byteSpan.Slice(1, 12));
+			rot = MemoryMarshal.Read<Quaternion>(byteSpan.Slice(13, 28));
 			ID = MemoryMarshal.Read<int>(byteSpan.Slice(29));
 		}
 		public P2PTransformPositionAndRotation(in Vector3 position, in Quaternion rotation, in int id){
@@ -54,9 +53,7 @@ namespace P2PMessages
 		public int ID { get; }
 		public Vector3 pos { get; }
 		public P2PTransformPosition(ReadOnlySpan<byte> byteSpan){
-			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(byteSpan.Slice(1, 12));
-			
-			pos = new(farr[0], farr[1], farr[2]);
+			pos = MemoryMarshal.Read<Vector3>(byteSpan.Slice(1, 12));
 			ID = MemoryMarshal.Read<int>(byteSpan.Slice(13));
 		}
 		public P2PTransformPosition(in Vector3 position, in int id){
@@ -82,9 +79,7 @@ namespace P2PMessages
 		public Quaternion rot { get; }
 		
 		public P2PTransformRotation(ReadOnlySpan<byte> byteSpan) {
-			ReadOnlySpan<float> farr = MemoryMarshal.Cast<byte, float>(byteSpan.Slice(1, 16));
-			
-			rot = new(farr[0], farr[1], farr[2], farr[3]);
+			rot = MemoryMarshal.Read<Quaternion>(byteSpan.Slice(1, 16));
 			ID = MemoryMarshal.Read<int>(byteSpan.Slice(17));
 		}
 		
