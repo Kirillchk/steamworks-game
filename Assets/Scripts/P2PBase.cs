@@ -107,36 +107,36 @@ public class P2PBase : MonoBehaviour
 						{
 							P2PTransformPositionAndRotation message = new (messageBytes);
 
-							networkTransforms[message.ID].MoveToSync(message.rot, message.pos);
-
 							var message2 = MemoryMarshal.Read<P2PTransformPositionAndRotation>(messageBytes);
 							var dbg1 = message.ID;
 							var dbg2 = message2.ID;
 							Debug.Log($"{dbg1.x} {dbg2.x} {dbg1.y} {dbg2.y} {dbg1.z} {dbg2.z}");
+							
+							networkTransforms[message.ID].MoveToSync(message.rot, message.pos);
 							break;
 						}
 						case EPackagePurpuse.TransformRotation:
 						{
 							P2PTransformRotation message = new (messageBytes);
 
-							networkTransforms[message.ID].MoveToSync(message.rot);
-
 							var message2 = MemoryMarshal.Read<P2PTransformRotation>(messageBytes);
 							var dbg1 = message.ID;
 							var dbg2 = message2.ID;
 							Debug.Log($"{dbg1.x} {dbg2.x} {dbg1.y} {dbg2.y} {dbg1.z} {dbg2.z}");
+
+							networkTransforms[message.ID].MoveToSync(message.rot);
 							break;
 						}
 						case EPackagePurpuse.TransformPosition:
 						{
 							P2PTransformPosition message = new (messageBytes);
-
-							networkTransforms[message.ID].MoveToSync(null, message.pos);
-
-							var message2 = MemoryMarshal.Read<P2PTransformPosition>(messageBytes);
+							
+							var message2 = MemoryMarshal.Read<P2PTransformRotation>(messageBytes);
 							var dbg1 = message.ID;
 							var dbg2 = message2.ID;
 							Debug.Log($"{dbg1.x} {dbg2.x} {dbg1.y} {dbg2.y} {dbg1.z} {dbg2.z}");
+
+							networkTransforms[message.ID].MoveToSync(null, message.pos);
 							break;
 						}
 					}
