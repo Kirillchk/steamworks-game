@@ -88,9 +88,9 @@ public class P2PBase : MonoBehaviour
 					
 					int messageSize = purpose switch
 					{
-						EPackagePurpuse.Transform => 33,
-						EPackagePurpuse.TransformPosition => 17,
-						EPackagePurpuse.TransformRotation => 21,
+						EPackagePurpuse.Transform => 41,
+						EPackagePurpuse.TransformPosition => 25,
+						EPackagePurpuse.TransformRotation => 29,
 						_ => throw new InvalidOperationException($"Unknown message type: {purpose}")
 					};
 					
