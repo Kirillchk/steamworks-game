@@ -1982,7 +1982,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 905c4b67115b26c4891852966cc83277, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  voiceDelay: 0.02
   audioSource: {fileID: 1997175895}
+  frequency: 22050
 --- !u!82 &1997175895
 AudioSource:
   m_ObjectHideFlags: 0
