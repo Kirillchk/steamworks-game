@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
-using Unity.Mathematics;
+
 namespace P2PMessages
 {
 	// https://github.com/rlabrecque/SteamworksSDK/blob/main/public/steam/steamnetworkingtypes.h#L954
@@ -36,14 +36,13 @@ namespace P2PMessages
 			ID = id;
 		}
 		public ReadOnlySpan<byte> GetBinaryRepresentation(){
-			byte[] data = new byte[messageSzie];
+			Span<byte> data = new byte[messageSzie];
 			data[0] = (byte)purpose;
-			
-			float[] farr = { pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w };
-			
-			MemoryMarshal.AsBytes(farr.AsSpan()).CopyTo(data.AsSpan(1, 28));
-			Array.Copy(BitConverter.GetBytes(ID), 0, data, 29, 4); 
-			
+
+			MemoryMarshal.Cast<byte, Vector3>(data.Slice(1, 12))[0] = pos;
+			MemoryMarshal.Cast<byte, Quaternion>(data.Slice(13, 16))[0] = rot;
+			MemoryMarshal.Cast<byte, int>(data.Slice(29, 4))[0] = ID;
+					
 			return data;
 		}
 	}
@@ -60,15 +59,13 @@ namespace P2PMessages
 			pos = position;
 			ID = id;
 		}
-		public ReadOnlySpan<byte> GetBinaryRepresentation(){
-			byte[] data = new byte[messageSzie];
+		public ReadOnlySpan<byte> GetBinaryRepresentation() {
+			Span<byte> data = new byte[17];
 			data[0] = (byte)purpose;
-			
-			float[] farr = { pos.x, pos.y, pos.z, };
 
-			MemoryMarshal.AsBytes(farr.AsSpan()).CopyTo(data.AsSpan(1, 12));
-			Array.Copy(BitConverter.GetBytes(ID), 0, data, 13, 4); 
-			
+			MemoryMarshal.Cast<byte, Vector3>(data.Slice(1, 12))[0] = pos;
+			MemoryMarshal.Cast<byte, int>(data.Slice(13, 4))[0] = ID;
+
 			return data;
 		}
 	}
@@ -89,14 +86,12 @@ namespace P2PMessages
 		}
 		
 		public ReadOnlySpan<byte> GetBinaryRepresentation() {
-			byte[] data = new byte[messageSzie];
+			Span<byte> data = new byte[21];
 			data[0] = (byte)purpose;
-			
-			float[] farr = { rot.x, rot.y, rot.z, rot.w };
-			
-			MemoryMarshal.AsBytes(farr.AsSpan()).CopyTo(data.AsSpan(1, 16));
-			Array.Copy(BitConverter.GetBytes(ID), 0, data, 17, 4); 
-			
+
+			MemoryMarshal.Cast<byte, Quaternion>(data.Slice(1, 16))[0] = rot;
+			MemoryMarshal.Cast<byte, int>(data.Slice(17, 4))[0] = ID;
+
 			return data;
 		}
 		
