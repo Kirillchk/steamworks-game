@@ -10,7 +10,7 @@ public class P2PBase : MonoBehaviour
 		Transform,
 		Action
 	}
-	internal static List<NetworkTransform> networkTransforms = new();
+	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
 	internal static List<ITransformMessage> transformMessages = new();
     protected HSteamNetConnection connection;
     protected bool isActive = false;
@@ -118,7 +118,7 @@ public class P2PBase : MonoBehaviour
 						case EPackagePurpuse.TransformPosition:
 						{
 							P2PTransformPosition message = new (messageBytes);
-							networkTransforms[message.ID].MoveToSync(null,message.pos);
+							networkTransforms[message.ID].MoveToSync(null, message.pos);
 							break;
 						}
 					}

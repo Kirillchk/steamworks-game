@@ -3,15 +3,14 @@ using P2PMessages;
 
 public class NetworkTransform : MonoBehaviour
 {
-	static int AutoID = 0;
-	[SerializeField] int ID; 
+	[SerializeField] Vector3 ID; 
 	Vector3 lastPosition;
 	Quaternion lastRotation;
 	bool sendTransform = false;
     void Awake()
 	{
-		P2PBase.networkTransforms.Add(this);
-		ID = AutoID++;
+		ID = GetComponent<NetworkIdentity>().uniqueVector;
+		P2PBase.networkTransforms[ID] = this;
 	}
 	void Update()
     {
