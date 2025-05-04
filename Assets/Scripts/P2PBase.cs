@@ -11,6 +11,7 @@ public class P2PBase : MonoBehaviour
 		Action
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
+	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<ITransformMessage> transformMessages = new();
     protected HSteamNetConnection connection;
     protected bool isActive = false;
@@ -57,7 +58,7 @@ public class P2PBase : MonoBehaviour
         if (!isActive || connection == HSteamNetConnection.Invalid)
             return;
         // Receive messages
-        IntPtr[] messages = new IntPtr[10];//why?
+        IntPtr[] messages = new IntPtr[10];
         int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
         
         if (numMessages > 0)
@@ -85,7 +86,7 @@ public class P2PBase : MonoBehaviour
 				while (position < bulkData.Length)
 				{
 					EPackagePurpuse purpose = (EPackagePurpuse)bulkData[position];
-					
+						
 					int messageSize = purpose switch
 					{
 						EPackagePurpuse.Transform => 41,
@@ -94,34 +95,15 @@ public class P2PBase : MonoBehaviour
 						_ => throw new InvalidOperationException($"Unknown message type: {purpose}")
 					};
 					
-					if (position + messageSize > bulkData.Length)
-						throw new InvalidOperationException("Incomplete message in bulk data");
+					//if (position + messageSize > bulkData.Length)
+					//	throw new InvalidOperationException("Incomplete message in bulk data");
 					
 					byte[] messageBytes = new byte[messageSize];
 					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
 					position += messageSize;
 
-					switch(purpose)
-					{
-						case EPackagePurpuse.Transform:
-						{
-							P2PTransformPositionAndRotation message = new (messageBytes);
-							networkTransforms[message.ID].MoveToSync(message.rot, message.pos);
-							break;
-						}
-						case EPackagePurpuse.TransformRotation:
-						{
-							P2PTransformRotation message = new (messageBytes);
-							networkTransforms[message.ID].MoveToSync(message.rot);
-							break;
-						}
-						case EPackagePurpuse.TransformPosition:
-						{
-							P2PTransformPosition message = new (messageBytes);
-							networkTransforms[message.ID].MoveToSync(null, message.pos);
-							break;
-						}
-					}
+					TransformMessage transformMessage = new (messageBytes);
+					networkTransforms[transformMessage.ID].MoveToSync(transformMessage.rot, transformMessage.pos);
 				}
 				break;
 			}
