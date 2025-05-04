@@ -28,17 +28,11 @@ public class NetworkTransform : MonoBehaviour
 			sendTransform = true;
 			return;
 		}
-		
-		ITransformMessage transformMessage = null;
-
-		if (moved && rotated)
-			transformMessage = new P2PTransformPositionAndRotation(currentPosition, currentRotation, ID);
-		else if (moved && !rotated)
-			transformMessage = new P2PTransformPosition(currentPosition, ID);
-		else if (!moved && rotated)
-			transformMessage = new P2PTransformRotation(currentRotation, ID);
-
-		P2PBase.transformMessages.Add(transformMessage);	
+		P2PBase.transformMessages.Add(
+			new TransformMessage(ID, 
+			moved ? currentPosition : null, 
+			rotated ? currentRotation : null)
+		);	
     }
 	internal void MoveToSync(Quaternion? rotate = null, Vector3? move = null)
 	{

@@ -12,7 +12,7 @@ public class P2PBase : MonoBehaviour
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
-	internal static List<ITransformMessage> transformMessages = new();
+	internal static List<TransformMessage> transformMessages = new();
     protected HSteamNetConnection connection;
     protected bool isActive = false;
 	void LateUpdate()
@@ -22,7 +22,7 @@ public class P2PBase : MonoBehaviour
 		{
 			(byte)EBulkPackage.Transform
 		};
-		foreach(ITransformMessage message in transformMessages)
+		foreach(TransformMessage message in transformMessages)
 			bulk.AddRange(message.GetBinaryRepresentation().ToArray());
 		SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.ReliableNoNagle);
 		transformMessages.Clear();
