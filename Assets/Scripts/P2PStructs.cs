@@ -104,7 +104,7 @@ namespace P2PMessages
 		public ReadOnlySpan<byte> GetBinaryRepresenation(){
 			Span<byte> res = new byte[messageSzie];
 			MemoryMarshal.Cast<byte, Vector3>(res.Slice(0,12))[0] = ID;
-			MemoryMarshal.Cast<byte, Vector3>(res.Slice(13,16))[0] = ID;
+			MemoryMarshal.Cast<byte, int>(res.Slice(13,16))[0] = Index;
 			return res;
 		}
 	}
