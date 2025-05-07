@@ -30,7 +30,7 @@ public class P2PBase : MonoBehaviour
 			transformMessages.Clear();
 		}
 
-		if(true) 
+		if(networkActions.Count != 0) 
 		{
 			const int maxMessageSize = 16;
 			List<byte> bulk = new (networkActions.Count * maxMessageSize + 1)
