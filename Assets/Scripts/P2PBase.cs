@@ -11,21 +11,37 @@ public class P2PBase : MonoBehaviour
 		Action
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
-	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<TransformMessage> transformMessages = new();
+	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
+	internal static List<ActionInvokeMessage> networkActions = new();
     protected HSteamNetConnection connection;
     protected bool isActive = false;
 	void LateUpdate()
 	{
-		if(transformMessages.Count == 0) return;
-		List<byte> bulk = new(transformMessages.Count * 33 + 1)
+		if(transformMessages.Count != 0) {
+			const int maxMessageSize = 41;
+			List<byte> bulk = new(transformMessages.Count * maxMessageSize + 1)
+			{
+				(byte)EBulkPackage.Transform
+			};
+			foreach(TransformMessage message in transformMessages)
+				bulk.AddRange(message.GetBinaryRepresentation().ToArray());
+			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
+			transformMessages.Clear();
+		}
+
+		if(true) 
 		{
-			(byte)EBulkPackage.Transform
-		};
-		foreach(TransformMessage message in transformMessages)
-			bulk.AddRange(message.GetBinaryRepresentation().ToArray());
-		SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.ReliableNoNagle);
-		transformMessages.Clear();
+			const int maxMessageSize = 16;
+			List<byte> bulk = new (networkActions.Count * maxMessageSize + 1)
+			{
+				(byte)EBulkPackage.Action
+			};
+			foreach(ActionInvokeMessage message in networkActions)
+				bulk.AddRange(message.GetBinaryRepresenation().ToArray());
+			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+			networkActions.Clear();
+		}
 	}
 	void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
@@ -109,7 +125,20 @@ public class P2PBase : MonoBehaviour
 			}
 			case EBulkPackage.Action:
 			{
-				
+				int position = 0;
+				while (position < bulkData.Length)
+				{		
+					const int messageSize = 16;
+					
+					byte[] messageBytes = new byte[messageSize];
+					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
+					position += messageSize;
+
+					ActionInvokeMessage InvokeMessage = new (messageBytes);
+					
+					NetworkActions entityInstance = networkActionScripts[InvokeMessage.ID];
+					entityInstance.TriggerByIndex(InvokeMessage.Index);
+				}
 				break;
 			}
 			default: 

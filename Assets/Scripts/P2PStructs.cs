@@ -1,12 +1,12 @@
 using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
-using UnityEditor.PackageManager;
 
 namespace P2PMessages
 {
-	// https://github.com/rlabrecque/SteamworksSDK/blob/main/public/steam/steamnetworkingtypes.h#L954
-	public enum k_nSteamNetworkingSend : int{
+	public enum k_nSteamNetworkingSend : int
+	{
+	//  https://github.com/rlabrecque/SteamworksSDK/blob/main/public/steam/steamnetworkingtypes.h#L954
 		Unreliable = 0,
 		NoNagle = 1,
 		NoDelay = 4,
@@ -15,12 +15,14 @@ namespace P2PMessages
 		UnreliableNoDelay = Unreliable | NoDelay | NoNagle,
 		ReliableNoNagle = Reliable | NoNagle,
 	}
-	public enum EPackagePurpuse : byte {
+	public enum EPackagePurpuse : byte 
+	{
 		Transform,
 		TransformPosition,
 		TransformRotation,
 	}
-	public struct TransformMessage{
+	public struct TransformMessage
+	{
 		readonly EPackagePurpuse purpuse;
 		readonly int messageSzie;
 		public readonly Vector3 ID;
@@ -81,6 +83,28 @@ namespace P2PMessages
 			} else {
 				throw new("FUCKED CONSTURCTOR");
 			}
+			return res;
+		}
+	}
+	public struct ActionInvokeMessage
+	{
+		const int messageSzie = 16;
+		public readonly Vector3 ID;
+		public readonly int Index;
+		public ActionInvokeMessage(in Vector3 id, in int index)
+		{
+			ID = id;
+			Index = index;
+		}
+		public ActionInvokeMessage(ReadOnlySpan<byte> byteSpan)
+		{
+			ID = MemoryMarshal.Read<Vector3>(byteSpan.Slice(0,12));
+			Index = MemoryMarshal.Read<int>(byteSpan.Slice(13));
+		}
+		public ReadOnlySpan<byte> GetBinaryRepresenation(){
+			Span<byte> res = new byte[messageSzie];
+			MemoryMarshal.Cast<byte, Vector3>(res.Slice(0,12))[0] = ID;
+			MemoryMarshal.Cast<byte, Vector3>(res.Slice(13,16))[0] = ID;
 			return res;
 		}
 	}
