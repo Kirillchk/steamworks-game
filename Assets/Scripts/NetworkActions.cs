@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-
+using P2PMessages;
 public class NetworkActions : MonoBehaviour
 {
     Vector3 ID;
@@ -23,7 +23,7 @@ public class NetworkActions : MonoBehaviour
 		if (!actions.Contains(a)) 
 			return;
 		a.Invoke();
-		Debug.Log("Action id:" + actions.IndexOf(a));
+		P2PBase.networkActions.Add(new ActionInvokeMessage(ID,actions.IndexOf(a)));
 	}
 	internal void TriggerByIndex(in int index){
 		if (index>actions.Count)
