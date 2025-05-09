@@ -37,8 +37,7 @@ public class P2PBase : MonoBehaviour
 			{
 				(byte)EBulkPackage.Action
 			};
-			foreach(ActionInvokeMessage message in networkActions)
-				bulk.AddRange(message.GetBinaryRepresenation().ToArray());
+			bulk.AddRange(MemoryMarshal.AsBytes(networkActions.ToArray().AsSpan()).ToArray());
 			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
 			networkActions.Clear();
 		}
@@ -134,7 +133,7 @@ public class P2PBase : MonoBehaviour
 					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
 					position += messageSize;
 
-					ActionInvokeMessage InvokeMessage = new (messageBytes);
+					ActionInvokeMessage InvokeMessage = MemoryMarshal.Cast<byte, ActionInvokeMessage>(messageBytes)[0];
 					
 					NetworkActions entityInstance = networkActionScripts[InvokeMessage.ID];
 					entityInstance.TriggerByIndex(InvokeMessage.Index);
