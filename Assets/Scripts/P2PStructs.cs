@@ -20,6 +20,7 @@ namespace P2PMessages
 		Transform,
 		TransformPosition,
 		TransformRotation,
+		Action
 	}
 	public struct TransformMessage
 	{
@@ -88,7 +89,8 @@ namespace P2PMessages
 	}
 	public struct ActionInvokeMessage
 	{
-		const int messageSzie = 16;
+		public const byte purpose = (byte)EPackagePurpuse.Action;
+		public const int messageSzie = 16;
 		public readonly Vector3 ID;
 		public readonly int Index;
 		public ActionInvokeMessage(in Vector3 id, in int index)
@@ -96,16 +98,5 @@ namespace P2PMessages
 			ID = id;
 			Index = index;
 		}
-		//public ActionInvokeMessage(ReadOnlySpan<byte> byteSpan)
-		//{
-		//	ID = MemoryMarshal.Read<Vector3>(byteSpan.Slice(0,12));
-		//	Index = MemoryMarshal.Read<int>(byteSpan.Slice(12));
-		//}
-		//public ReadOnlySpan<byte> GetBinaryRepresenation(){
-		//	Span<byte> res = new byte[messageSzie];
-		//	MemoryMarshal.Cast<byte, Vector3>(res.Slice(0,12))[0] = ID;
-		//	MemoryMarshal.Cast<byte, int>(res.Slice(12,4))[0] = Index;
-		//	return res;
-		//}
 	}
 }

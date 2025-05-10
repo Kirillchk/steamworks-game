@@ -109,14 +109,11 @@ public class P2PBase : MonoBehaviour
 						EPackagePurpuse.TransformRotation => 29,
 						_ => throw new InvalidOperationException($"Unknown message type: {purpose}")
 					};
-					
-					//if (position + messageSize > bulkData.Length)
-					//	throw new InvalidOperationException("Incomplete message in bulk data");
-					
+
 					byte[] messageBytes = new byte[messageSize];
 					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
 					position += messageSize;
-
+					
 					TransformMessage transformMessage = new (messageBytes);
 					networkTransforms[transformMessage.ID].MoveToSync(transformMessage.rot, transformMessage.pos);
 				}
@@ -124,19 +121,11 @@ public class P2PBase : MonoBehaviour
 			}
 			case EBulkPackage.Action:
 			{
-				int position = 0;
-				while (position < bulkData.Length)
-				{		
-					const int messageSize = 16;
-					
-					byte[] messageBytes = new byte[messageSize];
-					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
-					position += messageSize;
-
-					ActionInvokeMessage InvokeMessage = MemoryMarshal.Cast<byte, ActionInvokeMessage>(messageBytes)[0];
-					
-					NetworkActions entityInstance = networkActionScripts[InvokeMessage.ID];
-					entityInstance.TriggerByIndex(InvokeMessage.Index);
+				Span<ActionInvokeMessage> InvokeMessage = MemoryMarshal.Cast<byte, ActionInvokeMessage>(bulkData);
+				foreach(ActionInvokeMessage a in InvokeMessage)
+				{
+					NetworkActions entityInstance = networkActionScripts[a.ID];
+					entityInstance.TriggerByIndex(a.Index);
 				}
 				break;
 			}
