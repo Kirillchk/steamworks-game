@@ -8,22 +8,39 @@ public class P2PBase : MonoBehaviour
 {
 	enum EBulkPackage : byte {
 		Transform,
+		Action
 	}
-	internal static List<NetworkTransform> networkTransforms = new();
-	internal static List<ITransformMessage> transformMessages = new();
+	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
+	internal static List<TransformMessage> transformMessages = new();
+	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
+	internal static List<ActionInvokeMessage> networkActions = new();
     protected HSteamNetConnection connection;
     protected bool isActive = false;
 	void LateUpdate()
 	{
-		if(transformMessages.Count == 0) return;
-		List<byte> bulk = new(transformMessages.Count * 33 + 1)
+		if(transformMessages.Count != 0) {
+			const int maxMessageSize = 41;
+			List<byte> bulk = new(transformMessages.Count * maxMessageSize + 1)
+			{
+				(byte)EBulkPackage.Transform
+			};
+			foreach(TransformMessage message in transformMessages)
+				bulk.AddRange(message.GetBinaryRepresentation().ToArray());
+			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
+			transformMessages.Clear();
+		}
+
+		if(networkActions.Count != 0) 
 		{
-			(byte)EBulkPackage.Transform
-		};
-		foreach(ITransformMessage message in transformMessages)
-			bulk.AddRange(message.GetBinaryRepresentation().ToArray());
-		SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.ReliableNoNagle);
-		transformMessages.Clear();
+			const int maxMessageSize = 16;
+			List<byte> bulk = new (networkActions.Count * maxMessageSize + 1)
+			{
+				(byte)EBulkPackage.Action
+			};
+			bulk.AddRange(MemoryMarshal.AsBytes(networkActions.ToArray().AsSpan()).ToArray());
+			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+			networkActions.Clear();
+		}
 	}
 	void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
@@ -56,7 +73,7 @@ public class P2PBase : MonoBehaviour
         if (!isActive || connection == HSteamNetConnection.Invalid)
             return;
         // Receive messages
-        IntPtr[] messages = new IntPtr[10];//why?
+        IntPtr[] messages = new IntPtr[10];
         int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
         
         if (numMessages > 0)
@@ -84,43 +101,31 @@ public class P2PBase : MonoBehaviour
 				while (position < bulkData.Length)
 				{
 					EPackagePurpuse purpose = (EPackagePurpuse)bulkData[position];
-					
+						
 					int messageSize = purpose switch
 					{
-						EPackagePurpuse.Transform => 33,
-						EPackagePurpuse.TransformPosition => 17,
-						EPackagePurpuse.TransformRotation => 21,
+						EPackagePurpuse.Transform => 41,
+						EPackagePurpuse.TransformPosition => 25,
+						EPackagePurpuse.TransformRotation => 29,
 						_ => throw new InvalidOperationException($"Unknown message type: {purpose}")
 					};
-					
-					if (position + messageSize > bulkData.Length)
-						throw new InvalidOperationException("Incomplete message in bulk data");
-					
+
 					byte[] messageBytes = new byte[messageSize];
 					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
 					position += messageSize;
-
-					switch(purpose)
-					{
-						case EPackagePurpuse.Transform:
-						{
-							P2PTransformPositionAndRotation message = new (messageBytes);
-							networkTransforms[message.ID].MoveToSync(message.rot, message.pos);
-							break;
-						}
-						case EPackagePurpuse.TransformRotation:
-						{
-							P2PTransformRotation message = new (messageBytes);
-							networkTransforms[message.ID].MoveToSync(message.rot);
-							break;
-						}
-						case EPackagePurpuse.TransformPosition:
-						{
-							P2PTransformPosition message = new (messageBytes);
-							networkTransforms[message.ID].MoveToSync(null,message.pos);
-							break;
-						}
-					}
+					
+					TransformMessage transformMessage = new (messageBytes);
+					networkTransforms[transformMessage.ID].MoveToSync(transformMessage.rot, transformMessage.pos);
+				}
+				break;
+			}
+			case EBulkPackage.Action:
+			{
+				Span<ActionInvokeMessage> InvokeMessage = MemoryMarshal.Cast<byte, ActionInvokeMessage>(bulkData);
+				foreach(ActionInvokeMessage a in InvokeMessage)
+				{
+					NetworkActions entityInstance = networkActionScripts[a.ID];
+					entityInstance.TriggerByIndex(a.Index);
 				}
 				break;
 			}
