@@ -11,10 +11,9 @@ public class RoomGenerator : MonoBehaviour
 	[ContextMenu("SpawnRooms")]
 	void spawnRoom(){
 		if(!b){
-			GameObject[] doors = GameObject.FindGameObjectsWithTag("Door");
-			RoomDoor door = doors[0].GetComponent<RoomDoor>();
+			RoomDoor door = GameObject.FindGameObjectsWithTag("Door")[0].GetComponent<RoomDoor>();
 			randomDoor = door.transform.position;
-			v = Instantiate(Rooms[0], randomDoor, new Quaternion());
+			v = Instantiate(Rooms[1], randomDoor, new Quaternion());
 			Debug.DrawRay(randomDoor, Vector3.up, Color.white, 50, true);
 			Destroy(door);
 			b = !b;
@@ -28,14 +27,20 @@ public class RoomGenerator : MonoBehaviour
 			Debug.DrawRay(randomDoor, offset, Color.red, int.MaxValue, true);
 			float ang = Vector3.SignedAngle(offset, randomDoor, Vector3.up);
 			Debug.Log(ang);
-			if(ang == 180){
+			if((ang >= 135 && ang <= 180)||(ang <= -135 && ang <= 180)){
+				v.transform.RotateAround(randomDoor, Vector3.up, ang);
 				v.transform.position -= offset;
-			} else if(ang == 0){
+			} else if((ang <= 45 && ang >= 0)||(ang >= -45 && ang <= 0)){
+				v.transform.RotateAround(randomDoor, Vector3.up, ang);
 				v.transform.position += offset;
+			} else if(ang >= -135 && ang <= -45){
+				v.transform.position += offset;
+				v.transform.RotateAround(randomDoor, Vector3.up, ang);
+			} else if(ang <= 135 && ang >= 45){
+				v.transform.position += offset;
+				v.transform.RotateAround(randomDoor, Vector3.up, ang);
 			}
-			//Debug.Log($"{offset} {randomDoor} {secondDoor}");
 		}
-		
 	}
 	void Start() => 
 		Instantiate(Rooms[0], new Vector3(), new Quaternion());
