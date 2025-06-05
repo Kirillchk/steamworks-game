@@ -72,15 +72,15 @@ public class RoomGenerator : MonoBehaviour
 	{
 		rng = new(1);
 		Instantiate(Rooms[0], new Vector3(), new Quaternion());
-		while (ind < 8)
-		{
-			var res = spawnRoom();
-			Debug.Log($"sucsess: {res} ind: {ind}");
-			if (res)
-				ind++;
-			// TODO: FIX THIS for faster scene loading
-			// bullshit solution for rooms overlaping if there is no delay
-			await Task.Delay(100); 
-		}
+		//while (ind < 8)
+		//{
+		//	var res = spawnRoom();
+		//	Debug.Log($"sucsess: {res} ind: {ind}");
+		//	if (res)
+		//		ind++;
+		//	// TODO: FIX THIS for faster scene loading
+		//	// bullshit solution for rooms overlaping if there is no delay
+		//	await Task.Delay(100); 
+		//}
 	}
 }
