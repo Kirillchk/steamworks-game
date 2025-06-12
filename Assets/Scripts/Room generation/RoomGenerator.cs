@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 public class RoomGenerator : MonoBehaviour
@@ -68,7 +67,7 @@ public class RoomGenerator : MonoBehaviour
 			Instantiate(Rooms[0], new Vector3(), new Quaternion()).GetComponent<BoxCollider>()
 		);
 		await Task.Delay(10);
-		while (ind < 8)
+		while (ind < 16)
 		{
 			var res = spawnRoom();
 			Debug.Log($"sucsess: {res} ind: {ind}");
@@ -84,7 +83,7 @@ public class RoomGenerator : MonoBehaviour
 	}
 	Vector3 SnapToCardinal(Vector3 input)
 	{
-		Vector3 rounded = new Vector3(
+		Vector3 rounded = new (
 			Mathf.Round(input.x),
 			Mathf.Round(input.y),
 			Mathf.Round(input.z)
