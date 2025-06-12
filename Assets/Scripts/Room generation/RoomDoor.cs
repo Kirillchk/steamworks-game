@@ -2,15 +2,12 @@ using UnityEngine;
 
 public class RoomDoor : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	[SerializeField] GameObject doorPref;
+	void Start() => RoomGenerator.Doors.Add(gameObject);
+	public void Close()
+	{
+		Instantiate(doorPref, transform.position, transform.rotation)
+			.transform.SetParent(transform.parent);
+		Destroy(gameObject);
+	}
 }

@@ -726,6 +726,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5768219264397150482, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
+      propertyPath: RoomDoors.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768219264397150482, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
+      propertyPath: 'RoomDoors.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1318268022565789480}
     - target: {fileID: 7908536610962089340, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -12.5
@@ -757,6 +765,11 @@ PrefabInstance:
       addedObject: {fileID: 6646916433032733416}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
+--- !u!1 &1318268022565789480 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4910418018514670285, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
+  m_PrefabInstance: {fileID: 6227953697078693349}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8642641313349226489 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2422644783152300572, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
