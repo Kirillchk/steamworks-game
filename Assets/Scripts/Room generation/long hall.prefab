@@ -714,6 +714,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: long hall
       objectReference: {fileID: 0}
+    - target: {fileID: 3623128840962965815, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
+      propertyPath: angle
+      value: 180
+      objectReference: {fileID: 0}
     - target: {fileID: 4541765441658469377, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
       propertyPath: m_LocalScale.x
       value: 2.5

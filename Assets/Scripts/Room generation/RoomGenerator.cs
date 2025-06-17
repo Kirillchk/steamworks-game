@@ -67,7 +67,7 @@ public class RoomGenerator : MonoBehaviour
 			Instantiate(Rooms[0], new Vector3(), new Quaternion()).GetComponent<BoxCollider>()
 		);
 		await Task.Delay(10);
-		while (ind < 16)
+		while (ind < 6)
 		{
 			var res = spawnRoom();
 			Debug.Log($"sucsess: {res} ind: {ind}");
