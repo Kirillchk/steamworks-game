@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 499a538939b44704e8fffa0ae44a5d00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 1
   Rooms:
   - {fileID: 7966849186205204661, guid: adce0a6ff09c529f58fabb5f6ca5c538, type: 3}
   - {fileID: 7444224369781245350, guid: 2dff72f703efa9223b979c65a05d383e, type: 3}

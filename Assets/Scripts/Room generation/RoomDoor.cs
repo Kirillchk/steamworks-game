@@ -17,6 +17,7 @@ public class RoomDoor : MonoBehaviour
 		Vector3.SignedAngle(Vector3.left, SnapToCardinal(transform.localPosition), Vector3.up)
 		+ transform.parent.eulerAngles.y);
 		newDoor.transform.SetParent(transform.parent);
+		transform.parent.GetComponent<RoomBehaviour>().roomDoors.Remove(gameObject);
 		RoomGenerator.Doors.Remove(gameObject);
 		Destroy(gameObject);
 	}
@@ -32,12 +33,13 @@ public class RoomDoor : MonoBehaviour
 		Vector3.SignedAngle(Vector3.left, SnapToCardinal(transform.localPosition), Vector3.up)
 		+ transform.parent.eulerAngles.y);
 		newDoor.transform.SetParent(transform.parent);
+		transform.parent.GetComponent<RoomBehaviour>().roomDoors.Remove(gameObject);
 		RoomGenerator.Doors.Remove(gameObject);
 		Destroy(gameObject);
 	}
 	Vector3 SnapToCardinal(Vector3 input)
 	{
-		Vector3 rounded = new (
+		Vector3 rounded = new(
 			Mathf.Round(input.x),
 			Mathf.Round(input.y),
 			Mathf.Round(input.z)

@@ -8,7 +8,11 @@ public class RoomGenerator : MonoBehaviour
 	[SerializeField] List<GameObject> Rooms = new();
 	GameObject getRandomRoom() => Rooms[rng.Next(Rooms.Count)];
 	public static List<GameObject> Doors = new();
-	GameObject getRandomDoor() => Doors[rng.Next(Doors.Count)];
+	GameObject getRandomDoor()
+	{
+		Doors.RemoveAll(door => door == null);
+		return Doors[rng.Next(Doors.Count)];
+	}
 	List<BoxCollider> RoomColliders = new();
 	bool checkColisions(BoxCollider comp)
 	{
@@ -16,70 +20,78 @@ public class RoomGenerator : MonoBehaviour
 		foreach (var col in RoomColliders)
 			if (comp.bounds.Intersects(col.bounds))
 			{
-				Debug.LogWarning($"{col.bounds} intersects {comp.bounds}");
+				if(col.bounds == comp.bounds)
+					Debug.LogWarning($"{col.bounds} intersects {comp.bounds}");
+				else
+					Debug.Log($"{col.bounds} intersects {comp.bounds}");
 				DrawBoxCollider(col, Color.green, speed);
 				DrawBoxCollider(comp, Color.red, speed);
 				return true;
 			}
 		return false;
 	}
-	bool spawnRoom(GameObject roomPrefab = null)
-	{
-		// Selects random door inits new room
-		GameObject firstdoorObject = getRandomDoor();
-		Vector3 firstDoorPosition = firstdoorObject.transform.position;
-		GameObject newRoom = Instantiate(roomPrefab??getRandomRoom(), firstDoorPosition, new Quaternion());
-		// Gets random door of new room and destroys it
-		GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().GetRadomDoor(rng);
-		secondDoorObject.GetComponent<RoomDoor>().Open();
-
-		//smashes doors together
-		Vector3 offset = secondDoorObject.transform.position - firstDoorPosition;
-		newRoom.transform.position -= offset;
-		// Applies calculated rotation angle to align selected doors
-
-		float angle = Vector3.SignedAngle(
-				SnapToCardinal(offset),
-				SnapToCardinal(firstdoorObject.transform.localPosition) * -1, Vector3.up
-			) - firstdoorObject.transform.parent.rotation.eulerAngles.y;
-		newRoom.transform.RotateAround(firstDoorPosition, Vector3.up, angle);
-		// Check for overlaping
-
-		var roomCollider = newRoom.GetComponent<BoxCollider>();
-		bool intersects = checkColisions(roomCollider);
-		if (intersects)
-		{
-			firstdoorObject.GetComponent<RoomDoor>().Close();
-			Destroy(newRoom);
-		}
-		else
-		{
-			firstdoorObject.GetComponent<RoomDoor>().Open();
-			RoomColliders.Add(roomCollider);
-		}
-		Destroy(secondDoorObject);
-		return !intersects;
-	}
 	
 	async void Start()
 	{
 		int ind = 0;
-		[ContextMenu("SpawnRooms")]
-		void TryAddRoom()
-		{
-			var res = spawnRoom();
-			Debug.Log($"sucsess: {res} ind: {ind}");
-			if (res)
-				ind++;
-		}
 		RoomColliders.Add(
 			Instantiate(Rooms[0], new Vector3(), new Quaternion()).GetComponent<BoxCollider>()
 		);
 		await Task.Delay(10);
 		while (ind < 52)
 		{
-			TryAddRoom();
-			await Task.Delay((int)(speed*1000));
+            
+			await Task.Delay((int)(speed * 500));	
+			//Debug.Log("PRE INIT");
+			bool res;
+
+			// Selects random door inits new room
+			GameObject firstdoorObject = getRandomDoor();
+			Vector3 firstDoorPosition = firstdoorObject.transform.position;
+			GameObject newRoom = Instantiate(getRandomRoom(), firstDoorPosition, new Quaternion());
+			// Gets random door of new room and destroys it
+			GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().GetRadomDoor(rng);
+            
+			await Task.Delay((int)(speed * 500));
+			//Debug.Log("INIT");
+
+			//smashes doors together
+			Vector3 offset = secondDoorObject.transform.position - firstDoorPosition;
+			newRoom.transform.position -= offset;
+			// Applies calculated rotation angle to align selected doors
+			float angle = Vector3.SignedAngle(
+					SnapToCardinal(offset),
+					SnapToCardinal(firstdoorObject.transform.localPosition) * -1, Vector3.up
+				) - firstdoorObject.transform.parent.rotation.eulerAngles.y;
+			newRoom.transform.RotateAround(firstDoorPosition, Vector3.up, angle);
+			Debug.Log(
+				$"Angle(Snap({offset}), Snap({firstdoorObject.transform.localPosition})*-1) - {firstdoorObject.transform.parent.rotation.eulerAngles.y}\n" +
+				$"{angle}={Vector3.SignedAngle( SnapToCardinal(offset), SnapToCardinal(firstdoorObject.transform.localPosition) * -1, Vector3.up )}-{firstdoorObject.transform.parent.rotation.eulerAngles.y}" 
+			);
+
+			await Task.Delay((int)(speed * 500));
+			//Debug.Log("ROTUNDA");
+
+			var roomCollider = newRoom.GetComponent<BoxCollider>();
+			bool intersects = checkColisions(roomCollider);
+			if (intersects)
+			{
+				firstdoorObject.GetComponent<RoomDoor>().Close();
+				Destroy(newRoom);
+			}
+			else
+			{
+				firstdoorObject.GetComponent<RoomDoor>().Open();
+				RoomColliders.Add(roomCollider);
+			}
+			Destroy(secondDoorObject);
+			res = !intersects;
+		
+			Debug.Log($"sucsess: {res} ind: {ind}");
+			if (res)
+				ind++;
+
+			await Task.Delay((int)(speed * 500));
 		}
 			
 
