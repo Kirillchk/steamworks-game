@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class RoomDoor : MonoBehaviour
 {
+	[SerializeField] GameObject openDoorPref;
 	[SerializeField] GameObject doorPref;
 	void Start() => RoomGenerator.Doors.Add(gameObject);
 	public void Close()
@@ -16,6 +17,22 @@ public class RoomDoor : MonoBehaviour
 		Vector3.SignedAngle(Vector3.left, SnapToCardinal(transform.localPosition), Vector3.up)
 		+ transform.parent.eulerAngles.y);
 		newDoor.transform.SetParent(transform.parent);
+		RoomGenerator.Doors.Remove(gameObject);
+		Destroy(gameObject);
+	}
+	public void Open()
+	{
+		GameObject newDoor = Instantiate(openDoorPref,
+			transform.position + openDoorPref.transform.position,
+			new()
+		);
+		Debug.Log($"{transform.localPosition}, {SnapToCardinal(transform.localPosition)}");
+		newDoor.transform.RotateAround(transform.position,
+		Vector3.up,
+		Vector3.SignedAngle(Vector3.left, SnapToCardinal(transform.localPosition), Vector3.up)
+		+ transform.parent.eulerAngles.y);
+		newDoor.transform.SetParent(transform.parent);
+		RoomGenerator.Doors.Remove(gameObject);
 		Destroy(gameObject);
 	}
 	Vector3 SnapToCardinal(Vector3 input)

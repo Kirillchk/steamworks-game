@@ -4,7 +4,7 @@ using UnityEngine;
 public class RoomGenerator : MonoBehaviour
 {
 	public float speed = 5;
-	private System.Random rng;
+	private System.Random rng = new (2);
 	[SerializeField] List<GameObject> Rooms = new();
 	GameObject getRandomRoom() => Rooms[rng.Next(Rooms.Count)];
 	public static List<GameObject> Doors = new();
@@ -23,39 +23,28 @@ public class RoomGenerator : MonoBehaviour
 			}
 		return false;
 	}
-	Vector3 firstDoorPosition;
-	int ind = 0;
-	[ContextMenu("SpawnRooms")]
-	void TryAddRoom()
+	bool spawnRoom(GameObject roomPrefab = null)
 	{
-		var res = spawnRoom();
-		Debug.Log($"sucsess: {res} ind: {ind}");
-		if (res)
-			ind++;
-	}
-	bool spawnRoom()
-	{
-		// Selects random door inits new room and then destroys selected door
+		// Selects random door inits new room
 		GameObject firstdoorObject = getRandomDoor();
-		firstDoorPosition = firstdoorObject.transform.position;
-		GameObject newRoom = Instantiate(getRandomRoom(), firstDoorPosition, new Quaternion());
-		Doors.Remove(firstdoorObject);
-		Destroy(firstdoorObject);
+		Vector3 firstDoorPosition = firstdoorObject.transform.position;
+		GameObject newRoom = Instantiate(roomPrefab??getRandomRoom(), firstDoorPosition, new Quaternion());
 		// Gets random door of new room and destroys it
 		GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().GetRadomDoor(rng);
-		Doors.Remove(secondDoorObject);
-		Destroy(secondDoorObject);
+		secondDoorObject.GetComponent<RoomDoor>().Open();
+
 		//smashes doors together
 		Vector3 offset = secondDoorObject.transform.position - firstDoorPosition;
 		newRoom.transform.position -= offset;
 		// Applies calculated rotation angle to align selected doors
+
 		float angle = Vector3.SignedAngle(
 				SnapToCardinal(offset),
 				SnapToCardinal(firstdoorObject.transform.localPosition) * -1, Vector3.up
 			) - firstdoorObject.transform.parent.rotation.eulerAngles.y;
-
 		newRoom.transform.RotateAround(firstDoorPosition, Vector3.up, angle);
 		// Check for overlaping
+
 		var roomCollider = newRoom.GetComponent<BoxCollider>();
 		bool intersects = checkColisions(roomCollider);
 		if (intersects)
@@ -64,26 +53,35 @@ public class RoomGenerator : MonoBehaviour
 			Destroy(newRoom);
 		}
 		else
+		{
+			firstdoorObject.GetComponent<RoomDoor>().Open();
 			RoomColliders.Add(roomCollider);
+		}
+		Destroy(secondDoorObject);
 		return !intersects;
 	}
+	
 	async void Start()
 	{
-		rng = new(2);
+		int ind = 0;
+		[ContextMenu("SpawnRooms")]
+		void TryAddRoom()
+		{
+			var res = spawnRoom();
+			Debug.Log($"sucsess: {res} ind: {ind}");
+			if (res)
+				ind++;
+		}
 		RoomColliders.Add(
 			Instantiate(Rooms[0], new Vector3(), new Quaternion()).GetComponent<BoxCollider>()
 		);
 		await Task.Delay(10);
 		while (ind < 52)
 		{
-			var res = spawnRoom();
-			Debug.Log($"sucsess: {res} ind: {ind}");
-			if (res)
-				ind++;
-			// TODO: FIX THIS for faster scene loading
-			// bullshit solution for rooms overlaping if there is no delay
+			TryAddRoom();
 			await Task.Delay((int)(speed*1000));
 		}
+			
 
 		//foreach (GameObject door in Doors) 
 		//	door.GetComponent<RoomDoor>().Close();
