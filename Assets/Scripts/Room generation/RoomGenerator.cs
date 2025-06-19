@@ -61,7 +61,6 @@ public class RoomGenerator : MonoBehaviour
 			// await Task.Delay((int)(speed * 500));
 			// Debug.Log("SMASH");
 
-
 			// Applies calculated rotation angle to align selected doors
 
 			Vector3 vec1 = SnapToCardinal(firstDoorPosition - firstdoorObject.transform.parent.position);
@@ -97,7 +96,7 @@ public class RoomGenerator : MonoBehaviour
 			if (res)
 				ind++;
 
-			await Task.Delay((int)(speed * 50));
+			await Task.Delay((int)(speed * 10));
 		}
 
 		foreach (GameObject door in Doors) 
