@@ -11,7 +11,7 @@ public class RoomDoor : MonoBehaviour
 			transform.position + doorPref.transform.position,
 			new()
 		);
-		Debug.Log($"{transform.localPosition}, {SnapToCardinal(transform.localPosition)}");
+		// Debug.Log($"{transform.localPosition}, {SnapToCardinal(transform.localPosition)}");
 		newDoor.transform.RotateAround(transform.position,
 		Vector3.up,
 		Vector3.SignedAngle(Vector3.left, SnapToCardinal(transform.localPosition), Vector3.up)
@@ -27,7 +27,7 @@ public class RoomDoor : MonoBehaviour
 			transform.position + openDoorPref.transform.position,
 			new()
 		);
-		Debug.Log($"{transform.localPosition}, {SnapToCardinal(transform.localPosition)}");
+		// Debug.Log($"{transform.localPosition}, {SnapToCardinal(transform.localPosition)}");
 		newDoor.transform.RotateAround(transform.position,
 		Vector3.up,
 		Vector3.SignedAngle(Vector3.left, SnapToCardinal(transform.localPosition), Vector3.up)

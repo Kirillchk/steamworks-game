@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using UnityEngine;
 public class RoomGenerator : MonoBehaviour
 {
+	int ind = 0;
 	public float speed = 5;
-	private System.Random rng = new (2);
+	private System.Random rng = new (7);
 	[SerializeField] List<GameObject> Rooms = new();
 	GameObject getRandomRoom() => Rooms[rng.Next(Rooms.Count)];
 	public static List<GameObject> Doors = new();
@@ -20,10 +21,7 @@ public class RoomGenerator : MonoBehaviour
 		foreach (var col in RoomColliders)
 			if (comp.bounds.Intersects(col.bounds))
 			{
-				if(col.bounds == comp.bounds)
-					Debug.LogWarning($"{col.bounds} intersects {comp.bounds}");
-				else
-					Debug.Log($"{col.bounds} intersects {comp.bounds}");
+				// Debug.LogWarning($"IND:{ind} {col.bounds} intersects {comp.bounds}");
 				DrawBoxCollider(col, Color.green, speed);
 				DrawBoxCollider(comp, Color.red, speed);
 				return true;
@@ -33,43 +31,51 @@ public class RoomGenerator : MonoBehaviour
 	
 	async void Start()
 	{
-		int ind = 0;
 		RoomColliders.Add(
 			Instantiate(Rooms[0], new Vector3(), new Quaternion()).GetComponent<BoxCollider>()
 		);
 		await Task.Delay(10);
-		while (ind < 52)
+		while (ind < 101)
 		{
             
-			await Task.Delay((int)(speed * 500));	
-			//Debug.Log("PRE INIT");
+			// await Task.Delay((int)(speed * 500));	
+			// Debug.Log("PRE INIT");
 			bool res;
 
-			// Selects random door inits new room
+			// Selects random doors and inits new room
 			GameObject firstdoorObject = getRandomDoor();
 			Vector3 firstDoorPosition = firstdoorObject.transform.position;
+
 			GameObject newRoom = Instantiate(getRandomRoom(), firstDoorPosition, new Quaternion());
-			// Gets random door of new room and destroys it
 			GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().GetRadomDoor(rng);
+
+			Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, speed);
+			Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, speed);
             
-			await Task.Delay((int)(speed * 500));
-			//Debug.Log("INIT");
+			// await Task.Delay((int)(speed * 500));
+			// Debug.Log("INIT");
 
 			//smashes doors together
-			Vector3 offset = secondDoorObject.transform.position - firstDoorPosition;
-			newRoom.transform.position -= offset;
-			// Applies calculated rotation angle to align selected doors
-			float angle = Vector3.SignedAngle(
-					SnapToCardinal(offset),
-					SnapToCardinal(firstdoorObject.transform.localPosition) * -1, Vector3.up
-				) - firstdoorObject.transform.parent.rotation.eulerAngles.y;
-			newRoom.transform.RotateAround(firstDoorPosition, Vector3.up, angle);
-			Debug.Log(
-				$"Angle(Snap({offset}), Snap({firstdoorObject.transform.localPosition})*-1) - {firstdoorObject.transform.parent.rotation.eulerAngles.y}\n" +
-				$"{angle}={Vector3.SignedAngle( SnapToCardinal(offset), SnapToCardinal(firstdoorObject.transform.localPosition) * -1, Vector3.up )}-{firstdoorObject.transform.parent.rotation.eulerAngles.y}" 
-			);
+			newRoom.transform.position -= secondDoorObject.transform.position - firstDoorPosition;
 
-			await Task.Delay((int)(speed * 500));
+			// await Task.Delay((int)(speed * 500));
+			// Debug.Log("SMASH");
+
+
+			// Applies calculated rotation angle to align selected doors
+
+			Vector3 vec1 = SnapToCardinal(firstDoorPosition - firstdoorObject.transform.parent.position);
+			Vector3 vec2 = SnapToCardinal(secondDoorObject.transform.localPosition)*-1;
+			Vector3 orient = Vector3.up;
+
+			Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, speed);
+			Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up*2, Color.blue, speed);
+			Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up*3, Color.yellow, speed);
+
+			float angle = Vector3.SignedAngle(vec1, vec2, orient*-1);
+			newRoom.transform.RotateAround(firstDoorPosition, orient, angle);
+
+			//await Task.Delay((int)(speed * 500));
 			//Debug.Log("ROTUNDA");
 
 			var roomCollider = newRoom.GetComponent<BoxCollider>();
@@ -87,16 +93,15 @@ public class RoomGenerator : MonoBehaviour
 			Destroy(secondDoorObject);
 			res = !intersects;
 		
-			Debug.Log($"sucsess: {res} ind: {ind}");
+			Debug.Log($"IND:{ind} sucsess: {res}");
 			if (res)
 				ind++;
 
-			await Task.Delay((int)(speed * 500));
+			await Task.Delay((int)(speed * 50));
 		}
-			
 
-		//foreach (GameObject door in Doors) 
-		//	door.GetComponent<RoomDoor>().Close();
+		foreach (GameObject door in Doors) 
+			door.GetComponent<RoomDoor>().Close();
 	}
 	Vector3 SnapToCardinal(Vector3 input)
 	{
