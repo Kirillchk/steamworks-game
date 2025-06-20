@@ -15,12 +15,15 @@ public class RoomDoor : MonoBehaviour
 		);
 
 		// Debug.Log($"{transform.localPosition}, {SnapVector(transform.localPosition)}");
-		
+
 		newDoor.transform.RotateAround(
 			transform.position,
 			Vector3.up,
-			Vector3.SignedAngle(Vector3.left, SnapVector(transform.localPosition), Vector3.up)
-			+ transform.parent.eulerAngles.y
+			Vector3.SignedAngle(
+				Vector3.left,
+				SnapVector(transform.localPosition),
+				Vector3.up
+			) + transform.parent.eulerAngles.y
 		);
 
 		newDoor.transform.SetParent(transform.parent);
