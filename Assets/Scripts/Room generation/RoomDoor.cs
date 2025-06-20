@@ -4,8 +4,6 @@ public class RoomDoor : MonoBehaviour
 {
 	[SerializeField] GameObject openDoorPref;
 	[SerializeField] GameObject closedDoorPref;
-	void Start() =>
-		RoomGenerator.Doors.Add(gameObject);
 	private void createDoor(GameObject doorPref)
 	{
 		GameObject newDoor = Instantiate(
@@ -28,7 +26,6 @@ public class RoomDoor : MonoBehaviour
 
 		newDoor.transform.SetParent(transform.parent);
 		transform.parent.GetComponent<RoomBehaviour>().roomDoors.Remove(gameObject);
-		RoomGenerator.Doors.Remove(gameObject);
 		Destroy(gameObject);
 	}
 	public void Close() =>

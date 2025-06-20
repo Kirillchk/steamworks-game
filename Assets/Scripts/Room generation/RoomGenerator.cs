@@ -6,35 +6,37 @@ public class RoomGenerator : MonoBehaviour
 	int ind = 0;
 	public float slowering = 5;
 	private System.Random rng = new(7);
-	[SerializeField] List<GameObject> Rooms = new();
-	GameObject getRandomRoom() => Rooms[rng.Next(Rooms.Count)];
-	public static List<GameObject> Doors = new();
+	[SerializeField] GameObject[] Rooms;
+	GameObject getRandomRoom() =>
+		Rooms[rng.Next(Rooms.Length)];
 	GameObject getRandomDoor()
 	{
-		Doors.RemoveAll(door => door == null);
-		return Doors[rng.Next(Doors.Count)];
+		GameObject[] Doors = GameObject.FindGameObjectsWithTag("DoorMark");
+		return Doors[rng.Next(Doors.Length)];
 	}
 	List<BoxCollider> RoomColliders = new();
 	bool checkColisions(BoxCollider comp)
 	{
 		comp.enabled = false;
-		Physics.SyncTransforms();
 		// TODO: Rewrite with Physics.BoxCast() for prod
 		var colliders = Physics.OverlapBox(
 			comp.transform.TransformPoint(comp.center),
 			comp.size * 0.5f,
 			comp.transform.rotation,
-			LayerMask.GetMask("LVL"));
+			LayerMask.GetMask("LVL"),
+			QueryTriggerInteraction.Collide
+		);
+
+		//foreach (var col in colliders)
+		//{
+		//	Debug.LogWarning($"IND:{ind} {col.bounds} intersects {comp.bounds}");
+		//	ColliderDrawer.DrawCollider(col, Color.green, slowering);
+		//}
+		//ColliderDrawer.DrawCollider(comp, Color.red, slowering);
+
 		if (colliders.Length > 0)
-		{
-			foreach (var col in colliders)
-			{
-				Debug.LogWarning($"IND:{ind} {col.bounds} intersects {comp.bounds}");
-				ColliderDrawer.DrawCollider(col, Color.green, slowering);
-			}
-			ColliderDrawer.DrawCollider(comp, Color.red, slowering);
 			return true;
-		}
+
 		comp.enabled = true;
 		return false;
 	}
@@ -49,7 +51,7 @@ public class RoomGenerator : MonoBehaviour
 			).GetComponent<BoxCollider>()
 		);
 		await Task.Delay(10);
-		while (ind < 101)
+		while (ind < 301)
 		{
 
 			// await Task.Delay((int)(slowering * 500));	
@@ -63,8 +65,8 @@ public class RoomGenerator : MonoBehaviour
 			GameObject newRoom = Instantiate(getRandomRoom(), firstDoorPosition, new Quaternion());
 			GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().GetRadomDoor(rng);
 
-			Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
-			Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
+			//Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
+			//Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
 
 			// await Task.Delay((int)(slowering * 500));
 			// Debug.Log("INIT");
@@ -81,9 +83,9 @@ public class RoomGenerator : MonoBehaviour
 			Vector3 vec2 = secondDoorObject.GetComponent<RoomDoor>().GetVector2();
 			Vector3 orient = Vector3.up;
 
-			Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, slowering);
-			Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up * 2, Color.blue, slowering);
-			Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up * 3, Color.yellow, slowering);
+			//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, slowering);
+			//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up * 2, Color.blue, slowering);
+			//Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up * 3, Color.yellow, slowering);
 
 			float angle = Vector3.SignedAngle(vec1, vec2, orient * -1);
 			newRoom.transform.RotateAround(firstDoorPosition, orient, angle);
@@ -110,11 +112,10 @@ public class RoomGenerator : MonoBehaviour
 			if (res)
 				ind++;
 
-			// FOR SOME REASON NECESARY
-			await Task.Delay((int)(slowering * 10));
+			await Task.Yield();
 		}
 
-		foreach (GameObject door in Doors)
+		foreach (GameObject door in GameObject.FindGameObjectsWithTag("DoorMark"))
 			door.GetComponent<RoomDoor>().Close();
 	}
 }

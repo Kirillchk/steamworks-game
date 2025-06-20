@@ -1905,10 +1905,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Door (5)
       objectReference: {fileID: 0}
-    - target: {fileID: 7552055272626732385, guid: b8b7c77f92c18194481e674ddb2f7277, type: 3}
-      propertyPath: angle
-      value: -90
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1975,10 +1971,6 @@ PrefabInstance:
     - target: {fileID: 2210410990898818715, guid: b8b7c77f92c18194481e674ddb2f7277, type: 3}
       propertyPath: m_Name
       value: Door (4)
-      objectReference: {fileID: 0}
-    - target: {fileID: 7552055272626732385, guid: b8b7c77f92c18194481e674ddb2f7277, type: 3}
-      propertyPath: angle
-      value: 180
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2225,10 +2217,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Door (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 7552055272626732385, guid: b8b7c77f92c18194481e674ddb2f7277, type: 3}
-      propertyPath: angle
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2295,10 +2283,6 @@ PrefabInstance:
     - target: {fileID: 2210410990898818715, guid: b8b7c77f92c18194481e674ddb2f7277, type: 3}
       propertyPath: m_Name
       value: Door (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 7552055272626732385, guid: b8b7c77f92c18194481e674ddb2f7277, type: 3}
-      propertyPath: angle
-      value: 180
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
