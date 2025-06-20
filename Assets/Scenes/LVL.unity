@@ -148,10 +148,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 499a538939b44704e8fffa0ae44a5d00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 1
   Rooms:
-  - {fileID: 7966849186205204661, guid: adce0a6ff09c529f58fabb5f6ca5c538, type: 3}
+  - {fileID: 4312834682966477563, guid: 1a249be9b632b6af4a4f4e99c5faf300, type: 3}
   - {fileID: 7444224369781245350, guid: 2dff72f703efa9223b979c65a05d383e, type: 3}
+  - {fileID: 7966849186205204661, guid: adce0a6ff09c529f58fabb5f6ca5c538, type: 3}
+  - {fileID: 2013499668657666272, guid: ccf266745f6fbe340b8ab045c11053a8, type: 3}
 --- !u!4 &643993621
 Transform:
   m_ObjectHideFlags: 0
@@ -185,7 +187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &773466700
 AudioListener:
   m_ObjectHideFlags: 0
@@ -321,7 +323,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &1285774863
 Light:
   m_ObjectHideFlags: 0

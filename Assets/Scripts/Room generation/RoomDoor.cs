@@ -37,6 +37,10 @@ public class RoomDoor : MonoBehaviour
 		RoomGenerator.Doors.Remove(gameObject);
 		Destroy(gameObject);
 	}
+	public Vector3 GetVector1() =>
+		SnapToCardinal(transform.position - transform.parent.position);
+	public Vector3 GetVector2() =>
+		SnapToCardinal(transform.localPosition) * -1;
 	Vector3 SnapToCardinal(Vector3 input)
 	{
 		Vector3 rounded = new(
