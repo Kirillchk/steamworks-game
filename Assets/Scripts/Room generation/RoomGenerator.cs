@@ -4,7 +4,7 @@ using UnityEngine;
 public class RoomGenerator : MonoBehaviour
 {
 	int ind = 0;
-	public float speed = 5;
+	public float slowering = 5;
 	private System.Random rng = new(7);
 	[SerializeField] List<GameObject> Rooms = new();
 	GameObject getRandomRoom() => Rooms[rng.Next(Rooms.Count)];
@@ -19,6 +19,7 @@ public class RoomGenerator : MonoBehaviour
 	{
 		comp.enabled = false;
 		Physics.SyncTransforms();
+		// TODO: Rewrite with Physics.BoxCast() for prod
 		var colliders = Physics.OverlapBox(
 			comp.transform.TransformPoint(comp.center),
 			comp.size * 0.5f,
@@ -29,9 +30,9 @@ public class RoomGenerator : MonoBehaviour
 			foreach (var col in colliders)
 			{
 				Debug.LogWarning($"IND:{ind} {col.bounds} intersects {comp.bounds}");
-				ColliderDrawer.DrawCollider(col, Color.green, speed);
+				ColliderDrawer.DrawCollider(col, Color.green, slowering);
 			}
-			ColliderDrawer.DrawCollider(comp, Color.red, speed);
+			ColliderDrawer.DrawCollider(comp, Color.red, slowering);
 			return true;
 		}
 		comp.enabled = true;
@@ -41,13 +42,17 @@ public class RoomGenerator : MonoBehaviour
 	async void Start()
 	{
 		RoomColliders.Add(
-			Instantiate(Rooms[0], new Vector3(), new Quaternion()).GetComponent<BoxCollider>()
+			Instantiate(
+				Rooms[0],
+				new Vector3(),
+				new Quaternion()
+			).GetComponent<BoxCollider>()
 		);
 		await Task.Delay(10);
 		while (ind < 101)
 		{
 
-			// await Task.Delay((int)(speed * 500));	
+			// await Task.Delay((int)(slowering * 500));	
 			// Debug.Log("PRE INIT");
 			bool res;
 
@@ -58,16 +63,16 @@ public class RoomGenerator : MonoBehaviour
 			GameObject newRoom = Instantiate(getRandomRoom(), firstDoorPosition, new Quaternion());
 			GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().GetRadomDoor(rng);
 
-			Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, speed);
-			Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, speed);
+			Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
+			Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
 
-			// await Task.Delay((int)(speed * 500));
+			// await Task.Delay((int)(slowering * 500));
 			// Debug.Log("INIT");
 
 			//smashes doors together
 			newRoom.transform.position -= secondDoorObject.transform.position - firstDoorPosition;
 
-			// await Task.Delay((int)(speed * 500));
+			// await Task.Delay((int)(slowering * 500));
 			// Debug.Log("SMASH");
 
 			// Applies calculated rotation angle to align selected doors
@@ -76,14 +81,14 @@ public class RoomGenerator : MonoBehaviour
 			Vector3 vec2 = secondDoorObject.GetComponent<RoomDoor>().GetVector2();
 			Vector3 orient = Vector3.up;
 
-			Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, speed);
-			Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up * 2, Color.blue, speed);
-			Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up * 3, Color.yellow, speed);
+			Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, slowering);
+			Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up * 2, Color.blue, slowering);
+			Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up * 3, Color.yellow, slowering);
 
 			float angle = Vector3.SignedAngle(vec1, vec2, orient * -1);
 			newRoom.transform.RotateAround(firstDoorPosition, orient, angle);
 
-			//await Task.Delay((int)(speed * 500));
+			//await Task.Delay((int)(slowering * 500));
 			//Debug.Log("ROTUNDA");
 
 			var roomCollider = newRoom.GetComponent<BoxCollider>();
@@ -105,7 +110,8 @@ public class RoomGenerator : MonoBehaviour
 			if (res)
 				ind++;
 
-			await Task.Delay((int)(speed * 10));
+			// FOR SOME REASON NECESARY
+			await Task.Delay((int)(slowering * 10));
 		}
 
 		foreach (GameObject door in Doors)
