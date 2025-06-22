@@ -1,19 +1,25 @@
 using UnityEngine;
 using P2PMessages;
-
+using System;
+using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
 public class NetworkTransform : MonoBehaviour
 {
-	[SerializeField] Vector3 ID; 
+	[SerializeField] Vector3 ID;
 	Vector3 lastPosition;
 	Quaternion lastRotation;
 	bool sendTransform = false;
-    void Awake()
+	async void Awake()
 	{
+		//TODO: FIX! This should not be necessary
+		await Task.Yield();
 		ID = GetComponent<NetworkIdentity>().uniqueVector;
+		Debug.Log($"UNIQUE {ID}");
 		P2PBase.networkTransforms[ID] = this;
 	}
 	void Update()
-    {
+	{
 		Vector3 currentPosition = transform.position;
 		Quaternion currentRotation = transform.rotation;
 
@@ -23,17 +29,29 @@ public class NetworkTransform : MonoBehaviour
 		lastPosition = currentPosition;
 		lastRotation = currentRotation;
 
-		if (!(moved || rotated) || !sendTransform) 
+		if (sendTransform)
 		{
-			sendTransform = true;
-			return;
+			if (moved)
+				P2PBase.TransformBulk.AddRange(INetworkMessage.StructToSpan(
+					new TransformPos()
+					{
+						purpuse = TransformPos.Purpuse,
+						ID = ID,
+						pos = currentPosition,
+					}
+				).ToArray());
+			if (rotated)
+				P2PBase.TransformBulk.AddRange(INetworkMessage.StructToSpan(
+					new TransformRot()
+					{
+						purpuse = TransformRot.Purpuse,
+						ID = ID,
+						rot = currentRotation
+					}
+				).ToArray());
 		}
-		P2PBase.transformMessages.Add(
-			new TransformMessage(ID, 
-			moved ? currentPosition : null, 
-			rotated ? currentRotation : null)
-		);	
-    }
+		sendTransform = true;
+	}
 	internal void MoveToSync(Quaternion? rotate = null, Vector3? move = null)
 	{
 		if (rotate != null)

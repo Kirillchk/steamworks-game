@@ -15,124 +15,40 @@ namespace P2PMessages
 		UnreliableNoDelay = Unreliable | NoDelay | NoNagle,
 		ReliableNoNagle = Reliable | NoNagle,
 	}
-	public enum EPackagePurpuse : byte 
+	enum EPackagePurpuse : byte
 	{
 		TransformPosRot,
 		TransformPosition,
 		TransformRotation,
 		Action
 	}
-	public struct TransformPosRot
+	
+	public interface INetworkMessage
 	{
-		const byte purpuse = (byte)EPackagePurpuse.TransformPosRot;
-		const int messageSzie = 41; // ???
-		public readonly Vector3 ID;
-		public readonly Vector3 pos;
-		public readonly Quaternion rot;
+		// TODO: should not be static 
+		public static ReadOnlySpan<byte> StructToSpan<T>(T inp) where T : unmanaged
+			=> MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref inp, 1));
 	}
-	public struct TransformPos
+	[StructLayout(LayoutKind.Sequential, Size = 32)]
+	public struct TransformPos : INetworkMessage
 	{
-		const byte purpuse = (byte)EPackagePurpuse.TransformPosRot;
-		const int messageSzie = 25; // ???
-		public readonly Vector3 ID;
-		public readonly Vector3 pos;
-		public readonly Quaternion rot;
+		public static byte Purpuse = (byte)EPackagePurpuse.TransformPosition;
+		public byte purpuse;
+		public Vector3 ID;
+		public Vector3 pos;
 	}
-	public struct TransformRot
+	[StructLayout(LayoutKind.Sequential, Size = 32)]
+	public struct TransformRot : INetworkMessage
 	{
-		const byte purpuse = (byte)EPackagePurpuse.TransformPosRot;
-		const int messageSzie = 29; // ???
-		public readonly Vector3 ID;
-		public readonly Vector3 pos;
-		public readonly Quaternion rot;
+		public static byte Purpuse = (byte)EPackagePurpuse.TransformRotation;
+		public byte purpuse;
+		public Vector3 ID;
+		public Quaternion rot;
 	}
-	public struct TransformMessage
+	public struct ActionInvokeMessage : INetworkMessage
 	{
-		readonly EPackagePurpuse purpuse;
-		readonly int messageSzie;
-		public readonly Vector3 ID;
-		public readonly Vector3? pos;
-		public readonly Quaternion? rot;
-		public TransformMessage(in Vector3 id, in Vector3? position = null, in Quaternion? rotation = null)
-		{
-			ID = id;
-			pos = position;
-			rot = rotation;
-			if (pos != null && rot != null)
-			{
-				purpuse = EPackagePurpuse.TransformPosRot;
-				messageSzie = 41;
-			}
-			else if (pos != null && rot == null)
-			{
-				purpuse = EPackagePurpuse.TransformPosition;
-				messageSzie = 25;
-			}
-			else if (pos == null && rot != null)
-			{
-				purpuse = EPackagePurpuse.TransformRotation;
-				messageSzie = 29;
-			}
-			else
-				throw new("FUCKED CONSTURCTOR");
-		}
-		public TransformMessage(ReadOnlySpan<byte> byteSpan)
-		{
-			purpuse = MemoryMarshal.Read<EPackagePurpuse>(byteSpan.Slice(0));
-			if (purpuse == EPackagePurpuse.TransformPosRot)
-			{
-				pos = MemoryMarshal.Read<Vector3>(byteSpan.Slice(1, 12));
-				rot = MemoryMarshal.Read<Quaternion>(byteSpan.Slice(13, 28));
-				ID = MemoryMarshal.Read<Vector3>(byteSpan.Slice(29));
-				messageSzie = 41;
-			}
-			else if (purpuse == EPackagePurpuse.TransformPosition)
-			{
-				pos = MemoryMarshal.Read<Vector3>(byteSpan.Slice(1, 12));
-				rot = null;
-				ID = MemoryMarshal.Read<Vector3>(byteSpan.Slice(13));
-				messageSzie = 25;
-			}
-			else if (purpuse == EPackagePurpuse.TransformRotation)
-			{
-				pos = null;
-				rot = MemoryMarshal.Read<Quaternion>(byteSpan.Slice(1, 16));
-				ID = MemoryMarshal.Read<Vector3>(byteSpan.Slice(17));
-				messageSzie = 29;
-			}
-			else
-				throw new("FUCKED CONSTURCTOR");
-		}
-		public ReadOnlySpan<byte> GetBinaryRepresentation()
-		{
-			Span<byte> res = new byte[messageSzie];
-			res[0] = (byte)purpuse;
-
-			if (purpuse == EPackagePurpuse.TransformPosRot)
-			{
-				MemoryMarshal.Cast<byte, Vector3>(res.Slice(1, 12))[0] = pos.Value;
-				MemoryMarshal.Cast<byte, Quaternion>(res.Slice(13, 16))[0] = rot.Value;
-				MemoryMarshal.Cast<byte, Vector3>(res.Slice(29, 12))[0] = ID;
-			}
-			else if (purpuse == EPackagePurpuse.TransformPosition)
-			{
-				MemoryMarshal.Cast<byte, Vector3>(res.Slice(1, 12))[0] = pos.Value;
-				MemoryMarshal.Cast<byte, Vector3>(res.Slice(13, 12))[0] = ID;
-			}
-			else if (purpuse == EPackagePurpuse.TransformRotation)
-			{
-				MemoryMarshal.Cast<byte, Quaternion>(res.Slice(1, 16))[0] = rot.Value;
-				MemoryMarshal.Cast<byte, Vector3>(res.Slice(17, 12))[0] = ID;
-			}
-			else
-				throw new("FUCKED CONSTURCTOR");
-			return res;
-		}
-	}
-	public struct ActionInvokeMessage
-	{
-		public const byte purpose = (byte)EPackagePurpuse.Action;
-		public const int messageSzie = 16;
+		const byte purpose = (byte)EPackagePurpuse.Action;
+		const int messageSzie = 16; // ???
 		public readonly Vector3 ID;
 		public readonly int Index;
 		public ActionInvokeMessage(in Vector3 id, in int index)

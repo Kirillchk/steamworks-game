@@ -11,23 +11,17 @@ public class P2PBase : MonoBehaviour
 		Action
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
-	internal static List<TransformMessage> transformMessages = new();
+	internal static List<byte> TransformBulk = new() { (byte)EBulkPackage.Transform };
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<ActionInvokeMessage> networkActions = new();
     protected HSteamNetConnection connection;
     protected bool isActive = false;
 	void LateUpdate()
 	{
-		if(transformMessages.Count != 0) {
-			const int maxMessageSize = 41;
-			List<byte> bulk = new(transformMessages.Count * maxMessageSize + 1)
-			{
-				(byte)EBulkPackage.Transform
-			};
-			foreach(TransformMessage message in transformMessages)
-				bulk.AddRange(message.GetBinaryRepresentation().ToArray());
-			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
-			transformMessages.Clear();
+		if (TransformBulk.Count != 0)
+		{
+			SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
+			TransformBulk = new() { (byte)EBulkPackage.Transform };
 		}
 
 		if(networkActions.Count != 0) 
@@ -96,26 +90,21 @@ public class P2PBase : MonoBehaviour
 		switch(bulkPurpose){
 			case EBulkPackage.Transform:
 			{
-				int position = 0;
-				
-				while (position < bulkData.Length)
+				for (int i = 0; i < bulkData.Length; i += 32)
 				{
-					EPackagePurpuse purpose = (EPackagePurpuse)bulkData[position];
-						
-					int messageSize = purpose switch
+					Span<byte> span = bulkData[i..(i + 32)];
+					if (span[i] == TransformRot.Purpuse)
 					{
-						EPackagePurpuse.TransformOnly => 41,
-						EPackagePurpuse.TransformPosition => 25,
-						EPackagePurpuse.TransformRotation => 29,
-						_ => throw new InvalidOperationException($"Unknown message type: {purpose}")
-					};
-
-					byte[] messageBytes = new byte[messageSize];
-					Array.Copy(bulkData, position, messageBytes, 0, messageSize);
-					position += messageSize;
-					
-					TransformMessage transformMessage = new (messageBytes);
-					networkTransforms[transformMessage.ID].MoveToSync(transformMessage.rot, transformMessage.pos);
+						var inst = MemoryMarshal.Read<TransformRot>(span);
+						networkTransforms[inst.ID].MoveToSync(inst.rot);
+						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.rot}");
+					}
+					else if (span[i] == TransformPos.Purpuse)
+					{
+						var inst = MemoryMarshal.Read<TransformPos>(span);
+						networkTransforms[inst.ID].MoveToSync(null, inst.pos);
+						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.pos}");
+					}
 				}
 				break;
 			}
