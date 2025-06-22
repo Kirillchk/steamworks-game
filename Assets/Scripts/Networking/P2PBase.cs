@@ -18,7 +18,7 @@ public class P2PBase : MonoBehaviour
     protected bool isActive = false;
 	void LateUpdate()
 	{
-		if (TransformBulk.Count != 0)
+		if (TransformBulk.Count > 1)
 		{
 			SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
 			TransformBulk = new() { (byte)EBulkPackage.Transform };

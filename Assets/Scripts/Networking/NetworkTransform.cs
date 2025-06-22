@@ -1,9 +1,6 @@
 using UnityEngine;
 using P2PMessages;
-using System;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
 public class NetworkTransform : MonoBehaviour
 {
 	[SerializeField] Vector3 ID;
