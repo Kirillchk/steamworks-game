@@ -46,8 +46,19 @@ public class P2PBase : MonoBehaviour
         }
         if (audioFrame.samples != null)
         {
-            Span<byte> span = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref audioFrame, 1));
-            SendMessageToConnection(span.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+            int size = Marshal.SizeOf(audioFrame);
+            byte[] arr = new byte[size];
+            IntPtr ptr = IntPtr.Zero;
+            try
+            {
+                ptr = Marshal.AllocHGlobal(size);
+                Marshal.StructureToPtr(audioFrame, ptr, true);
+                Marshal.Copy(ptr, arr, 0, size);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
+            }
             audioFrame.samples = null;
         }
 	}
@@ -135,7 +146,20 @@ public class P2PBase : MonoBehaviour
 			}
             case EBulkPackage.Audio:
             {
-                OnAudioRecieve?.Invoke(MemoryMarshal.Read<AudioFrame>(bulkData.AsSpan()));
+                AudioFrame audioFrame = new AudioFrame();
+                int size = Marshal.SizeOf(audioFrame);
+                IntPtr ptr = IntPtr.Zero;
+                try
+                {
+                    ptr = Marshal.AllocHGlobal(size);
+                    Marshal.Copy(bulkData, 0, ptr, size);
+                    audioFrame = (AudioFrame)Marshal.PtrToStructure(ptr, audioFrame.GetType());
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(ptr);
+                }
+                OnAudioRecieve?.Invoke(audioFrame);
                 break;
             }
 			default: 
