@@ -1,9 +1,12 @@
-﻿namespace Adrenak.UniVoice {
+﻿using System.Runtime.InteropServices;
+
+namespace Adrenak.UniVoice {
     [System.Serializable]
     /// <summary>
     /// A data structure representing the audio transmitted over the network.
     /// </summary>
-    public struct AudioFrame {
+    public struct AudioFrame
+    {
         public const byte id = 2;
         /// <summary>
         /// The frequency (or sampling rate) of the audio
@@ -14,7 +17,6 @@
         /// The number of channels in the audio
         /// </summary>
         public int channelCount;
-
         /// <summary>
         /// A byte array representing the audio data
         /// </summary>
