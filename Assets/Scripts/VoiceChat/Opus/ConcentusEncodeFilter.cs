@@ -75,7 +75,6 @@ namespace Adrenak.UniVoice.Filters {
             if (encodeResult > 0) {
                 floatsToBytes = encoded.ToArray();
                 return new AudioFrame {
-                    timestamp = input.timestamp,
                     channelCount = inputChannels,
                     samples = floatsToBytes,
                     frequency = (int)SamplingFrequency
@@ -83,7 +82,6 @@ namespace Adrenak.UniVoice.Filters {
             }
             else {
                 return new AudioFrame {
-                    timestamp = input.timestamp,
                     channelCount = inputChannels,
                     samples = new byte[0],
                     frequency = (int)SamplingFrequency

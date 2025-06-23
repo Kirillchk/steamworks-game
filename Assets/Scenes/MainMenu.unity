@@ -1265,7 +1265,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1997175891}
+      - m_Target: {fileID: 1997175887}
         m_TargetAssemblyTypeName: LobbyManager, Assembly-CSharp
         m_MethodName: HostLobbyButton
         m_Mode: 1
@@ -1315,51 +1315,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 533587363}
   m_CullTransparentMesh: 1
---- !u!1 &615175678
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 615175680}
-  - component: {fileID: 615175679}
-  m_Layer: 0
-  m_Name: Sample
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &615175679
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 615175678}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18b797d993559ba4fb4728b327509716, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  micAudioSource: {fileID: 878770772}
---- !u!4 &615175680
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 615175678}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1193.8038, y: -77.419174, z: 1526.2091}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &739453037
 GameObject:
   m_ObjectHideFlags: 0
@@ -1684,13 +1639,15 @@ GameObject:
   - component: {fileID: 878770774}
   - component: {fileID: 878770773}
   - component: {fileID: 878770772}
+  - component: {fileID: 878770776}
+  - component: {fileID: 878770777}
   m_Layer: 0
   m_Name: MyMic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &878770772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1827,6 +1784,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &878770776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878770771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18b797d993559ba4fb4728b327509716, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  micAudioSource: {fileID: 878770772}
+--- !u!114 &878770777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878770771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2b17312dae0bb04f96a9d4c897078a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &901445322
 GameObject:
   m_ObjectHideFlags: 0
@@ -2481,7 +2463,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1997175887}
         m_TargetAssemblyTypeName: LobbyManager, Assembly-CSharp
         m_MethodName: JoinLobbyButton
         m_Mode: 1
@@ -2995,9 +2977,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1997175889}
   - component: {fileID: 1997175887}
-  - component: {fileID: 1997175893}
   - component: {fileID: 1997175895}
   - component: {fileID: 1997175896}
+  - component: {fileID: 1997175897}
   m_Layer: 0
   m_Name: Manager
   m_TagString: MainManager
@@ -3035,18 +3017,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1997175893
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997175886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ab2c5881a7a73d4a9ad4421962366f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &1997175895
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3156,6 +3126,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e486f8363de69314b8d479cd50373743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1997175897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997175886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a82d3472faf00b4cbdc484cf6d436a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2030833163
 GameObject:
   m_ObjectHideFlags: 0
@@ -3203,4 +3185,3 @@ SceneRoots:
   - {fileID: 1874721034}
   - {fileID: 1997175889}
   - {fileID: 878770775}
-  - {fileID: 615175680}

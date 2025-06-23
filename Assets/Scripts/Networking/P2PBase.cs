@@ -4,43 +4,65 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using P2PMessages;
+using Adrenak.UniVoice;
+using UnityEditor;
+using Adrenak.UniMic;
+using Unity.VisualScripting;
 public class P2PBase : MonoBehaviour
 {
-	enum EBulkPackage : byte {
-		Transform,
-		Action
+    enum EBulkPackage : byte
+    {
+        Transform,
+        Action,
+        Audio
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
 	internal static List<TransformMessage> transformMessages = new();
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<ActionInvokeMessage> networkActions = new();
+    internal static List<AudioFrame> audioFrames = new();
+
     protected HSteamNetConnection connection;
     protected bool isActive = false;
-	void LateUpdate()
-	{
-		if(transformMessages.Count != 0) {
-			const int maxMessageSize = 41;
-			List<byte> bulk = new(transformMessages.Count * maxMessageSize + 1)
-			{
-				(byte)EBulkPackage.Transform
-			};
-			foreach(TransformMessage message in transformMessages)
-				bulk.AddRange(message.GetBinaryRepresentation().ToArray());
-			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
-			transformMessages.Clear();
-		}
+    void LateUpdate()
+    {
+        if (!isActive || connection == HSteamNetConnection.Invalid) return;
+        if (transformMessages.Count != 0)
+        {
+            const int maxMessageSize = 41;
+            List<byte> bulk = new(transformMessages.Count * maxMessageSize + 1)
+            {
+                (byte)EBulkPackage.Transform
+            };
+            foreach (TransformMessage message in transformMessages)
+                bulk.AddRange(message.GetBinaryRepresentation().ToArray());
+            SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
+            transformMessages.Clear();
+        }
 
-		if(networkActions.Count != 0) 
-		{
-			const int maxMessageSize = 16;
-			List<byte> bulk = new (networkActions.Count * maxMessageSize + 1)
-			{
-				(byte)EBulkPackage.Action
-			};
-			bulk.AddRange(MemoryMarshal.AsBytes(networkActions.ToArray().AsSpan()).ToArray());
-			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
-			networkActions.Clear();
-		}
+        if (networkActions.Count != 0)
+        {
+            const int maxMessageSize = 16;
+            List<byte> bulk = new(networkActions.Count * maxMessageSize + 1)
+            {
+                (byte)EBulkPackage.Action
+            };
+            bulk.AddRange(MemoryMarshal.AsBytes(networkActions.ToArray().AsSpan()).ToArray());
+            SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+            networkActions.Clear();
+        }
+        if (audioFrames.Count != 0)
+        {
+            int size = 0;
+            foreach (var frame in audioFrames)
+                size += Marshal.SizeOf(frame);
+            List<byte> bulk = new(size + 1)
+            {
+                (byte)EBulkPackage.Audio
+            };
+ 
+            SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+        }
 	}
 	void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
@@ -129,6 +151,18 @@ public class P2PBase : MonoBehaviour
 				}
 				break;
 			}
+            case EBulkPackage.Audio:
+            {
+                Span<AudioFrame> audioFrames = MemoryMarshal.Cast<byte, AudioFrame>(bulkData);
+                GameObject gameObjectMic = GameObject.Find("MyMic");
+                MicAudioSource micAudioSource = gameObjectMic.GetComponent<MicAudioSource>();
+                
+                foreach (AudioFrame audioFrame in audioFrames)
+                {
+                    micAudioSource.SendFrameToPlayer(audioFrame);
+                }
+                break;
+            }
 			default: 
 			{
 				Debug.LogError("UNSUPORTED BULK");

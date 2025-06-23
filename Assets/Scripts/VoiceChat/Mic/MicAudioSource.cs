@@ -1,6 +1,8 @@
 using UnityEngine;
 using Adrenak.UniVoice;
 using Adrenak.UniVoice.Filters;
+using System.Runtime.InteropServices;
+using System;
 namespace Adrenak.UniMic
 {
     /// <summary>
@@ -78,11 +80,17 @@ namespace Adrenak.UniMic
             audioFrame.channelCount = channels;
             audioFrame.samples = Utils.Bytes.FloatsToBytes(samples);
 
+            P2PBase.audioFrames.Add(audioFrame);
             encodedAudio = encoder.Run(audioFrame);
             decodedAudio = decoder.Run(encodedAudio);
 
             float[] audio = Utils.Bytes.BytesToFloats(decodedAudio.samples);
+            P2PBase.audioFrames.Add(audioFrame);
             StreamedAudioSource.Feed(frequency, channels, audio);
+        }
+        public void SendFrameToPlayer(AudioFrame audioFrame)
+        {
+            StreamedAudioSource.Feed(audioFrame.frequency, audioFrame.channelCount, Utils.Bytes.BytesToFloats(audioFrame.samples));
         }
         void OnStopRecording()
         {

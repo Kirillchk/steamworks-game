@@ -4,12 +4,7 @@
     /// A data structure representing the audio transmitted over the network.
     /// </summary>
     public struct AudioFrame {
-        /// <summary>
-        /// The UTC Unix timestamp (in ms) when the samples were captured.
-        /// The timestamp is local to the client the audio was captured from.
-        /// </summary>
-        public long timestamp;
-
+        public const byte id = 2;
         /// <summary>
         /// The frequency (or sampling rate) of the audio
         /// </summary>
