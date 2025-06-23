@@ -93,6 +93,7 @@ namespace Adrenak.UniMic
             decodedAudio = decoder.Run(audioFrame);
             float[] audio = Utils.Bytes.BytesToFloats(decodedAudio.samples);
             StreamedAudioSource.Feed(decodedAudio.frequency, decodedAudio.channelCount, audio);
+            Debug.Log(audio);
         }
 
         void OnStopRecording()
