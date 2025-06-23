@@ -8,6 +8,7 @@ using Adrenak.UniVoice;
 using UnityEditor;
 using Adrenak.UniMic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Dependencies.Sqlite;
 public class P2PBase : MonoBehaviour
 {
     enum EBulkPackage : byte
@@ -20,17 +21,17 @@ public class P2PBase : MonoBehaviour
 	internal static List<byte> TransformBulk = new() { (byte)EBulkPackage.Transform };
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<ActionInvokeMessage> networkActions = new();
-    internal static List<AudioFrame> audioFrames = new();
-
+    internal static AudioFrame audioFrame = new();
     protected HSteamNetConnection connection;
     protected bool isActive = false;
-	void LateUpdate()
-	{
-		if (TransformBulk.Count > 1)
-		{
-			SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
-			TransformBulk = new() { (byte)EBulkPackage.Transform };
-		}
+    public static event Action<AudioFrame> OnAudioRecieve;
+    void LateUpdate()
+    {
+        if (TransformBulk.Count > 1)
+        {
+            SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
+            TransformBulk = new() { (byte)EBulkPackage.Transform };
+        }
 
         if (networkActions.Count != 0)
         {
@@ -43,17 +44,11 @@ public class P2PBase : MonoBehaviour
             SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
             networkActions.Clear();
         }
-        if (audioFrames.Count != 0)
+        if (audioFrame.samples != null)
         {
-            int size = 0;
-            foreach (var frame in audioFrames)
-                size += Marshal.SizeOf(frame);
-            List<byte> bulk = new(size + 1)
-            {
-                (byte)EBulkPackage.Audio
-            };
- 
-            SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+            Span<byte> span = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref audioFrame, 1));
+            SendMessageToConnection(span.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+            audioFrame.samples = null;
         }
 	}
 	void SendMessageToConnection(in byte[] data, in int nSendFlags)
@@ -140,14 +135,7 @@ public class P2PBase : MonoBehaviour
 			}
             case EBulkPackage.Audio:
             {
-                Span<AudioFrame> audioFrames = MemoryMarshal.Cast<byte, AudioFrame>(bulkData);
-                GameObject gameObjectMic = GameObject.Find("MyMic");
-                MicAudioSource micAudioSource = gameObjectMic.GetComponent<MicAudioSource>();
-                
-                foreach (AudioFrame audioFrame in audioFrames)
-                {
-                    micAudioSource.SendFrameToPlayer(audioFrame);
-                }
+                OnAudioRecieve?.Invoke(MemoryMarshal.Read<AudioFrame>(bulkData.AsSpan()));
                 break;
             }
 			default: 

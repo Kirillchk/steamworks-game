@@ -73,25 +73,28 @@ namespace Adrenak.UniMic
             46080);
             decoder = new ConcentusDecodeFilter();
             audioFrame = new AudioFrame();
+            P2PBase.OnAudioRecieve += RecieveFrame;
         }
         void OnFrameCollected(int frequency, int channels, float[] samples)
         {
             audioFrame.frequency = frequency;
             audioFrame.channelCount = channels;
             audioFrame.samples = Utils.Bytes.FloatsToBytes(samples);
-
-            P2PBase.audioFrames.Add(audioFrame);
             encodedAudio = encoder.Run(audioFrame);
-            decodedAudio = decoder.Run(encodedAudio);
 
-            float[] audio = Utils.Bytes.BytesToFloats(decodedAudio.samples);
-            P2PBase.audioFrames.Add(audioFrame);
-            StreamedAudioSource.Feed(frequency, channels, audio);
+            SendFrame(encodedAudio);
         }
-        public void SendFrameToPlayer(AudioFrame audioFrame)
+        void SendFrame(AudioFrame audioFrame)
         {
-            StreamedAudioSource.Feed(audioFrame.frequency, audioFrame.channelCount, Utils.Bytes.BytesToFloats(audioFrame.samples));
+            P2PBase.audioFrame = audioFrame;
         }
+        void RecieveFrame(AudioFrame audioFrame)
+        {
+            decodedAudio = decoder.Run(audioFrame);
+            float[] audio = Utils.Bytes.BytesToFloats(decodedAudio.samples);
+            StreamedAudioSource.Feed(decodedAudio.frequency, decodedAudio.channelCount, audio);
+        }
+
         void OnStopRecording()
         {
             StreamedAudioSource.Stop();
