@@ -117,6 +117,7 @@ public class P2PBase : MonoBehaviour
 	}
     void ProcesData(EBulkPackage bulkPurpose, in byte[] bulkData)
     {
+        Debug.LogWarning(bulkPurpose);
         switch (bulkPurpose)
         {
             case EBulkPackage.Transform:
@@ -175,7 +176,7 @@ public class P2PBase : MonoBehaviour
                     break;
                 }
         }
-        Debug.LogWarning(bulkPurpose);
+        
 	}
     void Update() => TryRecive();
 	void Awake()
