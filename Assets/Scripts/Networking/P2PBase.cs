@@ -59,7 +59,7 @@ public class P2PBase : MonoBehaviour
             {
                 Marshal.FreeHGlobal(ptr);
             }
-            Debug.Log(audioFrame.samples);
+            SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
             audioFrame.samples = null;
             
         }
@@ -162,6 +162,7 @@ public class P2PBase : MonoBehaviour
                     Marshal.FreeHGlobal(ptr);
                 }
                 OnAudioRecieve?.Invoke(audioFrame);
+                Debug.Log(audioFrame.samples);
                 break;
             }
 			default: 
