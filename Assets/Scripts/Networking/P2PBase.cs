@@ -115,64 +115,67 @@ public class P2PBase : MonoBehaviour
             }
         }
 	}
-	void ProcesData(EBulkPackage bulkPurpose, in byte[] bulkData) {	
-		switch(bulkPurpose){
-			case EBulkPackage.Transform:
-			{
-				for (int i = 0; i < bulkData.Length; i += 32)
-				{
-					Span<byte> span = bulkData[i..(i + 32)];
-					if (span[i] == TransformRot.Purpuse)
-					{
-						var inst = MemoryMarshal.Read<TransformRot>(span);
-						networkTransforms[inst.ID].MoveToSync(inst.rot);
-						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.rot}");
-					}
-					else if (span[i] == TransformPos.Purpuse)
-					{
-						var inst = MemoryMarshal.Read<TransformPos>(span);
-						networkTransforms[inst.ID].MoveToSync(null, inst.pos);
-						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.pos}");
-					}
-				}
-				break;
-			}
-			case EBulkPackage.Action:
-			{
-				Span<ActionInvokeMessage> InvokeMessage = MemoryMarshal.Cast<byte, ActionInvokeMessage>(bulkData);
-				foreach(ActionInvokeMessage a in InvokeMessage)
-				{
-					NetworkActions entityInstance = networkActionScripts[a.ID];
-					entityInstance.TriggerByIndex(a.Index);
-				}
-				break;
-			}
+    void ProcesData(EBulkPackage bulkPurpose, in byte[] bulkData)
+    {
+        switch (bulkPurpose)
+        {
+            case EBulkPackage.Transform:
+                {
+                    for (int i = 0; i < bulkData.Length; i += 32)
+                    {
+                        Span<byte> span = bulkData[i..(i + 32)];
+                        if (span[i] == TransformRot.Purpuse)
+                        {
+                            var inst = MemoryMarshal.Read<TransformRot>(span);
+                            networkTransforms[inst.ID].MoveToSync(inst.rot);
+                            Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.rot}");
+                        }
+                        else if (span[i] == TransformPos.Purpuse)
+                        {
+                            var inst = MemoryMarshal.Read<TransformPos>(span);
+                            networkTransforms[inst.ID].MoveToSync(null, inst.pos);
+                            Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.pos}");
+                        }
+                    }
+                    break;
+                }
+            case EBulkPackage.Action:
+                {
+                    Span<ActionInvokeMessage> InvokeMessage = MemoryMarshal.Cast<byte, ActionInvokeMessage>(bulkData);
+                    foreach (ActionInvokeMessage a in InvokeMessage)
+                    {
+                        NetworkActions entityInstance = networkActionScripts[a.ID];
+                        entityInstance.TriggerByIndex(a.Index);
+                    }
+                    break;
+                }
             case EBulkPackage.Audio:
-            {
-                AudioFrame audioFrame = new AudioFrame();
-                int size = Marshal.SizeOf(audioFrame);
-                IntPtr ptr = IntPtr.Zero;
-                try
                 {
-                    ptr = Marshal.AllocHGlobal(size);
-                    Marshal.Copy(bulkData, 0, ptr, size);
-                    audioFrame = (AudioFrame)Marshal.PtrToStructure(ptr, audioFrame.GetType());
+                    AudioFrame audioFrame = new AudioFrame();
+                    int size = Marshal.SizeOf(audioFrame);
+                    IntPtr ptr = IntPtr.Zero;
+                    try
+                    {
+                        ptr = Marshal.AllocHGlobal(size);
+                        Marshal.Copy(bulkData, 0, ptr, size);
+                        audioFrame = (AudioFrame)Marshal.PtrToStructure(ptr, audioFrame.GetType());
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(ptr);
+                    }
+                    OnAudioRecieve?.Invoke(audioFrame);
+                    Debug.Log(audioFrame.samples);
+                    break;
                 }
-                finally
+            default:
                 {
-                    Marshal.FreeHGlobal(ptr);
+                    Debug.LogError("UNSUPORTED BULK");
+
+                    break;
                 }
-                OnAudioRecieve?.Invoke(audioFrame);
-                Debug.Log(audioFrame.samples);
-                break;
-            }
-			default: 
-			{
-				Debug.LogError("UNSUPORTED BULK");
-                Debug.LogError(bulkPurpose);
-				break;
-			}
-		}
+        }
+        Debug.LogWarning(bulkPurpose);
 	}
     void Update() => TryRecive();
 	void Awake()
