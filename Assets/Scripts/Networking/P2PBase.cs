@@ -45,25 +45,25 @@ public class P2PBase : MonoBehaviour
             SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
             networkActions.Clear();
         }
-        if (audioFrame.samples != null)
-        {
-            int size = Marshal.SizeOf(audioFrame);
-            byte[] arr = new byte[size];
-            IntPtr ptr = IntPtr.Zero;
-            try
-            {
-                ptr = Marshal.AllocHGlobal(size);
-                Marshal.StructureToPtr(audioFrame, ptr, true);
-                Marshal.Copy(ptr, arr, 0, size);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(ptr);
-            }
-            SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
-            audioFrame.samples = null;
+        // if (audioFrame.samples != null)
+        // {
+        //     int size = Marshal.SizeOf(audioFrame);
+        //     byte[] arr = new byte[size];
+        //     IntPtr ptr = IntPtr.Zero;
+        //     try
+        //     {
+        //         ptr = Marshal.AllocHGlobal(size);
+        //         Marshal.StructureToPtr(audioFrame, ptr, true);
+        //         Marshal.Copy(ptr, arr, 0, size);
+        //     }
+        //     finally
+        //     {
+        //         Marshal.FreeHGlobal(ptr);
+        //     }
+        //     SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
+        //     audioFrame.samples = null;
             
-        }
+        // }
 	}
 	void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
