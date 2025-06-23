@@ -59,8 +59,9 @@ public class P2PBase : MonoBehaviour
             {
                 Marshal.FreeHGlobal(ptr);
             }
-            audioFrame.samples = null;
             Debug.Log(audioFrame.samples);
+            audioFrame.samples = null;
+            
         }
 	}
 	void SendMessageToConnection(in byte[] data, in int nSendFlags)
