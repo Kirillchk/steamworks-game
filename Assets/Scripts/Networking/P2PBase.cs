@@ -48,7 +48,7 @@ public class P2PBase : MonoBehaviour
         if (audioFrame.samples != null)
         {
 
-            int size = audioFrame.samples.Length + sizeof(byte) + sizeof(int) * 2;
+            int size = Marshal.SizeOf(audioFrame);
             Debug.Log(size);
             byte[] arr = new byte[size];
             IntPtr ptr = IntPtr.Zero;
@@ -64,7 +64,7 @@ public class P2PBase : MonoBehaviour
                 Marshal.FreeHGlobal(ptr);
             }
             SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
-            Debug.Log("Size:"+arr.Length);
+            Debug.Log("Size:"+size);
             Debug.Log("bytes");
             foreach (byte b in arr)
                 Debug.Log(b);
