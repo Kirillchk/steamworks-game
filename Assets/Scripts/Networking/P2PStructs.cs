@@ -48,7 +48,7 @@ namespace P2PMessages
 	public struct ActionInvokeMessage : INetworkMessage
 	{
 		const byte purpose = (byte)EPackagePurpuse.Action;
-		const int messageSzie = 16; // ???
+		const int messageSzie = 16; // ??? // da
 		public readonly Vector3 ID;
 		public readonly int Index;
 		public ActionInvokeMessage(in Vector3 id, in int index)

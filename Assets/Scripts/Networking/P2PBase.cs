@@ -42,36 +42,38 @@ public class P2PBase : MonoBehaviour
                 (byte)EBulkPackage.Action
             };
             bulk.AddRange(MemoryMarshal.AsBytes(networkActions.ToArray().AsSpan()).ToArray());
-            Debug.Log("kirills size:" + Marshal.SizeOf(networkActions[0]));
             SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
             networkActions.Clear();
         }
-        // if (audioFrame.samples != null)
-        // {
+        if (audioFrame.samples != null)
+        {
 
-        //     int size = Marshal.SizeOf(audioFrame);
-        //     byte[] arr = new byte[size];
-        //     IntPtr ptr = IntPtr.Zero;
-        //     try
-        //     {
-        //         ptr = Marshal.AllocHGlobal(size);
-        //         Marshal.StructureToPtr(audioFrame, ptr, true);
+            int size = Marshal.SizeOf(audioFrame);
+            byte[] arr = new byte[size];
+            IntPtr ptr = IntPtr.Zero;
+            try
+            {
+                ptr = Marshal.AllocHGlobal(size);
+                Marshal.StructureToPtr(audioFrame, ptr, true);
 
-        //         Marshal.Copy(ptr, arr, 0, size);
-        //     }
-        //     finally
-        //     {
-        //         Marshal.FreeHGlobal(ptr);
-        //     }
-        //     SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
-        //     Debug.Log("Size:"+size);
-        //     Debug.Log("bytes");
-        //     foreach (byte b in arr)
-        //         Debug.Log(b);
-        //     audioFrame.samples = null;
-            
-            
-        // }
+                Marshal.Copy(ptr, arr, 0, size);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
+            }
+            SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
+            // Debug.Log("Size:" + size);
+            // Debug.Log("bytes");
+            // foreach (byte b in arr)
+            //     Debug.Log(b);
+            audioFrame.samples = null;
+            AudioFrame[] frame = new AudioFrame[1];
+            frame[0] = audioFrame;
+            Span<byte> bytes = MemoryMarshal.AsBytes(frame.AsSpan());
+            byte[] array = bytes.ToArray();
+            Debug.Log("Size:"+array.Length);
+        }
 	}
 	void SendMessageToConnection(in byte[] data, in int nSendFlags)
     {
