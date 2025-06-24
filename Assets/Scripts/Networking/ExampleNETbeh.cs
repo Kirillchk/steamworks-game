@@ -1,16 +1,13 @@
+using System;
+using System.ComponentModel;
 using UnityEngine;
 
 public class ExampleNETbeh : NetworkActions
 {
+	Action<int> logAction = new Action<int>(x => Debug.Log(x));
 	[ContextMenu("Test")]
 	void SUS()
 	{
-		TriggerSync(Test);
-	}
-	[ContextMenu("Test2")]
-	[CanTriggerSync]
-	public void Test()
-	{
-		Debug.Log(actions.Count);
+		InvokeFromBytes(BitConverter.GetBytes(42),logAction);
 	}
 }
