@@ -40,40 +40,30 @@ public class P2PBase : MonoBehaviour
 		{
 			case EBulkPackage.Transform:
 			{
-					string cont1 = "";
-					int ind1 = 0;
-					foreach (var byt in bulkData)
-						cont1 += $"{ind1}:{byt} ";
-					Debug.Log($"length:{bulkData.Length} Contains[ {cont1}]");
 				for (int i = 0; i < bulkData.Length; i += 32)
+				{
+					Span<byte> span = bulkData.AsSpan(i, 32);
+
+					byte purpuse = span[0];
+					if (purpuse == TransformRot.Purpuse)
 					{
-						Span<byte> span = bulkData.AsSpan(i, 32);
-
-						string cont2 = "";
-						int ind2 = 0;
-						foreach (var byt in span)
-							cont2 += $"{ind2}:{byt} ";
-						Debug.Log($"BULK{i} length:{span.Length} Contains[ {cont2}]");
-
-						if (span[0] == TransformRot.Purpuse)
-							{
-								var inst = MemoryMarshal.Read<TransformRot>(span);
-								networkTransforms[inst.ID].RotateToSync(inst.rot);
-								Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.rot}");
-							}
-							else if (span[i] == TransformPos.Purpuse)
-							{
-								var inst = MemoryMarshal.Read<TransformPos>(span);
-								networkTransforms[inst.ID].MoveToSync(inst.pos);
-								Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.pos}");
-							}
-							else if (span[i] == TransformScl.Purpuse)
-							{
-								var inst = MemoryMarshal.Read<TransformScl>(span);
-								networkTransforms[inst.ID].ScaleToSync(inst.scl);
-								Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.scl}");
-							}
+						var inst = MemoryMarshal.Read<TransformRot>(span);
+						networkTransforms[inst.ID].RotateToSync(inst.rot);
+						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.rot}");
 					}
+					else if (purpuse == TransformPos.Purpuse)
+					{
+						var inst = MemoryMarshal.Read<TransformPos>(span);
+						networkTransforms[inst.ID].MoveToSync(inst.pos);
+						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.pos}");
+					}
+					else if (purpuse == TransformScl.Purpuse)
+					{
+						var inst = MemoryMarshal.Read<TransformScl>(span);
+						networkTransforms[inst.ID].ScaleToSync(inst.scl);
+						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.scl}");
+					}
+				}
 				break;
 			}
 			case EBulkPackage.Action:
