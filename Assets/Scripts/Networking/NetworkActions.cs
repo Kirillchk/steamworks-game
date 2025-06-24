@@ -4,12 +4,16 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using P2PMessages;
+using System.Threading.Tasks;
+
 public class NetworkActions : MonoBehaviour
 {
     Vector3 ID;
 	protected List<Action> actions = new();
-    void Awake()
+    async void Awake()
 	{
+		//TODO: FIX! This should not be necessary
+		await Task.Yield();
 		ID = GetComponent<NetworkIdentity>().uniqueVector;
 		P2PBase.networkActionScripts[ID] = this;
 		
@@ -17,13 +21,22 @@ public class NetworkActions : MonoBehaviour
 			.Where(m => m.GetCustomAttributes(typeof(CanTriggerSync), false).Length > 0);
         foreach (var method in methods)
 			actions.Add((Action)Delegate.CreateDelegate(typeof(Action), this, method));
+		Debug.Log($"{methods.Count()}, {ID}");
 	}
 	internal void TriggerSync(Action a)
 	{
-		if (!actions.Contains(a)) 
+		if (!actions.Contains(a))
 			return;
 		a.Invoke();
-		P2PBase.networkActions.Add(new ActionInvokeMessage(ID,actions.IndexOf(a)));
+		P2PBase.ActionBulk.AddRange(
+			INetworkMessage.StructToSpan(
+				new ActionInvokeMessage()
+				{
+					ID = ID,
+					Index = actions.IndexOf(a)
+				}
+			).ToArray()
+		);
 	}
 	internal void TriggerByIndex(in int index){
 		if (index>actions.Count)

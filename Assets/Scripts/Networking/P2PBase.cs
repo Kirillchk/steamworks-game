@@ -11,83 +11,32 @@ public class P2PBase : MonoBehaviour
 		Action
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
-	internal static List<byte> TransformBulk = new() { (byte)EBulkPackage.Transform };
+	internal static List<byte> TransformBulk = new(1024) { (byte)EBulkPackage.Transform };
+
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
-	internal static List<ActionInvokeMessage> networkActions = new();
-    protected HSteamNetConnection connection;
-    protected bool isActive = false;
+	internal static List<byte> ActionBulk = new(64) { (byte)EBulkPackage.Action };
+
+	protected HSteamNetConnection connection;
+	protected bool isActive = false;
 	void LateUpdate()
 	{
 		if (TransformBulk.Count > 1)
 		{
 			SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
-			TransformBulk = new() { (byte)EBulkPackage.Transform };
+			// what is the most eeficient way to clear a list?
+			TransformBulk = new(1024) { (byte)EBulkPackage.Transform };
 		}
 
-		if(networkActions.Count != 0) 
+		if (ActionBulk.Count > 1)
 		{
-			const int maxMessageSize = 16;
-			List<byte> bulk = new (networkActions.Count * maxMessageSize + 1)
-			{
-				(byte)EBulkPackage.Action
-			};
-			bulk.AddRange(MemoryMarshal.AsBytes(networkActions.ToArray().AsSpan()).ToArray());
-			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
-			networkActions.Clear();
+			SendMessageToConnection(ActionBulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+			// what is the most eeficient way to clear a list?
+			ActionBulk = new(64) { (byte)EBulkPackage.Action };
 		}
 	}
-	void SendMessageToConnection(in byte[] data, in int nSendFlags)
-    {
-        if (!isActive || connection == HSteamNetConnection.Invalid)
-        {
-            Debug.LogError("Cannot send - no active connection!");
-            return;
-        }
-        GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-        try {
-            IntPtr pData = handle.AddrOfPinnedObject();
-            EResult result = SteamNetworkingSockets.SendMessageToConnection(
-                connection,
-                pData,
-                (uint)data.Length,
-                nSendFlags,
-                out long messageNumber
-            );
-            if (result != EResult.k_EResultOK)
-				Debug.LogError($"Failed to send message: {result}");
-            else 
-				Debug.Log($"Message sent successfully (ID: {messageNumber}, Size: {data.Length} bytes)");
-        } catch (Exception e) {
-            Debug.LogError($"Error sending message: {e}");
-        } finally {
-            handle.Free();
-        }
-    }
-	void TryRecive(){
-        if (!isActive || connection == HSteamNetConnection.Invalid)
-            return;
-        // Receive messages
-        IntPtr[] messages = new IntPtr[10];
-        int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
-        
-        if (numMessages > 0)
-			Debug.Log($"Received {numMessages} messages this frame");
-        for (int i = 0; i < numMessages; i++)
-        {
-            try {
-                SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
-                byte[] data = new byte[message.m_cbSize];
-                Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
-				ProcesData((EBulkPackage)data[0], data[1..]);
-            } catch (Exception e) {
-                Debug.LogError($"Error processing message: {e}");
-            } finally {
-                SteamNetworkingMessage_t.Release(messages[i]);
-            }
-        }
-	}
 	void ProcesData(EBulkPackage bulkPurpose, in byte[] bulkData) {	
-		switch(bulkPurpose){
+		switch(bulkPurpose)
+		{
 			case EBulkPackage.Transform:
 			{
 				for (int i = 0; i < bulkData.Length; i += 32)
@@ -96,25 +45,31 @@ public class P2PBase : MonoBehaviour
 					if (span[i] == TransformRot.Purpuse)
 					{
 						var inst = MemoryMarshal.Read<TransformRot>(span);
-						networkTransforms[inst.ID].MoveToSync(inst.rot);
+						networkTransforms[inst.ID].RotateToSync(inst.rot);
 						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.rot}");
 					}
 					else if (span[i] == TransformPos.Purpuse)
 					{
 						var inst = MemoryMarshal.Read<TransformPos>(span);
-						networkTransforms[inst.ID].MoveToSync(null, inst.pos);
+						networkTransforms[inst.ID].MoveToSync(inst.pos);
 						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.pos}");
+					}
+					else if (span[i] == TransformScl.Purpuse)
+					{
+						var inst = MemoryMarshal.Read<TransformScl>(span);
+						networkTransforms[inst.ID].ScaleToSync(inst.scl);
+						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.scl}");
 					}
 				}
 				break;
 			}
 			case EBulkPackage.Action:
 			{
-				Span<ActionInvokeMessage> InvokeMessage = MemoryMarshal.Cast<byte, ActionInvokeMessage>(bulkData);
-				foreach(ActionInvokeMessage a in InvokeMessage)
+				for (int i = 0; i < bulkData.Length; i += 16)
 				{
-					NetworkActions entityInstance = networkActionScripts[a.ID];
-					entityInstance.TriggerByIndex(a.Index);
+					Span<byte> span = bulkData[i..(i + 16)];
+					var inst = MemoryMarshal.Read<ActionInvokeMessage>(span);
+					networkActionScripts[inst.ID].TriggerByIndex(inst.Index);
 				}
 				break;
 			}
@@ -125,80 +80,129 @@ public class P2PBase : MonoBehaviour
 			}
 		}
 	}
-    void Update() => TryRecive();
+	void SendMessageToConnection(in byte[] data, in int nSendFlags)
+	{
+		if (!isActive || connection == HSteamNetConnection.Invalid)
+		{
+			Debug.LogError("Cannot send - no active connection!");
+			return;
+		}
+		GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
+		try {
+			IntPtr pData = handle.AddrOfPinnedObject();
+			EResult result = SteamNetworkingSockets.SendMessageToConnection(
+				connection,
+				pData,
+				(uint)data.Length,
+				nSendFlags,
+				out long messageNumber
+			);
+			if (result != EResult.k_EResultOK)
+				Debug.LogError($"Failed to send message: {result}");
+			else 
+				Debug.Log($"Message sent successfully (ID: {messageNumber}, Size: {data.Length} bytes)");
+		} catch (Exception e) {
+			Debug.LogError($"Error sending message: {e}");
+		} finally {
+			handle.Free();
+		}
+	}
+	void TryRecive(){
+		if (!isActive || connection == HSteamNetConnection.Invalid)
+			return;
+		// Receive messages
+		IntPtr[] messages = new IntPtr[10];
+		int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
+		
+		if (numMessages > 0)
+			Debug.Log($"Received {numMessages} messages this frame");
+		for (int i = 0; i < numMessages; i++)
+		{
+			try {
+				SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
+				byte[] data = new byte[message.m_cbSize];
+				Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
+				ProcesData((EBulkPackage)data[0], data[1..]);
+			} catch (Exception e) {
+				Debug.LogError($"Error processing message: {e}");
+			} finally {
+				SteamNetworkingMessage_t.Release(messages[i]);
+			}
+		}
+	}
+	void Update() => TryRecive();
 	void Awake()
-    {
-        if (!SteamManager.Initialized)
-        {
-            Debug.LogError("Steam not initialized!");
-            return;
-        }
+	{
+		if (!SteamManager.Initialized)
+		{
+			Debug.LogError("Steam not initialized!");
+			return;
+		}
 
-        try {
-            SteamNetworkingUtils.InitRelayNetworkAccess();
-        } catch (Exception e) {
-            Debug.LogError($"Network initialization error: {e}");
-        }
+		try {
+			SteamNetworkingUtils.InitRelayNetworkAccess();
+		} catch (Exception e) {
+			Debug.LogError($"Network initialization error: {e}");
+		}
 
-        DontDestroyOnLoad(gameObject);
-        
-        Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
-    }
+		DontDestroyOnLoad(gameObject);
+		
+		Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
+	}
 
-    void OnConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t callback)
-    {
-        Debug.Log($"Connection status changed:\n" +
+	void OnConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t callback)
+	{
+		Debug.Log($"Connection status changed:\n" +
 				$"State: {callback.m_info.m_eState}\n" +
 				$"Reason: {callback.m_info.m_eEndReason}\n" +
 				$"Remote: {callback.m_info.m_identityRemote.GetSteamID()}\n" +
 				$"OldState: {callback.m_eOldState}");
 
-        switch (callback.m_info.m_eState)
-        {
-            case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connecting:
-                if (callback.m_info.m_identityRemote.GetSteamID() != CSteamID.Nil && !isActive)
+		switch (callback.m_info.m_eState)
+		{
+			case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connecting:
+				if (callback.m_info.m_identityRemote.GetSteamID() != CSteamID.Nil && !isActive)
 				{
-                    if (SteamNetworkingSockets.AcceptConnection(callback.m_hConn) == EResult.k_EResultOK)
-                    {
-                        connection = callback.m_hConn;
-                        isActive = true;
-                        Debug.Log("Accepted incoming connection");
-                    }
-                    else
-                    {
-                        Debug.LogError("Failed to accept connection");
-                        // SteamNetworkingSockets.CloseConnection(callback.m_hConn, 0, "Failed to accept", false);
-                    }
+					if (SteamNetworkingSockets.AcceptConnection(callback.m_hConn) == EResult.k_EResultOK)
+					{
+						connection = callback.m_hConn;
+						isActive = true;
+						Debug.Log("Accepted incoming connection");
+					}
+					else
+					{
+						Debug.LogError("Failed to accept connection");
+						// SteamNetworkingSockets.CloseConnection(callback.m_hConn, 0, "Failed to accept", false);
+					}
 				}
-                break;
-                
-            case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
+				break;
+				
+			case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
 				if (isActive) 
 					Debug.Log("already active");
 				else {
 					bool result = SteamNetworkingSockets.AcceptConnection(callback.m_hConn) == EResult.k_EResultOK;
 					Debug.Log(result?"Successfully acepted":"failed wtf");
 				}
-                break;
-                
-            case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
-                Debug.Log("Connection closed");
 				break;
-            case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
-                Debug.Log("Connection closed: " + callback.m_info.m_szEndDebug);
-                SteamNetworkingSockets.CloseConnection(callback.m_hConn, 0, "Connection closed", false);
-                isActive = false;
-                break;
-        }
-    }
-	
-    void OnDestroy()
-    {
-        if (connection != HSteamNetConnection.Invalid)
-        {
-            SteamNetworkingSockets.CloseConnection(connection, 0, "Shutting down", false);
-            connection = HSteamNetConnection.Invalid;
-        }
-    }
+				
+			case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
+				Debug.Log("Connection closed");
+				break;
+			case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
+				Debug.Log("Connection closed: " + callback.m_info.m_szEndDebug);
+				SteamNetworkingSockets.CloseConnection(callback.m_hConn, 0, "Connection closed", false);
+				isActive = false;
+				break;
+		}
+	}
+	void OnDestroy()
+	{
+		if (connection != HSteamNetConnection.Invalid)
+		{
+			SteamNetworkingSockets.CloseConnection(connection, 0, "Shutting down", false);
+			connection = HSteamNetConnection.Invalid;
+		}
+	}
 }
 

@@ -17,14 +17,15 @@ namespace P2PMessages
 	}
 	enum EPackagePurpuse : byte
 	{
-		TransformPosRot,
 		TransformPosition,
 		TransformRotation,
+		TransformScale,
 		Action
 	}
 	
 	public interface INetworkMessage
 	{
+		public static byte Purpuse;
 		// TODO: should not be static 
 		public static ReadOnlySpan<byte> StructToSpan<T>(T inp) where T : unmanaged
 			=> MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref inp, 1));
@@ -45,16 +46,19 @@ namespace P2PMessages
 		public Vector3 ID;
 		public Quaternion rot;
 	}
+	[StructLayout(LayoutKind.Sequential, Size = 32)]
+	public struct TransformScl : INetworkMessage
+	{
+		public static byte Purpuse = (byte)EPackagePurpuse.TransformScale;
+		public byte purpuse;
+		public Vector3 ID;
+		public Vector3 scl;
+	}
+	[StructLayout(LayoutKind.Sequential, Size = 16)]
 	public struct ActionInvokeMessage : INetworkMessage
 	{
-		const byte purpose = (byte)EPackagePurpuse.Action;
-		const int messageSzie = 16; // ???
-		public readonly Vector3 ID;
-		public readonly int Index;
-		public ActionInvokeMessage(in Vector3 id, in int index)
-		{
-			ID = id;
-			Index = index;
-		}
+		public static byte Purpuse = (byte)EPackagePurpuse.Action;
+		public Vector3 ID;
+		public int Index;
 	}
 }
