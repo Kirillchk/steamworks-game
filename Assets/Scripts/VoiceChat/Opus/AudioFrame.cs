@@ -7,7 +7,7 @@ namespace Adrenak.UniVoice {
     /// </summary>
     public struct AudioFrame
     {
-        public const byte id = 2;
+        public byte id;
         /// <summary>
         /// The frequency (or sampling rate) of the audio
         /// </summary>
