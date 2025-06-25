@@ -4,18 +4,19 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using P2PMessages;
-using UnityEngine.UIElements;
 public class P2PBase : MonoBehaviour
 {
 	enum EBulkPackage : byte {
 		Transform,
-		Action
+		Action,
+		Delegate
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
-	internal static List<byte> TransformBulk = new(1024) { (byte)EBulkPackage.Transform };
+	internal static List<byte> TransformBulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
 
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
-	internal static List<byte> ActionBulk = new(64) { (byte)EBulkPackage.Action };
+	internal static List<byte> ActionBulk = new(64 + 1) { (byte)EBulkPackage.Action };
+	internal static List<byte> DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
 
 	protected HSteamNetConnection connection;
 	protected bool isActive = false;
@@ -27,12 +28,16 @@ public class P2PBase : MonoBehaviour
 			// what is the most eeficient way to clear a list?
 			TransformBulk = new(1024) { (byte)EBulkPackage.Transform };
 		}
-
 		if (ActionBulk.Count > 1)
 		{
 			SendMessageToConnection(ActionBulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
-			// what is the most eeficient way to clear a list?
+			// what is the most efficient way to clear a list?
 			ActionBulk = new(64) { (byte)EBulkPackage.Action };
+		}
+		if (DelegateBulk.Count > 1)
+		{
+			SendMessageToConnection(DelegateBulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+			DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
 		}
 	}
 	void ProcesData(EBulkPackage bulkPurpose, in byte[] bulkData) {	
@@ -74,6 +79,21 @@ public class P2PBase : MonoBehaviour
 					var inst = MemoryMarshal.Read<ActionInvokeMessage>(span);
 					networkActionScripts[inst.ID].TriggerByIndex(inst.Index);
 				}
+				break;
+			}
+			case EBulkPackage.Delegate:
+			{
+				for (int i = 0; i < bulkData.Length; i += 20)
+				{
+					Span<byte> part1 = bulkData.AsSpan(i, 20);
+
+					Vector3 id = MemoryMarshal.Read<Vector3>(part1[0..12]);
+					int index = MemoryMarshal.Read<int>(part1[12..16]);
+					int length = MemoryMarshal.Read<int>(part1[16..20]);
+					byte[] args = bulkData[(i + 20)..(i + 20 + length)];
+					i += length;
+					networkActionScripts[id].InvokeFromBytes(index, args);
+				}	
 				break;
 			}
 			default: 

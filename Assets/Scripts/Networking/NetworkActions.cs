@@ -6,11 +6,10 @@ using UnityEngine;
 using P2PMessages;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 
 public class NetworkActions : MonoBehaviour
 {
+	// TODO: AAAAAAAAAAAAAAAAAAAAAA wtf is this piss
     Vector3 ID;
 	protected List<Action> actions = new();
 	protected List<Delegate> delegates = new();
@@ -27,36 +26,57 @@ public class NetworkActions : MonoBehaviour
 			actions.Add((Action)Delegate.CreateDelegate(typeof(Action), this, method));
 		Debug.Log($"{methods.Count()}, {ID}");
 		
-		//P2PBase.networkActionScripts[ID] = this;
 		var methodsWargs = GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
 			.Where(m => m.GetCustomAttributes(typeof(CanTriggerSyncWargs), false).Length > 0);
 		foreach (var method in methodsWargs)
-			actions.Add((Action)Delegate.CreateDelegate(typeof(Delegate), this, method));
+			delegates.Add((Action)Delegate.CreateDelegate(typeof(Delegate), this, method));
 		Debug.Log($"{methods.Count()}, {ID}");
 	}
-	internal void TriggerSync(Action a)
+	// wraper
+	internal void TriggerSync(Action act)
 	{
-		if (!actions.Contains(a))
+		if (!actions.Contains(act))
 			return;
-		a.Invoke();
+		act.Invoke();
 		P2PBase.ActionBulk.AddRange(
 			INetworkMessage.StructToSpan(
 				new ActionInvokeMessage()
 				{
 					ID = ID,
-					Index = actions.IndexOf(a)
+					Index = actions.IndexOf(act)
 				}
 			).ToArray()
 		);
 	}
-	internal void TriggerByIndex(in int index){
-		if (index>actions.Count)
+	// for invoking method after package
+	internal void TriggerByIndex(in int index)
+	{
+		if (index > actions.Count)
 			return;
 		actions[index].Invoke();
 	}
-	
-	internal void InvokeFromBytes(byte[] data, Delegate targetMethod)
+	// wraper
+	internal void TriggerSyncWargs(Delegate del, byte[] data)
 	{
+		//Delegate del = delegates[ind];
+		if (!delegates.Contains(del))
+			return;
+		// NO
+		InvokeFromBytes(delegates.IndexOf(del), data);
+		P2PBase.DelegateBulk.AddRange(
+			new DelegateInvokeMessage()
+			{
+				ID = ID,
+				Index = delegates.IndexOf(del),
+				Length = data.Length,
+				Args = data
+			}.GetBinary()
+		);
+	}
+	// for invoking method after package
+	internal void InvokeFromBytes(int ind, byte[] data)
+	{
+		Delegate targetMethod = delegates[ind];
 		MethodInfo method = targetMethod.Method;
 		ParameterInfo[] parameters = method.GetParameters();
 
@@ -89,33 +109,21 @@ public class NetworkActions : MonoBehaviour
 				size += Marshal.SizeOf(param.ParameterType);
 			return size;
 		}
-	}
-
-	private static object BytesToStruct(ReadOnlySpan<byte> bytes, Type structType)
-	{
-		// Allocate unmanaged memory and copy bytes
-		IntPtr ptr = Marshal.AllocHGlobal(bytes.Length);
-		try
+		object BytesToStruct(ReadOnlySpan<byte> bytes, Type structType)
 		{
-			Marshal.Copy(bytes.ToArray(), 0, ptr, bytes.Length);
-			return Marshal.PtrToStructure(ptr, structType);
-		}
-		finally
-		{
-			Marshal.FreeHGlobal(ptr);
+			// Allocate unmanaged memory and copy bytes
+			IntPtr ptr = Marshal.AllocHGlobal(bytes.Length);
+			try
+			{
+				Marshal.Copy(bytes.ToArray(), 0, ptr, bytes.Length);
+				return Marshal.PtrToStructure(ptr, structType);
+			}
+			finally
+			{
+				Marshal.FreeHGlobal(ptr);
+			}
 		}
 	}
-
-
-	public static object SpanToStruct<T>(ReadOnlySpan<byte> bytes) where T : unmanaged
-	{
-		if (bytes.Length < Marshal.SizeOf<T>())
-			throw new ArgumentException("Byte array is too small for the target type", nameof(bytes));
-
-		return MemoryMarshal.Read<T>(bytes);
-	}
-
-
 	[AttributeUsage(AttributeTargets.Method)]
 	protected class CanTriggerSync : Attribute { }
 	[AttributeUsage(AttributeTargets.Method)]
