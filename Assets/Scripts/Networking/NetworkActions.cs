@@ -6,6 +6,7 @@ using UnityEngine;
 using P2PMessages;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Linq.Expressions;
 
 public class NetworkActions : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class NetworkActions : MonoBehaviour
 		var methodsWargs = GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
 			.Where(m => m.GetCustomAttributes(typeof(CanTriggerSyncWargs), false).Length > 0);
 		foreach (var method in methodsWargs)
-			delegates.Add((Action)Delegate.CreateDelegate(typeof(Delegate), this, method));
+			delegates.Add(Delegate.CreateDelegate(Expression.GetActionType(method.GetParameters().Select(p => p.ParameterType).ToArray()), this, method));
 		Debug.Log($"{methods.Count()}, {ID}");
 	}
 	// wraper
