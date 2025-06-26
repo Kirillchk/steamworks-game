@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Linq.Expressions;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using MessagePack;
 
 public class NetworkActions : MonoBehaviour
 {
@@ -86,14 +86,13 @@ public class NetworkActions : MonoBehaviour
 			// TODO: check if this is sexual harasment
 			if (objects == null || objects.Length == 0)
 				return Array.Empty<byte>();
-			List<byte> byb = new();
-			foreach (object o in objects)
-			{
-				Debug.Log(o);
-				byb.AddRange(JsonSerializer.Serialize(objects));
-			}
-			ReadOnlySpan<byte> StructToSpan<T>(T inp) where T : unmanaged
-				=> MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref inp, 1));
+			byte[] bytes = MessagePackSerializer.Serialize(objects);
+			deb += $"len in bytes:{bytes.Length}";
+			deb += "decrypted";
+			foreach (object o in MessagePackSerializer.Deserialize<object[]>(bytes))
+				deb += $"-{o}-";
+			Debug.Log(deb);
+			return bytes;
 		}
 	}
 	// for invoking method after package
