@@ -13,6 +13,14 @@ public class ExampleNETbeh : NetworkActions
 	{
 		TriggerSyncWargs(new Action(AFAF));
 	}
+	[ContextMenu("Test3")]
+	void sosat()
+	{
+		TriggerSyncWargs(new Action(AFAF));
+		TriggerSyncWargs(new Action<int, int>(Disentary), 1, 2);
+		TriggerSyncWargs(new Action<int, int>(Disentary), 1, 2);
+		TriggerSyncWargs(new Action(AFAF));
+	}
 	[CanTriggerSync]
 	public void Disentary(int num1, int num2)
 		=> Debug.Log($"num1{num1} num2{num2}");
