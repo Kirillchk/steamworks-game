@@ -33,7 +33,7 @@ public class NetworkActions : MonoBehaviour
 		Debug.Log($"{methods.Count()}, {ID}");
 	}
 	// wraper
-	internal void TriggerSyncWargs(in Delegate del, params object[] args)
+	internal void TriggerSync(in Delegate del, params object[] args)
 	{
 		del.DynamicInvoke(args);
 		byte[] data = MessagePackSerializer.Serialize(args);

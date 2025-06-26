@@ -54,13 +54,6 @@ namespace P2PMessages
 		public Vector3 ID;
 		public Vector3 scl;
 	}
-	[StructLayout(LayoutKind.Sequential, Size = 16)]
-	public struct ActionInvokeMessage : INetworkMessage
-	{
-		public static byte Purpuse = (byte)EPackagePurpuse.Action;
-		public Vector3 ID;
-		public int Index;
-	}
 	[StructLayout(LayoutKind.Sequential)]
 	public struct DelegateInvokeMessage : INetworkMessage
 	{
