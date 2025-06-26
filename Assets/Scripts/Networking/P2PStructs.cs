@@ -23,7 +23,6 @@ namespace P2PMessages
 		Action,
 		Delegate
 	}
-	
 	public interface INetworkMessage
 	{
 		public static byte Purpuse;
