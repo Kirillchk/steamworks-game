@@ -15,7 +15,7 @@ namespace Adrenak.UniVoice {
         public int frequency;
         [Key(2)]
         public int channelCount;
-        [IgnoreMember]
+        [Key(3)]
         public byte[] samples;
     }
 }
