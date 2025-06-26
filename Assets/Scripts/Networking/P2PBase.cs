@@ -112,8 +112,9 @@ public class P2PBase : MonoBehaviour
         {
             try {
                 SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
-                byte[] data = new byte[message.m_cbSize];
-                Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
+                int size = message.m_cbSize;
+                byte[] data = new byte[size];
+                Marshal.Copy(message.m_pData, data, 0, size);
 				ProcesData((EBulkPackage)data[0], data[1..]);
             } catch (Exception e) {
                 Debug.LogError($"Error processing message: {e}");
