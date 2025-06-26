@@ -25,9 +25,10 @@ public class P2PBase : MonoBehaviour
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<byte> ActionBulk = new(64 + 1) { (byte)EBulkPackage.Action };
 	internal static List<byte> DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
-	AudioFrame audioFrame = new AudioFrame();
+	public static AudioFrame audioFrame = new AudioFrame();
 	protected HSteamNetConnection connection;
 	protected bool isActive = false;
+	public static event Action<AudioFrame> OnAudioRecieve;
 	void LateUpdate()
 	{
 		if (TransformBulk.Count > 1)
@@ -46,6 +47,13 @@ public class P2PBase : MonoBehaviour
 		{
 			SendMessageToConnection(DelegateBulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
 			DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
+		}
+		if (audioFrame.samples != null)
+		{
+			byte[] bytes = MessagePackSerializer.Serialize(audioFrame);
+            SendMessageToConnection(bytes, (int)k_nSteamNetworkingSend.Reliable);
+			Debug.Log("bytes.Length"+bytes.Length);
+            audioFrame.samples = null;
 		}
 	}
 	void ProcesData(EBulkPackage bulkPurpose, in byte[] bulkData) {	
@@ -103,6 +111,12 @@ public class P2PBase : MonoBehaviour
 					networkActionScripts[id].InvokeFromBytes(index, args);
 				}	
 				break;
+			}
+			case EBulkPackage.Audio:
+			{
+					AudioFrame audioFrame = MessagePackSerializer.Deserialize<AudioFrame>(bulkData);
+                    OnAudioRecieve?.Invoke(audioFrame);
+                    break;
 			}
 			default: 
 			{
