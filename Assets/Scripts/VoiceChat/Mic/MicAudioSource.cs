@@ -77,7 +77,6 @@ namespace Adrenak.UniMic
         }
         void OnFrameCollected(int frequency, int channels, float[] samples)
         {
-            audioFrame.id = 2;
             audioFrame.frequency = frequency;
             audioFrame.channelCount = channels;
             audioFrame.samples = Utils.Bytes.FloatsToBytes(samples);
