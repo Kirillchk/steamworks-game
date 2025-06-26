@@ -44,9 +44,10 @@ public class P2PBase : MonoBehaviour
 			audioFrame.id = 3;
 
 			byte[] bytes = MessagePackSerializer.Serialize(audioFrame);
-			List<byte> audio = new(){audioFrame.id};
-			audio.AddRange(bytes);
-			SendMessageToConnection(audio.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+			byte[] audio = new byte[bytes.Length + 1];
+			audio[0] = audioFrame.id;
+			Array.Copy(bytes,0,audio, 1, bytes.Length);
+			SendMessageToConnection(audio, (int)k_nSteamNetworkingSend.Reliable);
 			// Debug.Log("audioFrame.samples.Length" + audioFrame.samples.Length);
 			// Debug.Log("bytes.Length"+bytes.Length);
 			// Debug.Log("BYTES");
