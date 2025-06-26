@@ -29,6 +29,16 @@ public class P2PBase : MonoBehaviour
 	protected HSteamNetConnection connection;
 	protected bool isActive = false;
 	public static event Action<AudioFrame> OnAudioRecieve;
+	[MessagePackObject]
+    public struct Test
+	{
+		[Key(0)]
+		public byte a;
+		[Key(1)]
+		public byte b;
+		[Key(2)]
+		public byte c;
+	}
 	void LateUpdate()
 	{
 		if (!isActive || connection == HSteamNetConnection.Invalid) return;
@@ -52,18 +62,25 @@ public class P2PBase : MonoBehaviour
 		if (audioFrame.samples != null)
 		{
 			audioFrame.id = 3;
-			Debug.Log("audioFrame.samples.Length" + audioFrame.samples.Length);
+
 			byte[] bytes = MessagePackSerializer.Serialize(audioFrame);
-            SendMessageToConnection(bytes, (int)k_nSteamNetworkingSend.Reliable);
-			Debug.Log("bytes.Length"+bytes.Length);
-			Debug.Log("BYTES");
+			SendMessageToConnection(bytes, (int)k_nSteamNetworkingSend.Reliable);
+			// Debug.Log("audioFrame.samples.Length" + audioFrame.samples.Length);
+			// Debug.Log("bytes.Length"+bytes.Length);
+			// Debug.Log("BYTES");
 			for (int i = 0; i < 10; i++)
 			{
 				Debug.Log(bytes[i]);
 			}
-            audioFrame.samples = null;
+			audioFrame.samples = null;
+			byte[] byt = MessagePackSerializer.Serialize(new Test());
+			Debug.Log("byt.Length"+byt.Length);
+			Debug.Log("BYTES");
+			foreach (byte b in byt)
+			   Debug.Log(b);
 		}
 	}
+	
 	void ProcesData(EBulkPackage bulkPurpose, in byte[] bulkData) {	
 		switch(bulkPurpose)
 		{
