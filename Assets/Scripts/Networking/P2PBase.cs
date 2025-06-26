@@ -5,17 +5,12 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using P2PMessages;
 using Adrenak.UniVoice;
-using UnityEditor;
-using Adrenak.UniMic;
-using Unity.VisualScripting;
-using Unity.VisualScripting.Dependencies.Sqlite;
 using MessagePack;
 public class P2PBase : MonoBehaviour
 {
 	enum EBulkPackage : byte
 	{
 		Transform,
-		Action,
 		Delegate,
 		Audio
 	}
@@ -24,6 +19,7 @@ public class P2PBase : MonoBehaviour
 
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<byte> DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
+
 	public static AudioFrame audioFrame = new AudioFrame();
 	protected HSteamNetConnection connection;
 	protected bool isActive = false;
