@@ -7,7 +7,8 @@ public class NetworkTransform : MonoBehaviour
 	Vector3 lastScale;
 	Vector3 lastPosition;
 	Quaternion lastRotation;
-	bool sendTransform = false;
+	bool doSendTransform = false;
+	bool isOwner = false;
 	async void Awake()
 	{
 		//TODO: FIX! This should not be necessary
@@ -16,8 +17,12 @@ public class NetworkTransform : MonoBehaviour
 		Debug.Log($"UNIQUE {ID}");
 		P2PBase.networkTransforms[ID] = this;
 	}
-	void Update()
+	void Update() =>
+		sendTransform();
+	void sendTransform()
 	{
+		if (!isOwner)
+			return;
 		Vector3 currentPosition = transform.position;
 		Quaternion currentRotation = transform.rotation;
 		Vector3 currentScale = lastScale;
@@ -30,7 +35,7 @@ public class NetworkTransform : MonoBehaviour
 		lastRotation = currentRotation;
 		lastScale = currentScale;
 
-		if (sendTransform)
+		if (doSendTransform)
 		{
 			if (moved)
 				P2PBase.TransformBulk.AddRange(INetworkMessage.StructToSpan(
@@ -60,21 +65,27 @@ public class NetworkTransform : MonoBehaviour
 					}
 				).ToArray());
 		}
-		sendTransform = true;
+		doSendTransform = true;
 	}
 	internal void MoveToSync(Vector3 move)
 	{
-		transform.position = move;
-		sendTransform = false;
+		if (isOwner)
+			return;
+		transform.position = Vector3.Lerp(transform.position,move, 1 * Time.deltaTime);
+		doSendTransform = false;
 	}
 	internal void RotateToSync(Quaternion rotate)
 	{
+		if (isOwner)
+			return;
 		transform.rotation = rotate;
-		sendTransform = false;
+		doSendTransform = false;
 	}
 	internal void ScaleToSync(Vector3 scale)
 	{
+		if (isOwner)
+			return;
 		transform.localScale = scale;
-		sendTransform = false;
+		doSendTransform = false;
 	}
 }
