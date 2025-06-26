@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 public class NetworkTransform : MonoBehaviour
 {
 	[SerializeField] Vector3 ID;
+	Vector3 lastScale;
 	Vector3 lastPosition;
 	Quaternion lastRotation;
 	bool sendTransform = false;
@@ -19,12 +20,15 @@ public class NetworkTransform : MonoBehaviour
 	{
 		Vector3 currentPosition = transform.position;
 		Quaternion currentRotation = transform.rotation;
+		Vector3 currentScale = lastScale;
 
 		bool moved = lastPosition != currentPosition;
 		bool rotated = lastRotation != currentRotation;
+		bool scaled = lastScale != currentScale;
 
 		lastPosition = currentPosition;
 		lastRotation = currentRotation;
+		lastScale = currentScale;
 
 		if (sendTransform)
 		{
@@ -46,15 +50,31 @@ public class NetworkTransform : MonoBehaviour
 						rot = currentRotation
 					}
 				).ToArray());
+			if (scaled)
+				P2PBase.TransformBulk.AddRange(INetworkMessage.StructToSpan(
+					new TransformScl()
+					{
+						purpuse = TransformScl.Purpuse,
+						ID = ID,
+						scl = currentScale
+					}
+				).ToArray());
 		}
 		sendTransform = true;
 	}
-	internal void MoveToSync(Quaternion? rotate = null, Vector3? move = null)
+	internal void MoveToSync(Vector3 move)
 	{
-		if (rotate != null)
-			transform.rotation = (Quaternion)rotate;
-		if (move != null)
-			transform.position = (Vector3)move;
+		transform.position = move;
+		sendTransform = false;
+	}
+	internal void RotateToSync(Quaternion rotate)
+	{
+		transform.rotation = rotate;
+		sendTransform = false;
+	}
+	internal void ScaleToSync(Vector3 scale)
+	{
+		transform.localScale = scale;
 		sendTransform = false;
 	}
 }

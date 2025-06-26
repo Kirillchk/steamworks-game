@@ -17,14 +17,16 @@ namespace P2PMessages
 	}
 	enum EPackagePurpuse : byte
 	{
-		TransformPosRot,
 		TransformPosition,
 		TransformRotation,
-		Action
+		TransformScale,
+		Action,
+		Delegate
 	}
 	
 	public interface INetworkMessage
 	{
+		public static byte Purpuse;
 		// TODO: should not be static 
 		public static ReadOnlySpan<byte> StructToSpan<T>(T inp) where T : unmanaged
 			=> MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref inp, 1));
@@ -45,16 +47,50 @@ namespace P2PMessages
 		public Vector3 ID;
 		public Quaternion rot;
 	}
+	[StructLayout(LayoutKind.Sequential, Size = 32)]
+	public struct TransformScl : INetworkMessage
+	{
+		public static byte Purpuse = (byte)EPackagePurpuse.TransformScale;
+		public byte purpuse;
+		public Vector3 ID;
+		public Vector3 scl;
+	}
+	[StructLayout(LayoutKind.Sequential, Size = 16)]
 	public struct ActionInvokeMessage : INetworkMessage
 	{
-		const byte purpose = (byte)EPackagePurpuse.Action;
-		const int messageSzie = 16; // ???
-		public readonly Vector3 ID;
-		public readonly int Index;
-		public ActionInvokeMessage(in Vector3 id, in int index)
+		public static byte Purpuse = (byte)EPackagePurpuse.Action;
+		public Vector3 ID;
+		public int Index;
+	}
+	[StructLayout(LayoutKind.Sequential)]
+	public struct DelegateInvokeMessage : INetworkMessage
+	{
+		// TODO: this is just absolute ass 
+		public byte[] GetBinary()
 		{
-			ID = id;
-			Index = index;
+			byte[] bytes = new byte[20 + Args.Length];
+
+			// Write ID (Vector3 - 12 bytes)
+			MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref ID, 1))
+				.CopyTo(bytes.AsSpan(0, 12));
+
+			// Write Index (4 bytes)
+			MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref Index, 1))
+				.CopyTo(bytes.AsSpan(12, 4));
+
+			// Write Length (4 bytes)
+			MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref Length, 1))
+				.CopyTo(bytes.AsSpan(16, 4));
+
+			if (Args.Length > 0)
+				Args.CopyTo(bytes.AsSpan(20));
+
+			return bytes;
 		}
+		public static byte Purpuse = (byte)EPackagePurpuse.Delegate;
+		public Vector3 ID;
+		public int Index;
+		public int Length;
+		public byte[] Args;
 	}
 }
