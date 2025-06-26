@@ -6,7 +6,7 @@ public class ExampleNETbeh : NetworkActions
 	[ContextMenu("Test")]
 	void SUS()
 	{
-		//TriggerSyncWargs(this.Disentary, BitConverter.GetBytes(9));
+		TriggerSyncWargs(new Action<int>(Disentary), 1);
 	}
 	[CanTriggerSyncWargs]
 	public void Disentary(int num1)

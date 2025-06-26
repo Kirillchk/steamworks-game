@@ -7,6 +7,8 @@ using P2PMessages;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Linq.Expressions;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class NetworkActions : MonoBehaviour
 {
@@ -57,22 +59,42 @@ public class NetworkActions : MonoBehaviour
 		actions[index].Invoke();
 	}
 	// wraper
-	internal void TriggerSyncWargs(Delegate del, byte[] data)
+	internal void TriggerSyncWargs(Delegate del, params object[] wow)
 	{
 		//Delegate del = delegates[ind];
 		if (!delegates.Contains(del))
 			return;
-		// NO
-		InvokeFromBytes(delegates.IndexOf(del), data);
+		List<byte> data = new();
+		del.Method.GetParameters();
+		data.AddRange(ConvertObjectsToBinary(wow));
+		// del.DynamicInvoke(wow);
 		P2PBase.DelegateBulk.AddRange(
 			new DelegateInvokeMessage()
 			{
 				ID = ID,
 				Index = delegates.IndexOf(del),
-				Length = data.Length,
-				Args = data
+				Length = data.Count,
+				Args = data.ToArray()
 			}.GetBinary()
 		);
+		Debug.Log(data.Count);
+		InvokeFromBytes(delegates.IndexOf(del), data.ToArray());
+		byte[] ConvertObjectsToBinary(params object[] objects)
+		{
+			string deb = "";
+			deb += $"Length:{objects.Length}";
+			// TODO: check if this is sexual harasment
+			if (objects == null || objects.Length == 0)
+				return Array.Empty<byte>();
+			List<byte> byb = new();
+			foreach (object o in objects)
+			{
+				Debug.Log(o);
+				byb.AddRange(JsonSerializer.Serialize(objects));
+			}
+			ReadOnlySpan<byte> StructToSpan<T>(T inp) where T : unmanaged
+				=> MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref inp, 1));
+		}
 	}
 	// for invoking method after package
 	internal void InvokeFromBytes(int ind, byte[] data)
