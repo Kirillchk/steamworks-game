@@ -29,16 +29,6 @@ public class P2PBase : MonoBehaviour
 	protected HSteamNetConnection connection;
 	protected bool isActive = false;
 	public static event Action<AudioFrame> OnAudioRecieve;
-	[MessagePackObject]
-    public struct Test
-	{
-		[Key(0)]
-		public byte a;
-		[Key(1)]
-		public byte b;
-		[Key(2)]
-		public byte c;
-	}
 	void LateUpdate()
 	{
 		if (!isActive || connection == HSteamNetConnection.Invalid) return;
@@ -72,11 +62,6 @@ public class P2PBase : MonoBehaviour
 			//     Debug.Log(bytes[i]);
 
 			audioFrame.samples = null;
-			byte[] byt = MessagePackSerializer.Serialize(new Test());
-			Debug.Log("byt.Length"+byt.Length);
-			Debug.Log("BYTES");
-			foreach (byte b in byt)
-			   Debug.Log(b);
 		}
 	}
 	
@@ -191,7 +176,7 @@ public class P2PBase : MonoBehaviour
 				SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
 				byte[] data = new byte[message.m_cbSize];
 				Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
-				ProcesData((EBulkPackage)data[0], data[1..]);
+				ProcesData((EBulkPackage)data[1], data[2..]);
 			} catch (Exception e) {
 				Debug.LogError($"Error processing message: {e}");
 			} finally {
