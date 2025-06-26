@@ -8,7 +8,7 @@ public class NetworkTransform : MonoBehaviour
 	Vector3 lastPosition;
 	Quaternion lastRotation;
 	bool doSendTransform = false;
-	bool isOwner = false;
+	public bool isOwner = false;
 	async void Awake()
 	{
 		//TODO: FIX! This should not be necessary
