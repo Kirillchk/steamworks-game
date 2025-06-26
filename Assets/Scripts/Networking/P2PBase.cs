@@ -63,14 +63,7 @@ public class P2PBase : MonoBehaviour
                 Marshal.FreeHGlobal(ptr);
             }
             SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
-
-            Debug.Log("Size:" + size);
-            Debug.Log("bytes");
-            foreach (byte b in arr)
-                Debug.Log(b);
-
             audioFrame.samples = null;
-            
         }
 	}
 	void SendMessageToConnection(in byte[] data, in int nSendFlags)
@@ -177,7 +170,7 @@ public class P2PBase : MonoBehaviour
                         Marshal.FreeHGlobal(ptr);
                     }
                     OnAudioRecieve?.Invoke(audioFrame);
-                    Debug.Log(audioFrame.samples.Length);
+                    Debug.Log("Size:"+audioFrame.samples.Length);
                     break;
                 }
             default:
