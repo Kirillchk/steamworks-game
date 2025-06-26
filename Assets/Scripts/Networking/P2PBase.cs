@@ -15,7 +15,6 @@ public class P2PBase : MonoBehaviour
 	internal static List<byte> TransformBulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
 
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
-	internal static List<byte> ActionBulk = new(64 + 1) { (byte)EBulkPackage.Action };
 	internal static List<byte> DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
 
 	protected HSteamNetConnection connection;
@@ -27,12 +26,6 @@ public class P2PBase : MonoBehaviour
 			SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
 			// what is the most eeficient way to clear a list?
 			TransformBulk = new(1024) { (byte)EBulkPackage.Transform };
-		}
-		if (ActionBulk.Count > 1)
-		{
-			SendMessageToConnection(ActionBulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
-			// what is the most efficient way to clear a list?
-			ActionBulk = new(64) { (byte)EBulkPackage.Action };
 		}
 		if (DelegateBulk.Count > 1)
 		{
@@ -68,16 +61,6 @@ public class P2PBase : MonoBehaviour
 						networkTransforms[inst.ID].ScaleToSync(inst.scl);
 						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.scl}");
 					}
-				}
-				break;
-			}
-			case EBulkPackage.Action:
-			{
-				for (int i = 0; i < bulkData.Length; i += 16)
-				{
-					Span<byte> span = bulkData.AsSpan(i, 16);
-					var inst = MemoryMarshal.Read<ActionInvokeMessage>(span);
-					networkActionScripts[inst.ID].TriggerByIndex(inst.Index);
 				}
 				break;
 			}
