@@ -49,6 +49,7 @@ public class P2PBase : MonoBehaviour
         {
 
             int size = Marshal.SizeOf(audioFrame);
+            audioFrame.id = 2;
             byte[] arr = new byte[size];
             IntPtr ptr = IntPtr.Zero;
             try
