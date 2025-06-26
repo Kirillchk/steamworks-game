@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Adrenak.UniVoice {
     [System.Serializable]
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Size =40)]
     /// <summary>
     /// A data structure representing the audio transmitted over the network.
     /// </summary>
