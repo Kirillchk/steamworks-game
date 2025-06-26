@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using P2PMessages;
 using Adrenak.UniVoice;
 using MessagePack;
+using Unity.VisualScripting;
 public class P2PBase : MonoBehaviour
 {
 	enum EBulkPackage : byte
@@ -43,6 +44,9 @@ public class P2PBase : MonoBehaviour
 			audioFrame.id = 3;
 
 			byte[] bytes = MessagePackSerializer.Serialize(audioFrame);
+			byte[] audio = new byte[bytes.Length+1];
+			audio[0] = audioFrame.id;
+			audio.AddRange(bytes);
 			SendMessageToConnection(bytes, (int)k_nSteamNetworkingSend.Reliable);
 			// Debug.Log("audioFrame.samples.Length" + audioFrame.samples.Length);
 			// Debug.Log("bytes.Length"+bytes.Length);
@@ -155,7 +159,7 @@ public class P2PBase : MonoBehaviour
 				SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
 				byte[] data = new byte[message.m_cbSize];
 				Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
-				ProcesData((EBulkPackage)data[1], data[0..]);
+				ProcesData((EBulkPackage)data[0], data[1..]);
 			} catch (Exception e) {
 				Debug.LogError($"Error processing message: {e}");
 			} finally {

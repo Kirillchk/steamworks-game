@@ -9,13 +9,13 @@ namespace Adrenak.UniVoice {
     /// </summary>
     public struct AudioFrame
     {
+        [IgnoreMember]
+        public byte id;
         [Key(0)]
-        public int id;
-        [Key(1)]
         public int frequency;
-        [Key(2)]
+        [Key(1)]
         public int channelCount;
-        [Key(3)]
+        [Key(2)]
         public byte[] samples;
     }
 }
