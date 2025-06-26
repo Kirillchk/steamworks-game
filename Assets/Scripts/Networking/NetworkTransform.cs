@@ -71,7 +71,7 @@ public class NetworkTransform : MonoBehaviour
 	{
 		if (isOwner)
 			return;
-		transform.position = Vector3.Lerp(transform.position,move, 1 * Time.deltaTime);
+		transform.position = Vector3.Lerp(transform.position,move, .05f * Time.deltaTime);
 		doSendTransform = false;
 	}
 	internal void RotateToSync(Quaternion rotate)
