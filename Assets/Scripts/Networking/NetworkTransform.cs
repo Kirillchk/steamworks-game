@@ -34,7 +34,6 @@ public class NetworkTransform : MonoBehaviour
 		lastPosition = currentPosition;
 		lastRotation = currentRotation;
 		lastScale = currentScale;
-
 		if (doSendTransform)
 		{
 			if (moved)
@@ -71,7 +70,7 @@ public class NetworkTransform : MonoBehaviour
 	{
 		if (isOwner)
 			return;
-		transform.position = Vector3.Lerp(transform.position,move, .05f * Time.deltaTime);
+		transform.position = Vector3.Lerp(transform.position, move, 0.02f);
 		doSendTransform = false;
 	}
 	internal void RotateToSync(Quaternion rotate)
