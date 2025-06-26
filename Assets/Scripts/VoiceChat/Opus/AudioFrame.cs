@@ -19,15 +19,18 @@ namespace Adrenak.UniVoice {
             get { return _samples; }
             set
             {
-                intPtr = IntPtr.Zero;
-                try
+                if (value != null)
                 {
-                    intPtr = Marshal.AllocHGlobal(samplesLength);
-                    Marshal.Copy(value, 0, intPtr, samplesLength);
-                }
-                finally
-                {
-                    Marshal.FreeHGlobal(intPtr);
+                    intPtr = IntPtr.Zero;
+                    try
+                    {
+                        intPtr = Marshal.AllocHGlobal(samplesLength);
+                        Marshal.Copy(value, 0, intPtr, samplesLength);
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(intPtr);
+                    }
                 }
                 _samples = value;
             }
