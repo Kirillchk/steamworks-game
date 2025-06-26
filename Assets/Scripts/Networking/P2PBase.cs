@@ -68,10 +68,9 @@ public class P2PBase : MonoBehaviour
 			// Debug.Log("audioFrame.samples.Length" + audioFrame.samples.Length);
 			// Debug.Log("bytes.Length"+bytes.Length);
 			// Debug.Log("BYTES");
-			for (int i = 0; i < 10; i++)
-			{
-				Debug.Log(bytes[i]);
-			}
+			// for (int i = 0; i < 10; i++)
+			//     Debug.Log(bytes[i]);
+
 			audioFrame.samples = null;
 			byte[] byt = MessagePackSerializer.Serialize(new Test());
 			Debug.Log("byt.Length"+byt.Length);
