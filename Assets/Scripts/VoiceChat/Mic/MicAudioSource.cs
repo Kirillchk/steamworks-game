@@ -72,11 +72,12 @@ namespace Adrenak.UniMic
             64000,
             46080);
             decoder = new ConcentusDecodeFilter();
-            audioFrame = new AudioFrame() { id = 2 };
+            audioFrame = new AudioFrame();
             P2PBase.OnAudioRecieve += RecieveFrame;
         }
         void OnFrameCollected(int frequency, int channels, float[] samples)
         {
+            audioFrame.id = 2;
             audioFrame.frequency = frequency;
             audioFrame.channelCount = channels;
             audioFrame.samples = Utils.Bytes.FloatsToBytes(samples);
