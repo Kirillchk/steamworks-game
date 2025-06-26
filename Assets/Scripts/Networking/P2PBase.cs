@@ -41,7 +41,7 @@ public class P2PBase : MonoBehaviour
 		}
 		if (audioFrame.samples != null)
 		{
-			audioFrame.id = 3;
+			audioFrame.id = 2;
 
 			byte[] bytes = MessagePackSerializer.Serialize(audioFrame);
 			byte[] audio = new byte[bytes.Length + 1];
