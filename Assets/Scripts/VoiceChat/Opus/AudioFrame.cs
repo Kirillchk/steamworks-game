@@ -11,30 +11,6 @@ namespace Adrenak.UniVoice {
         public int id;
         public int frequency;
         public int channelCount;
-
-        public int samplesLength;
-        byte[] _samples;
-        public byte[] samples
-        {
-            get { return _samples; }
-            set
-            {
-                if (value != null)
-                {
-                    intPtr = IntPtr.Zero;
-                    try
-                    {
-                        intPtr = Marshal.AllocHGlobal(samplesLength);
-                        Marshal.Copy(value, 0, intPtr, samplesLength);
-                    }
-                    finally
-                    {
-                        Marshal.FreeHGlobal(intPtr);
-                    }
-                }
-                _samples = value;
-            }
-        }
-        public IntPtr intPtr;
+        public byte[] samples;
     }
 }

@@ -9,12 +9,15 @@ using UnityEditor;
 using Adrenak.UniMic;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Dependencies.Sqlite;
+using MessagePack;
 public class P2PBase : MonoBehaviour
 {
-	enum EBulkPackage : byte {
+	enum EBulkPackage : byte
+	{
 		Transform,
 		Action,
-		Delegate
+		Delegate,
+		Audio
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
 	internal static List<byte> TransformBulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
@@ -22,7 +25,7 @@ public class P2PBase : MonoBehaviour
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<byte> ActionBulk = new(64 + 1) { (byte)EBulkPackage.Action };
 	internal static List<byte> DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
-
+	AudioFrame audioFrame = new AudioFrame();
 	protected HSteamNetConnection connection;
 	protected bool isActive = false;
 	void LateUpdate()

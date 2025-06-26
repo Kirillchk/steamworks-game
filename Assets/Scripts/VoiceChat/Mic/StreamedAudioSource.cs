@@ -160,8 +160,6 @@ namespace Adrenak.UniMic
         int lastPlaybackPos;
         int absPlaybackPos;
         int samplesLen;
-        float time = 0;
-
         /// <summary>
         /// Feed audio data for playback
         /// </summary>
@@ -229,8 +227,6 @@ namespace Adrenak.UniMic
             if (UnityAudioSource.timeSamples < lastPlaybackPos)
             {
                 playbackLoops++;
-                // Debug.Log(Time.time - time);
-                // time = Time.time;
 
             }
             lastPlaybackPos = UnityAudioSource.timeSamples;

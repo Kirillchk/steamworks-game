@@ -322,8 +322,6 @@ namespace Adrenak.UniMic {
         int prevPos;
         Queue<float> pcm;
         int frameLen;
-        float time = 0;
-        
         void Update() {
             foreach (var pair in clips)
             {
