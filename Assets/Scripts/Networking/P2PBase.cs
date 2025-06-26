@@ -31,6 +31,7 @@ public class P2PBase : MonoBehaviour
 	public static event Action<AudioFrame> OnAudioRecieve;
 	void LateUpdate()
 	{
+		if (!isActive || connection == HSteamNetConnection.Invalid) return;
 		if (TransformBulk.Count > 1)
 		{
 			SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
