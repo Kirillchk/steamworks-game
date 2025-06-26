@@ -61,7 +61,11 @@ public class P2PBase : MonoBehaviour
             {
                 Marshal.FreeHGlobal(ptr);
             }
-            Debug.Log(arr[0]);
+            Debug.Log("size:"+arr.Length);
+            Debug.Log("bytes");
+            foreach (byte b in arr)
+                Debug.Log(b);
+            Debug.Log("end");
             SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
             
             audioFrame.samples = null;
