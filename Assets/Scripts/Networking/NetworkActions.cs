@@ -5,7 +5,6 @@ using System.Reflection;
 using UnityEngine;
 using P2PMessages;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 using System.Linq.Expressions;
 using MessagePack;
 
@@ -56,10 +55,7 @@ public class NetworkActions : MonoBehaviour
 	// wraper
 	internal void TriggerSyncWargs(in Delegate del, params object[] wow)
 	{
-		//Delegate del = delegates[ind];
-		if (!delegates.Contains(del))
-			return;
-		del.Method.GetParameters();
+		del.DynamicInvoke(wow);
 		byte[] data = MessagePackSerializer.Serialize(wow);
 		P2PBase.DelegateBulk.AddRange(
 			new DelegateInvokeMessage()
