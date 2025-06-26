@@ -48,34 +48,29 @@ public class P2PBase : MonoBehaviour
         if (audioFrame.samples != null)
         {
 
-            // int size = Marshal.SizeOf(audioFrame);
-            // byte[] arr = new byte[size];
-            // IntPtr ptr = IntPtr.Zero;
-            // try
-            // {
-            //     ptr = Marshal.AllocHGlobal(size);
-            //     Marshal.StructureToPtr(audioFrame, ptr, true);
+            int size = Marshal.SizeOf(audioFrame);
+            byte[] arr = new byte[size];
+            IntPtr ptr = IntPtr.Zero;
+            try
+            {
+                ptr = Marshal.AllocHGlobal(size);
+                Marshal.StructureToPtr(audioFrame, ptr, true);
 
-            //     Marshal.Copy(ptr, arr, 0, size);
-            // }
-            // finally
-            // {
-            //     Marshal.FreeHGlobal(ptr);
-            // }
-            // SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
+                Marshal.Copy(ptr, arr, 0, size);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
+            }
+            SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
 
-            // Debug.Log("Size:" + size);
-            // Debug.Log("bytes");
-            // foreach (byte b in arr)
-            //     Debug.Log(b);
+            Debug.Log("Size:" + size);
+            Debug.Log("bytes");
+            foreach (byte b in arr)
+                Debug.Log(b);
 
-            // audioFrame.samples = null;
+            audioFrame.samples = null;
             
-            AudioFrame[] frame = new AudioFrame[1];
-            frame[0] = audioFrame;
-            Span<byte> bytes = MemoryMarshal.AsBytes(frame.AsSpan());
-            byte[] array = bytes.ToArray();
-            Debug.Log("Size:"+array.Length);
         }
 	}
 	void SendMessageToConnection(in byte[] data, in int nSendFlags)
@@ -170,15 +165,19 @@ public class P2PBase : MonoBehaviour
                     try
                     {
                         ptr = Marshal.AllocHGlobal(size);
+
                         Marshal.Copy(bulkData, 0, ptr, size);
                         audioFrame = (AudioFrame)Marshal.PtrToStructure(ptr, audioFrame.GetType());
+                        byte[] samples = new byte[audioFrame.samplesLength];
+
+                        Marshal.Copy(audioFrame.intPtr, samples, 0, samples.Length);
                     }
                     finally
                     {
                         Marshal.FreeHGlobal(ptr);
                     }
                     OnAudioRecieve?.Invoke(audioFrame);
-                    Debug.Log(audioFrame.samples);
+                    Debug.Log(audioFrame.samples.Length);
                     break;
                 }
             default:
@@ -187,6 +186,7 @@ public class P2PBase : MonoBehaviour
 
                     break;
                 }
+                
         }
         
 	}

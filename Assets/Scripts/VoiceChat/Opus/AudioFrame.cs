@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Adrenak.UniVoice {
     [System.Serializable]
@@ -8,18 +9,29 @@ namespace Adrenak.UniVoice {
     public struct AudioFrame
     {
         public byte id;
-        /// <summary>
-        /// The frequency (or sampling rate) of the audio
-        /// </summary>
         public int frequency;
-
-        /// <summary>
-        /// The number of channels in the audio
-        /// </summary>
         public int channelCount;
-        /// <summary>
-        /// A byte array representing the audio data
-        /// </summary>
-        public byte[] samples;
+
+        public int samplesLength;
+        byte[] _samples;
+        public byte[] samples
+        {
+            get { return _samples; }
+            set
+            {
+                intPtr = IntPtr.Zero;
+                try
+                {
+                    intPtr = Marshal.AllocHGlobal(samplesLength);
+                    Marshal.Copy(value, 0, intPtr, samplesLength);
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(intPtr);
+                }
+                _samples = value;
+            }
+        }
+        public IntPtr intPtr;
     }
 }

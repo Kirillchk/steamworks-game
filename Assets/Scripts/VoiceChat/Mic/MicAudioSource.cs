@@ -80,6 +80,7 @@ namespace Adrenak.UniMic
             audioFrame.frequency = frequency;
             audioFrame.channelCount = channels;
             audioFrame.samples = Utils.Bytes.FloatsToBytes(samples);
+            audioFrame.samplesLength = audioFrame.samples.Length;
             encodedAudio = encoder.Run(audioFrame);
 
             SendFrame(encodedAudio);
