@@ -1,6 +1,7 @@
 using UnityEngine;
 using P2PMessages;
 using System.Threading.Tasks;
+using System.Collections;
 public class NetworkTransform : MonoBehaviour
 {
 	[SerializeField] Vector3 ID;
@@ -64,8 +65,23 @@ public class NetworkTransform : MonoBehaviour
 	}
 	internal void MoveToSync(Vector3 move)
 	{
-		transform.position = move;
+		StartCoroutine(LerpPosition(move, 0.2f));
 		sendTransform = false;
+	}
+
+	private IEnumerator LerpPosition(Vector3 targetPosition, float duration)
+	{
+		float time = 0;
+		Vector3 startPosition = transform.position;
+		
+		while (time < duration)
+		{
+			transform.position = Vector3.Lerp(startPosition, targetPosition, time / duration);
+			time += Time.deltaTime;
+			yield return null;
+		}
+		
+		transform.position = targetPosition;
 	}
 	internal void RotateToSync(Quaternion rotate)
 	{

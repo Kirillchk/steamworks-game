@@ -8,13 +8,11 @@ public class ExampleNETbeh : NetworkActions
     {
         this.Sync(Disentary, 1, 2);
     }
-    
     [ContextMenu("Test2")]
     void sus()
     {
         this.Sync(AFAF);
     }
-    
     [ContextMenu("Test3")]
     void sosat()
     {
@@ -23,7 +21,6 @@ public class ExampleNETbeh : NetworkActions
         this.Sync(Disentary, 1, 2);
         this.Sync(AFAF);
     }
-    
     [CanTriggerSync]
     public void Disentary(int num1, int num2)
         => Debug.Log($"num1{num1} num2{num2}");
