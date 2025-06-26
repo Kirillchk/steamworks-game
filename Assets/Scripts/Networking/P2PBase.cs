@@ -54,15 +54,16 @@ public class P2PBase : MonoBehaviour
             try
             {
                 ptr = Marshal.AllocHGlobal(size);
-                Marshal.StructureToPtr(audioFrame, ptr, true);
-
+                Marshal.StructureToPtr(audioFrame, ptr, false);
                 Marshal.Copy(ptr, arr, 0, size);
             }
             finally
             {
                 Marshal.FreeHGlobal(ptr);
             }
+            Debug.Log(arr[0]);
             SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
+            
             audioFrame.samples = null;
         }
 	}
@@ -176,7 +177,7 @@ public class P2PBase : MonoBehaviour
             default:
                 {
                     Debug.LogError("UNSUPORTED BULK");
-
+                    Debug.LogWarning(bulkPurpose);
                     break;
                 }
                 
