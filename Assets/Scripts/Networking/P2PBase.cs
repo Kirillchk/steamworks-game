@@ -62,11 +62,11 @@ public class P2PBase : MonoBehaviour
             {
                 Marshal.FreeHGlobal(ptr);
             }
-            Debug.Log("size:"+arr.Length);
-            Debug.Log("bytes");
-            foreach (byte b in arr)
-                Debug.Log(b);
-            Debug.Log("end");
+            // Debug.Log("size:"+arr.Length);
+            // Debug.Log("bytes");
+            // foreach (byte b in arr)
+            //     Debug.Log(b);
+            // Debug.Log("end");
             SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
             
             audioFrame.samples = null;
@@ -112,8 +112,7 @@ public class P2PBase : MonoBehaviour
         {
             try {
                 SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
-                byte[] data = new byte[message.m_cbSize];
-                Debug.Log("m_cbSize:" + message.m_cbSize);
+                byte[] data = new byte[512];
                 Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
 				ProcesData((EBulkPackage)data[0], data[1..]);
             } catch (Exception e) {
