@@ -67,7 +67,6 @@ public class P2PBase : MonoBehaviour
             // foreach (byte b in arr)
             //     Debug.Log(b);
             // Debug.Log("end");
-            Debug.Log("SIZE:" + size);
             SendMessageToConnection(arr, (int)k_nSteamNetworkingSend.Reliable);
             
             audioFrame.samples = null;
@@ -114,7 +113,7 @@ public class P2PBase : MonoBehaviour
             try {
                 SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
                 byte[] data = new byte[message.m_cbSize];
-                Marshal.Copy(message.m_pData, data, 0, 1);
+                Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
 				ProcesData((EBulkPackage)data[0], data[1..]);
             } catch (Exception e) {
                 Debug.LogError($"Error processing message: {e}");
@@ -160,7 +159,7 @@ public class P2PBase : MonoBehaviour
             case EBulkPackage.Audio:
                 {
                     AudioFrame audioFrame = new AudioFrame();
-                    int size = Marshal.SizeOf(audioFrame);
+                    int size = bulkData.Length;
                     IntPtr ptr = IntPtr.Zero;
                     try
                     {
@@ -171,6 +170,10 @@ public class P2PBase : MonoBehaviour
                         byte[] samples = new byte[audioFrame.samplesLength];
 
                         Marshal.Copy(audioFrame.intPtr, samples, 0, samples.Length);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Error processing message: {e}");
                     }
                     finally
                     {
