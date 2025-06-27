@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using MessagePack;
 namespace Adrenak.UniVoice {
@@ -9,13 +9,20 @@ namespace Adrenak.UniVoice {
     /// </summary>
     public struct AudioFrame
     {
-        [IgnoreMember]
-        public byte id;
         [Key(0)]
-        public int frequency;
+        public byte id;
         [Key(1)]
-        public int channelCount;
+        public int frequency;
         [Key(2)]
+        public int channelCount;
+        [Key(3)]
         public byte[] samples;
+        public AudioFrame(int frequency, int channelCount, byte[] samples)
+        {
+            this.frequency = frequency;
+            this.channelCount = channelCount;
+            this.samples = samples;
+            this.id = 2;
+        }
     }
 }
