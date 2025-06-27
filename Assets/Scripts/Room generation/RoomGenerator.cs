@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Steamworks;
 using UnityEngine;
 public class RoomGenerator : MonoBehaviour
 {
@@ -15,7 +16,6 @@ public class RoomGenerator : MonoBehaviour
 		GameObject[] Doors = GameObject.FindGameObjectsWithTag("DoorMark");
 		return Doors[rng.Next(Doors.Length)];
 	}
-	List<BoxCollider> RoomColliders = new();
 	bool checkColisions(BoxCollider comp)
 	{
 		comp.enabled = false;
@@ -44,13 +44,13 @@ public class RoomGenerator : MonoBehaviour
 
 	async void Start()
 	{
-		RoomColliders.Add(
-			Instantiate(
-				Rooms[0],
-				new Vector3(),
-				new Quaternion()
-			).GetComponent<BoxCollider>()
-		);
+		//RoomColliders.Add(
+		//	Instantiate(
+		//		Rooms[0],
+		//		new Vector3(),
+		//		new Quaternion()
+		//	).GetComponent<BoxCollider>()
+		//);
 		await Task.Delay(10);
 		while (ind < AmountOfRooms)
 		{
@@ -104,7 +104,6 @@ public class RoomGenerator : MonoBehaviour
 			else
 			{
 				firstdoorObject.GetComponent<RoomDoor>().Open();
-				RoomColliders.Add(roomCollider);
 			}
 			Destroy(secondDoorObject);
 			res = !intersects;
@@ -118,6 +117,7 @@ public class RoomGenerator : MonoBehaviour
 
 		foreach (GameObject door in GameObject.FindGameObjectsWithTag("DoorMark"))
 			door.GetComponent<RoomDoor>().Close();
+		PlayableBehavior.Players[SteamMatchmaking.GetNumLobbyMembers(LobbyManager.lobbyId)-1].Possess();
 	}
 }
 public static class ColliderDrawer

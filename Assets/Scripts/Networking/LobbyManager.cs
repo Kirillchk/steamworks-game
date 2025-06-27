@@ -1,6 +1,5 @@
 using UnityEngine;
 using Steamworks;
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 public class LobbyManager : MonoBehaviour
 {
@@ -10,7 +9,7 @@ public class LobbyManager : MonoBehaviour
 	[ContextMenu("Create")]
 	private void DebugCreate() => CreateLobby();
 	private const int MaxLobbyMembers = 4; // Maximum number of players in the lobby
-	public CSteamID lobbyId;
+	public static CSteamID lobbyId;
 	private void Awake()
 	{
 		DontDestroyOnLoad(gameObject);
@@ -34,7 +33,7 @@ public class LobbyManager : MonoBehaviour
 		);
 		Callback<LobbyEnter_t>.Create(callback =>
 		{
-			Debug.Log($"Successfully entered lobby! Lobby ID: {callback.m_ulSteamIDLobby}");
+			Debug.Log($"Lobby ID: {callback.m_ulSteamIDLobby} Lobby users {SteamMatchmaking.GetNumLobbyMembers(lobbyId)}");		
 			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 			if(SceneManager.GetActiveScene()!= SceneManager.GetSceneByName("Lobby"))
 				SceneManager.LoadScene("Lobby");

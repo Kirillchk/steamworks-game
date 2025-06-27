@@ -8,13 +8,13 @@ public class P2PClient : P2PBase
     public void Connect()
     {
         lobby = GetComponent<LobbyManager>();
-        if (lobby == null || lobby.lobbyId == CSteamID.Nil)
+        if (lobby == null || LobbyManager.lobbyId == CSteamID.Nil)
         {
             Debug.LogError("Lobby not initialized!");
             return;
         }
 
-        CSteamID playerID = SteamMatchmaking.GetLobbyMemberByIndex(lobby.lobbyId, 0);
+        CSteamID playerID = SteamMatchmaking.GetLobbyMemberByIndex(LobbyManager.lobbyId, 0);
         if (playerID == CSteamID.Nil)
         {
             Debug.LogError("No members in lobby!");
