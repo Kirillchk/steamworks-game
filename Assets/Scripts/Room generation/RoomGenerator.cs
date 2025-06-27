@@ -4,8 +4,9 @@ using UnityEngine;
 public class RoomGenerator : MonoBehaviour
 {
 	int ind = 0;
-	public float slowering = 5;
-	private System.Random rng = new(7);
+	// public float slowering = 5;
+	public int AmountOfRooms = 10;
+	System.Random rng = new(0);
 	[SerializeField] GameObject[] Rooms;
 	GameObject getRandomRoom() =>
 		Rooms[rng.Next(Rooms.Length)];
@@ -51,7 +52,7 @@ public class RoomGenerator : MonoBehaviour
 			).GetComponent<BoxCollider>()
 		);
 		await Task.Delay(10);
-		while (ind < 301)
+		while (ind < AmountOfRooms)
 		{
 
 			// await Task.Delay((int)(slowering * 500));	
