@@ -11,10 +11,8 @@ public class LobbyManager : MonoBehaviour
 	private void DebugCreate() => CreateLobby();
 	private const int MaxLobbyMembers = 4; // Maximum number of players in the lobby
 	public CSteamID lobbyId;
-	private DataSender dataSender;
 	private void Awake()
 	{
-		dataSender = GetComponent<DataSender>();
 		DontDestroyOnLoad(gameObject);
 		if (!SteamManager.Initialized)
 		{
@@ -82,12 +80,6 @@ public class LobbyManager : MonoBehaviour
 		gameObject.AddComponent<P2PHost>();
 		CreateLobby();
 		SceneManager.LoadScene("Lobby");
-	}
-	[ContextMenu("send")]
-	public void SendData()
-	{
-		byte[] data = new byte[111];
-		dataSender.SendToAllPlayers(data);
 	}
 }
 
