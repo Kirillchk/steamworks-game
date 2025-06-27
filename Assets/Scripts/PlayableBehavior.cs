@@ -9,6 +9,7 @@ public class PlayableBehavior : MonoBehaviour
 	[ContextMenu("possess")]
 	public void Possess()
 	{
+		gameObject.AddComponent<AudioListener>();
 		var rigid = gameObject.AddComponent<Rigidbody>();
 		rigid.constraints = RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX;
 		var movement = gameObject.AddComponent<PlayerMovement>();
