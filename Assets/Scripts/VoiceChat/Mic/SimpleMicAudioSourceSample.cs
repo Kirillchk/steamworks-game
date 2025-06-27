@@ -21,10 +21,13 @@ namespace Adrenak.UniMic.Samples
         {
             if (Mic.AvailableDevices.Count > 0)
             {
+                foreach(var mic in Mic.AvailableDevices)
+                    mic.StopRecording();
                 if (sysManager.mic == null)
                 {
                     Mic.AvailableDevices[0].StartRecording();
                     micAudioSource.Device = Mic.AvailableDevices[0];
+                    return;
                 }
                 else
                 {
