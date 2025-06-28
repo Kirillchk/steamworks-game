@@ -41,11 +41,9 @@ public class P2PBase : MonoBehaviour
 		}
 		if (audioFrame.samples != null)
 		{
-			audioFrame.id = 2;
-
 			byte[] bytes = MessagePackSerializer.Serialize(audioFrame);
 			byte[] audio = new byte[bytes.Length + 1];
-			audio[0] = audioFrame.id;
+			audio[0] = AudioFrame.id;
 			Array.Copy(bytes,0,audio, 1, bytes.Length);
 			SendMessageToConnection(audio, (int)k_nSteamNetworkingSend.Reliable);
 			// Debug.Log("audioFrame.samples.Length" + audioFrame.samples.Length);
@@ -53,7 +51,6 @@ public class P2PBase : MonoBehaviour
 			// Debug.Log("BYTES");
 			// for (int i = 0; i < 10; i++)
 			//     Debug.Log(bytes[i]);
-
 			audioFrame.samples = null;
 		}
 	}

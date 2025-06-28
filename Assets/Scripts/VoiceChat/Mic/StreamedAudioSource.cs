@@ -186,19 +186,19 @@ namespace Adrenak.UniMic
                 if (channels != Clip.channels)
                 {
                     ChannelCount = channels;
-                    // Stop();
+                    Stop();
                     Play();
                 }
                 if (SamplingFrequency != frequency)
                 {
                     SamplingFrequency = frequency;
-                    // Stop();
+                    Stop();
                     Play();
                 }
                 if (samples.Length != samplesLen)
                 {
                     samplesLen = samples.Length;
-                    // Stop();
+                    Stop();
                     Play();
                 }
             }

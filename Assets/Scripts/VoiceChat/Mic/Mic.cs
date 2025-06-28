@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Adrenak.UniVoice;
 using UnityEngine;
 
 namespace Adrenak.UniMic {
@@ -36,7 +36,7 @@ namespace Adrenak.UniMic {
             /// You use the channel count provided to be able to react
             /// to it changing
             /// </summary>
-            public event Action<int, int, float[]> OnFrameCollected;
+            public event Action<AudioFrame> OnFrameCollected;
 
             /// <summary>
             /// Invoked when the instance stop Recording.
@@ -196,8 +196,7 @@ namespace Adrenak.UniMic {
                     for (int i = 0; i < pcm.Length; i++)
                         pcm[i] *= VolumeMultiplier;
                 }
-                
-                OnFrameCollected?.Invoke(SamplingFrequency, channelCount, pcm);
+                OnFrameCollected?.Invoke(new AudioFrame(SamplingFrequency, channelCount, Utils.Bytes.FloatsToBytes(pcm)));
             }
         }
 
