@@ -89,8 +89,8 @@ namespace Adrenak.UniMic
         void RecieveFrame(AudioFrame audioFrame)
         {
             decodedAudio = decoder.Run(audioFrame);
-            float[] audio = Utils.Bytes.BytesToFloats(decodedAudio.samples);
-            StreamedAudioSource.Feed(decodedAudio.frequency, decodedAudio.channelCount, audio);
+            StreamedAudioSource.Feed(decodedAudio.frequency, decodedAudio.channelCount,
+             Utils.Bytes.BytesToFloats(decodedAudio.samples));
         }
     }
     
