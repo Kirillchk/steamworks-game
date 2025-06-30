@@ -11,7 +11,7 @@ public class PlayableBehavior : MonoBehaviour
 	{
 		gameObject.AddComponent<AudioListener>();
 		var rigid = gameObject.AddComponent<Rigidbody>();
-		rigid.constraints = RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX;
+		rigid.constraints = RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
 		var movement = gameObject.AddComponent<PlayerMovement>();
 		GameObject camerainstance = Instantiate(CameraPrefab, gameObject.transform);
 		movement.playerCamera = camerainstance.transform;

@@ -15,11 +15,11 @@ public class PlayerMovement : MonoBehaviour
     float prevMoveZ;
     private Rigidbody rb;
     private float rotationX = 0f;
-    private bool isGrounded;
+    [SerializeField]private bool isGrounded;
     [SerializeField] bool sprint = false;
     [SerializeField] Vector3 moveDirection;
     [SerializeField] LayerMask groundLayer;
-    [SerializeField] float maxDistance = 1;
+    [SerializeField] float maxDistance = 1.3f;
     [SerializeField] Vector3 gravity;
     [SerializeField] float gravityScale;
     [SerializeField] float acceleration = 1;
@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        groundLayer = LayerMask.GetMask("Ground");
     }
 
     void Update()

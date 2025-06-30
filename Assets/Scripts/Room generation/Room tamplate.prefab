@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2422644783152300572}
   - component: {fileID: 1992982423177090519}
   - component: {fileID: 5768219264397150482}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Room tamplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: 7306397461781886328}
   - component: {fileID: 5975110700764735342}
   - component: {fileID: 1537194835052931497}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -235,7 +235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2210410990898818715, guid: b8b7c77f92c18194481e674ddb2f7277, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
