@@ -9,16 +9,17 @@ public class NetworkTransform : MonoBehaviour
 	Quaternion lastRotation;
 	NetworkIdentity networkIdentity;
 	bool doSendTransform = false;
-	async void Awake()
+	async void Start()
 	{
 		//TODO: FIX! This should not be necessary
 		await Task.Yield();
-		networkIdentity = GetComponent<NetworkIdentity>(); 
+		networkIdentity = GetComponent<NetworkIdentity>();
+		Debug.Log(networkIdentity);
 		ID = networkIdentity.uniqueVector;
 		Debug.Log($"UNIQUE {ID}");
 		P2PBase.networkTransforms[ID] = this;
 	}
-	void Update() =>
+	void LateUpdate() =>
 		sendTransform();
 	void sendTransform()
 	{
