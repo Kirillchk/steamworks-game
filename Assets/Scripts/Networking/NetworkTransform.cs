@@ -12,13 +12,13 @@ public class NetworkTransform : MonoBehaviour
 	async void Start()
 	{
 		//TODO: FIX! This should not be necessary
-		await Task.Yield();
 		networkIdentity = GetComponent<NetworkIdentity>(); 
+		await Task.Yield();
 		ID = networkIdentity.uniqueVector;
 		Debug.Log($"UNIQUE {ID}");
 		P2PBase.networkTransforms[ID] = this;
 	}
-	void LateUpdate() =>
+	void Update() =>
 		sendTransform();
 	void sendTransform()
 	{
