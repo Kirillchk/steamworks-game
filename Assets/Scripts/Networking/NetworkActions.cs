@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using P2PMessages;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using MessagePack;
@@ -36,13 +35,15 @@ public class NetworkActions : MonoBehaviour
 		del.DynamicInvoke(args);
 		byte[] data = MessagePackSerializer.Serialize(args);
 		P2PBase.DelegateBulk.AddRange(
-			new DelegateInvokeMessage()
-			{
-				ID = ID,
-				Index = delegates.IndexOf(del),
-				Length = data.Length,
-				Args = data
-			}.GetBinary() // maybe remove
+			MessagePackSerializer.Serialize(
+				new P2PBase.DelegateInvokeMessage()
+				{
+					ID = ID,
+					Index = delegates.IndexOf(del),
+					Length = data.Length,
+					Args = data
+				}
+			)
 		);
 	}
 	internal void InvokeFromBytes(in int ind, in byte[] data) =>

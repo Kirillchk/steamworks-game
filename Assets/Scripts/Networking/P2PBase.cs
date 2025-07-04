@@ -3,11 +3,21 @@ using Steamworks;
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using P2PMessages;
 using Adrenak.UniVoice;
 using MessagePack;
 public class P2PBase : MonoBehaviour
 {
+	public enum k_nSteamNetworkingSend : int
+	{
+		// https://github.com/rlabrecque/SteamworksSDK/blob/main/public/steam/steamnetworkingtypes.h#L954
+		Unreliable = 0,
+		NoNagle = 1,
+		NoDelay = 4,
+		Reliable = 8,
+		UnreliableNoNagle = Unreliable | NoNagle,
+		UnreliableNoDelay = Unreliable | NoDelay | NoNagle,
+		ReliableNoNagle = Reliable | NoNagle,
+	}
 	enum EBulkPackage : byte
 	{
 		Transform,
@@ -30,8 +40,19 @@ public class P2PBase : MonoBehaviour
 	}
 
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
+	[MessagePackObject]
+	public struct DelegateInvokeMessage 
+	{
+		[Key(0)]
+		public Vector3 ID;
+		[Key(1)]
+		public int Index;
+		[Key(2)]
+		public int Length;
+		[Key(3)]
+		public byte[] Args;
+	}
 	internal static List<byte> DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
-
 	public static AudioFrame audioFrame = new AudioFrame();
 	protected HSteamNetConnection connection;
 	protected bool isActive = false;
@@ -41,9 +62,9 @@ public class P2PBase : MonoBehaviour
 		if (!isActive || connection == HSteamNetConnection.Invalid) return;
 		if (TransformPacks.Count > 0)
 		{
-			List<byte> TransformBulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
-			TransformBulk.AddRange(MessagePackSerializer.Serialize(TransformPacks));
-			SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
+			List<byte> Bulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
+			Bulk.AddRange(MessagePackSerializer.Serialize(TransformPacks));
+			SendMessageToConnection(Bulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
 			TransformPacks.Clear();
 		}
 		if (DelegateBulk.Count > 1)

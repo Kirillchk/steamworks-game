@@ -10,11 +10,10 @@ public class NetworkTransform : MonoBehaviour
 	public bool doSendTransform = true;
 	async void Start()
 	{
-		//TODO: FIX! This should not be necessary
 		networkIdentity = GetComponent<NetworkIdentity>(); 
+		//TODO: FIX! This should not be necessary
 		await Task.Yield();
 		ID = networkIdentity.uniqueVector;
-		Debug.Log($"UNIQUE {ID}");
 		P2PBase.networkTransforms[ID] = this;
 	}
 	void Update() =>
