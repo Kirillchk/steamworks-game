@@ -12,6 +12,7 @@ namespace Adrenak.UniMic
     [RequireComponent(typeof(StreamedAudioSource))]
     public class MicAudioSource : MonoBehaviour
     {
+		public static MicAudioSource only;
         [SerializeField] Mic.Device device;
         public Mic.Device Device
         {
@@ -63,16 +64,17 @@ namespace Adrenak.UniMic
         AudioFrame audioFrame;
         AudioFrame encodedAudio;
         AudioFrame decodedAudio;
-        void Start()
-        {
-            encoder = new ConcentusEncodeFilter(
-            ConcentusFrequencies.Frequency_48000,
-            8,
-            8,
-            64000,
-            46080);
-            decoder = new ConcentusDecodeFilter();
-            audioFrame = new AudioFrame();
+		void Start()
+		{
+			encoder = new ConcentusEncodeFilter(
+			ConcentusFrequencies.Frequency_48000,
+			8,
+			8,
+			64000,
+			46080);
+			decoder = new ConcentusDecodeFilter();
+			audioFrame = new AudioFrame();
+			only = this;
         }
         void OnFrameCollected(int frequency, int channels, float[] samples)
         {
