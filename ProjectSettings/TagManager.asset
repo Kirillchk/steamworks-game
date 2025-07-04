@@ -6,6 +6,7 @@ TagManager:
   tags:
   - MainManager
   - DoorMark
+  - MIC
   layers:
   - Default
   - TransparentFX

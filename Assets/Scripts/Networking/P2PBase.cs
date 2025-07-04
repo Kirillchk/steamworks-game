@@ -188,7 +188,7 @@ public class P2PBase : MonoBehaviour
 		}
 
 		DontDestroyOnLoad(gameObject);
-		
+		source = GameObject.FindGameObjectWithTag("MIC").GetComponent<MicAudioSource>();
 		Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
 	}
 
