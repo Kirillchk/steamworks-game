@@ -16,6 +16,18 @@ public class P2PBase : MonoBehaviour
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
 	internal static List<TransformPack> TransformPacks = new();
+	[MessagePackObject]
+	public struct TransformPack
+	{
+		[Key(0)]
+		public Vector3 ID;
+		[Key(1)]
+		public Vector3? newPos;
+		[Key(2)]
+		public Quaternion? newRot;
+		[Key(3)]
+		public Vector3? newScl;
+	}
 
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<byte> DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };

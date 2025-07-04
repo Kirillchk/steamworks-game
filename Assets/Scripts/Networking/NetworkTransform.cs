@@ -1,5 +1,4 @@
 using UnityEngine;
-using P2PMessages;
 using System.Threading.Tasks;
 public class NetworkTransform : MonoBehaviour
 {
@@ -35,20 +34,19 @@ public class NetworkTransform : MonoBehaviour
 		lastPosition = currentPosition;
 		lastRotation = currentRotation;
 		lastScale = currentScale;
+
 		if (doSendTransform && (moved || rotated || scaled))
-		{
-			var pack = new TransformPack()
-			{
-				ID = ID,
-				newPos = moved ? currentPosition : null,
-				newRot = rotated ? currentRotation : null,
-				newScl = scaled ? currentScale : null
-			};
-			P2PBase.TransformPacks.Add(pack);
-		}
+			P2PBase.TransformPacks.Add(
+				new() {
+					ID = ID,
+					newPos = moved ? currentPosition : null,
+					newRot = rotated ? currentRotation : null,
+					newScl = scaled ? currentScale : null
+				}
+			);
 		doSendTransform = true;
 	}
-	internal void TransformSync(in TransformPack tp)
+	internal void TransformSync(in P2PBase.TransformPack tp)
 	{
 		if (networkIdentity.isOwner)
 			return;

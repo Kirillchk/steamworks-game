@@ -31,18 +31,6 @@ namespace P2PMessages
 		public static ReadOnlySpan<byte> StructToSpan<T>(T inp) where T : unmanaged
 			=> MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref inp, 1));
 	}
-	[MessagePackObject]
-	public struct TransformPack
-	{
-		[Key(0)]
-		public Vector3 ID;
-		[Key(1)]
-		public Vector3? newPos;
-		[Key(2)]
-		public Quaternion? newRot;
-		[Key(3)]
-		public Vector3? newScl;
-	}
 	[StructLayout(LayoutKind.Sequential)]
 	public struct DelegateInvokeMessage : INetworkMessage
 	{
