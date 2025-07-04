@@ -11,7 +11,7 @@ public class NetworkTransform : MonoBehaviour
 	Quaternion lastRotation;
 	NetworkIdentity networkIdentity;
 	public bool doSendTransform = false;
-	async void Awake()
+	async void Start()
 	{
 		//TODO: FIX! This should not be necessary
 		networkIdentity = GetComponent<NetworkIdentity>(); 
