@@ -30,6 +30,7 @@ public class P2PBase : MonoBehaviour
 		if (TransformPacks.Count > 0)
 		{
 			List<byte> TransformBulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
+			TransformBulk.AddRange(MessagePackSerializer.Serialize(TransformPacks));
 			SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
 			TransformPacks.Clear();
 		}
