@@ -10,7 +10,7 @@ public class NetworkTransform : MonoBehaviour
 	Vector3 lastPosition;
 	Quaternion lastRotation;
 	NetworkIdentity networkIdentity;
-	public bool doSendTransform = false;
+	public bool doSendTransform = true;
 	async void Start()
 	{
 		//TODO: FIX! This should not be necessary
@@ -73,7 +73,8 @@ public class NetworkTransform : MonoBehaviour
 				newRot = rotated ? currentRotation : null,
 				newScl = scaled ? currentScale : null
 			};
-			byte[] bytes = MessagePackSerializer.Serialize(pack);
+			var list = new List<TransformPack>(){ pack };
+			byte[] bytes = MessagePackSerializer.Serialize(list);
 			var packs = MessagePackSerializer.Deserialize<List<TransformPack>>(bytes);
 			Debug.Log($"Original pack-(id:{pack.ID} pos:{pack.newPos} rot:{pack.newRot} scl:{pack.newScl}) bytes: {bytes}");
 			foreach (var p in packs)

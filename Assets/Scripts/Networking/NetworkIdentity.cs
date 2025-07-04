@@ -3,7 +3,7 @@ using UnityEngine;
 public class NetworkIdentity : MonoBehaviour
 {
 	internal Vector3 uniqueVector;
-	internal bool isOwner;
+	public bool isOwner = true;
 	void Start() =>
 		uniqueVector = transform.position;
 }
