@@ -66,6 +66,8 @@ namespace Adrenak.UniMic
         AudioFrame decodedAudio;
 		void Start()
 		{
+			only = this;
+			Debug.Log("added only");
 			encoder = new ConcentusEncodeFilter(
 			ConcentusFrequencies.Frequency_48000,
 			8,
@@ -74,7 +76,6 @@ namespace Adrenak.UniMic
 			46080);
 			decoder = new ConcentusDecodeFilter();
 			audioFrame = new AudioFrame();
-			only = this;
         }
         void OnFrameCollected(int frequency, int channels, float[] samples)
         {
