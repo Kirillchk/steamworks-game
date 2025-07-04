@@ -43,30 +43,6 @@ namespace P2PMessages
 		[Key(3)]
 		public Vector3? newScl;
 	}
-	[StructLayout(LayoutKind.Sequential, Size = 32)]
-	public struct TransformPos : INetworkMessage
-	{
-		public static byte Purpuse = (byte)EPackagePurpuse.TransformPosition;
-		public byte purpuse;
-		public Vector3 ID;
-		public Vector3 pos;
-	}
-	[StructLayout(LayoutKind.Sequential, Size = 32)]
-	public struct TransformRot : INetworkMessage
-	{
-		public static byte Purpuse = (byte)EPackagePurpuse.TransformRotation;
-		public byte purpuse;
-		public Vector3 ID;
-		public Quaternion rot;
-	}
-	[StructLayout(LayoutKind.Sequential, Size = 32)]
-	public struct TransformScl : INetworkMessage
-	{
-		public static byte Purpuse = (byte)EPackagePurpuse.TransformScale;
-		public byte purpuse;
-		public Vector3 ID;
-		public Vector3 scl;
-	}
 	[StructLayout(LayoutKind.Sequential)]
 	public struct DelegateInvokeMessage : INetworkMessage
 	{

@@ -1,8 +1,6 @@
 using UnityEngine;
 using P2PMessages;
 using System.Threading.Tasks;
-using MessagePack;
-using System.Collections.Generic;
 public class NetworkTransform : MonoBehaviour
 {
 	[SerializeField] Vector3 ID;
@@ -37,35 +35,8 @@ public class NetworkTransform : MonoBehaviour
 		lastPosition = currentPosition;
 		lastRotation = currentRotation;
 		lastScale = currentScale;
-		if (doSendTransform)
+		if (doSendTransform && (moved || rotated || scaled))
 		{
-			if (moved)
-				P2PBase.TransformBulk.AddRange(INetworkMessage.StructToSpan(
-					new TransformPos()
-					{
-						purpuse = TransformPos.Purpuse,
-						ID = ID,
-						pos = currentPosition,
-					}
-				).ToArray());
-			if (rotated)
-				P2PBase.TransformBulk.AddRange(INetworkMessage.StructToSpan(
-					new TransformRot()
-					{
-						purpuse = TransformRot.Purpuse,
-						ID = ID,
-						rot = currentRotation
-					}
-				).ToArray());
-			if (scaled)
-				P2PBase.TransformBulk.AddRange(INetworkMessage.StructToSpan(
-					new TransformScl()
-					{
-						purpuse = TransformScl.Purpuse,
-						ID = ID,
-						scl = currentScale
-					}
-				).ToArray());
 			var pack = new TransformPack()
 			{
 				ID = ID,
@@ -73,34 +44,20 @@ public class NetworkTransform : MonoBehaviour
 				newRot = rotated ? currentRotation : null,
 				newScl = scaled ? currentScale : null
 			};
-			var list = new List<TransformPack>(){ pack };
-			byte[] bytes = MessagePackSerializer.Serialize(list);
-			var packs = MessagePackSerializer.Deserialize<List<TransformPack>>(bytes);
-			Debug.Log($"Original pack-(id:{pack.ID} pos:{pack.newPos} rot:{pack.newRot} scl:{pack.newScl}) bytes: {bytes}");
-			foreach (var p in packs)
-				Debug.Log($"recived pack-(id:{p.ID} pos:{p.newPos} rot:{p.newRot} scl:{p.newScl})");	
+			P2PBase.TransformPacks.Add(pack);
 		}
 		doSendTransform = true;
 	}
-	internal void MoveToSync(Vector3 move)
+	internal void TransformSync(in TransformPack tp)
 	{
 		if (networkIdentity.isOwner)
 			return;
-		transform.position = Vector3.Lerp(transform.position, move, 0.5f);
-		doSendTransform = false;
-	}
-	internal void RotateToSync(Quaternion rotate)
-	{
-		if (networkIdentity.isOwner)
-			return;
-		transform.rotation = rotate;
-		doSendTransform = false;
-	}
-	internal void ScaleToSync(Vector3 scale)
-	{
-		if (networkIdentity.isOwner)
-			return;
-		transform.localScale = scale;
+		if (tp.newPos != null)
+			transform.position = Vector3.Lerp(transform.position, tp.newPos.Value, 0.5f);
+		if (tp.newRot != null)
+			transform.rotation = tp.newRot.Value;
+		if (tp.newScl != null)
+			transform.localScale = tp.newScl.Value;
 		doSendTransform = false;
 	}
 }

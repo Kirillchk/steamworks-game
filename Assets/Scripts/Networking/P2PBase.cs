@@ -15,7 +15,7 @@ public class P2PBase : MonoBehaviour
 		Audio
 	}
 	internal static Dictionary<Vector3, NetworkTransform> networkTransforms = new();
-	internal static List<byte> TransformBulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
+	internal static List<TransformPack> TransformPacks = new();
 
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<byte> DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
@@ -27,11 +27,11 @@ public class P2PBase : MonoBehaviour
 	void LateUpdate()
 	{
 		if (!isActive || connection == HSteamNetConnection.Invalid) return;
-		if (TransformBulk.Count > 1)
+		if (TransformPacks.Count > 0)
 		{
+			List<byte> TransformBulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
 			SendMessageToConnection(TransformBulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
-			// what is the most eeficient way to clear a list?
-			TransformBulk = new(1024) { (byte)EBulkPackage.Transform };
+			TransformPacks.Clear();
 		}
 		if (DelegateBulk.Count > 1)
 		{
@@ -62,30 +62,9 @@ public class P2PBase : MonoBehaviour
 		{
 			case EBulkPackage.Transform:
 			{
-				for (int i = 0; i < bulkData.Length; i += 32)
-				{
-					Span<byte> span = bulkData.AsSpan(i, 32);
-
-					byte purpuse = span[0];
-					if (purpuse == TransformRot.Purpuse)
-					{
-						var inst = MemoryMarshal.Read<TransformRot>(span);
-						networkTransforms[inst.ID].RotateToSync(inst.rot);
-						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.rot}");
-					}
-					else if (purpuse == TransformPos.Purpuse)
-					{
-						var inst = MemoryMarshal.Read<TransformPos>(span);
-						networkTransforms[inst.ID].MoveToSync(inst.pos);
-						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.pos}");
-					}
-					else if (purpuse == TransformScl.Purpuse)
-					{
-						var inst = MemoryMarshal.Read<TransformScl>(span);
-						networkTransforms[inst.ID].ScaleToSync(inst.scl);
-						Debug.Log($"Recived: {inst.purpuse} {inst.ID} {inst.scl}");
-					}
-				}
+				var packs = MessagePackSerializer.Deserialize<List<TransformPack>>(bulkData);
+				foreach (var pack in packs)
+					networkTransforms[pack.ID].TransformSync(pack);
 				break;
 			}
 			case EBulkPackage.Delegate:
