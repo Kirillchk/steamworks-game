@@ -73,7 +73,6 @@ namespace Adrenak.UniMic
             46080);
             decoder = new ConcentusDecodeFilter();
             audioFrame = new AudioFrame();
-            P2PBase.OnAudioRecieve += RecieveFrame;
         }
         void OnFrameCollected(int frequency, int channels, float[] samples)
         {
@@ -88,7 +87,7 @@ namespace Adrenak.UniMic
         {
             P2PBase.audioFrame = audioFrame;
         }
-        void RecieveFrame(AudioFrame audioFrame)
+        public void RecieveFrame(AudioFrame audioFrame)
         {
             decodedAudio = decoder.Run(audioFrame);
             float[] audio = Utils.Bytes.BytesToFloats(decodedAudio.samples);

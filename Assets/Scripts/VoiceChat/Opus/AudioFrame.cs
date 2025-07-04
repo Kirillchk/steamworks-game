@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using MessagePack;
+﻿using MessagePack;
 namespace Adrenak.UniVoice {
     [System.Serializable]
     [MessagePackObject]

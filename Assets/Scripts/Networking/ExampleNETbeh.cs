@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using static NetworkSyncExtensions; 
 public class ExampleNETbeh : NetworkActions
 {
     [ContextMenu("Test1")]

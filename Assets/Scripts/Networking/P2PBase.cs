@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using Adrenak.UniVoice;
 using MessagePack;
+using Adrenak.UniMic;
 public class P2PBase : MonoBehaviour
 {
 	public enum k_nSteamNetworkingSend : int
@@ -52,10 +53,11 @@ public class P2PBase : MonoBehaviour
 		[Key(3)]
 		public byte[] Args;
 	}
+	public MicAudioSource source;
 	public static AudioFrame audioFrame = new AudioFrame();
+
 	protected HSteamNetConnection connection;
 	protected bool isActive = false;
-	public static event Action<AudioFrame> OnAudioRecieve;
 	void LateUpdate()
 	{
 		if (!isActive || connection == HSteamNetConnection.Invalid) return;
@@ -75,13 +77,11 @@ public class P2PBase : MonoBehaviour
 		}
 		if (audioFrame.samples != null)
 		{
-			audioFrame.id = 2;
-
-			byte[] bytes = MessagePackSerializer.Serialize(audioFrame);
-			byte[] audio = new byte[bytes.Length + 1];
-			audio[0] = audioFrame.id;
-			Array.Copy(bytes,0,audio, 1, bytes.Length);
-			SendMessageToConnection(audio, (int)k_nSteamNetworkingSend.Reliable);
+			// che bliat?
+			// audioFrame.id = 2; <- nahuia
+			List<byte> bulk = new(1024 + 1) { (byte)EBulkPackage.Audio };
+			bulk.AddRange(MessagePackSerializer.Serialize(audioFrame));
+			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
 			// Debug.Log("audioFrame.samples.Length" + audioFrame.samples.Length);
 			// Debug.Log("bytes.Length"+bytes.Length);
 			// Debug.Log("BYTES");
@@ -106,13 +106,13 @@ public class P2PBase : MonoBehaviour
 			{
 				var packs = MessagePackSerializer.Deserialize<List<DelegatePack>>(bulkData);
 				foreach (var pack in packs) 
-					networkActionScripts[pack.ID].InvokeFromBytes(pack.Index,pack.Args);
+					networkActionScripts[pack.ID].InvokeFromBytes(pack.Index, pack.Args);
 				break;
 			}
 			case EBulkPackage.Audio:
 			{
-				AudioFrame audioFrame = MessagePackSerializer.Deserialize<AudioFrame>(bulkData);
-				OnAudioRecieve?.Invoke(audioFrame);
+				var audioFrame = MessagePackSerializer.Deserialize<AudioFrame>(bulkData);
+				source.RecieveFrame(audioFrame);
 				break;
 			}
 			default: 
