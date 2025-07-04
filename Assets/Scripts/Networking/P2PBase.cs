@@ -146,10 +146,10 @@ public class P2PBase : MonoBehaviour
 				nSendFlags,
 				out long messageNumber
 			);
-			if (result != EResult.k_EResultOK)
-				Debug.LogError($"Failed to send message: {result}");
-			else 
-				Debug.Log($"Message sent successfully (ID: {messageNumber}, Size: {data.Length} bytes)");
+			//if (result != EResult.k_EResultOK)
+			//	Debug.LogError($"Failed to send message: {result}");
+			//else 
+			//	Debug.Log($"Message sent successfully (ID: {messageNumber}, Size: {data.Length} bytes)");
 		} catch (Exception e) {
 			Debug.LogError($"Error sending message: {e}");
 		} finally {
