@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using P2PMessages;
 using Adrenak.UniVoice;
 using MessagePack;
-using Unity.VisualScripting;
 public class P2PBase : MonoBehaviour
 {
 	enum EBulkPackage : byte

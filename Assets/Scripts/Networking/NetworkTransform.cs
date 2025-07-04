@@ -1,6 +1,8 @@
 using UnityEngine;
 using P2PMessages;
 using System.Threading.Tasks;
+using MessagePack;
+using System.Collections.Generic;
 public class NetworkTransform : MonoBehaviour
 {
 	[SerializeField] Vector3 ID;
@@ -8,12 +10,12 @@ public class NetworkTransform : MonoBehaviour
 	Vector3 lastPosition;
 	Quaternion lastRotation;
 	NetworkIdentity networkIdentity;
-	bool doSendTransform = false;
+	public bool doSendTransform = false;
 	async void Awake()
 	{
 		//TODO: FIX! This should not be necessary
-		await Task.Yield();
 		networkIdentity = GetComponent<NetworkIdentity>(); 
+		await Task.Yield();
 		ID = networkIdentity.uniqueVector;
 		Debug.Log($"UNIQUE {ID}");
 		P2PBase.networkTransforms[ID] = this;
@@ -64,6 +66,18 @@ public class NetworkTransform : MonoBehaviour
 						scl = currentScale
 					}
 				).ToArray());
+			var pack = new TransformPack()
+			{
+				ID = ID,
+				newPos = moved ? currentPosition : null,
+				newRot = rotated ? currentRotation : null,
+				newScl = scaled ? currentScale : null
+			};
+			byte[] bytes = MessagePackSerializer.Serialize(pack);
+			var packs = MessagePackSerializer.Deserialize<List<TransformPack>>(bytes);
+			Debug.Log($"Original pack-(id:{pack.ID} pos:{pack.newPos} rot:{pack.newRot} scl:{pack.newScl}) bytes: {bytes}");
+			foreach (var p in packs)
+				Debug.Log($"recived pack-(id:{p.ID} pos:{p.newPos} rot:{p.newRot} scl:{p.newScl})");	
 		}
 		doSendTransform = true;
 	}
