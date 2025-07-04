@@ -53,7 +53,7 @@ public class P2PBase : MonoBehaviour
 		[Key(3)]
 		public byte[] Args;
 	}
-	public MicAudioSource source;
+	public static MicAudioSource source;
 	public static AudioFrame audioFrame = new AudioFrame();
 
 	protected HSteamNetConnection connection;
@@ -188,7 +188,6 @@ public class P2PBase : MonoBehaviour
 		}
 
 		DontDestroyOnLoad(gameObject);
-		source = MicAudioSource.only;
 		Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
 	}
 

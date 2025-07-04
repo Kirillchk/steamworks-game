@@ -66,7 +66,7 @@ namespace Adrenak.UniMic
         AudioFrame decodedAudio;
 		void Start()
 		{
-			only = this;
+			P2PBase.source = this;
 			Debug.Log("added only");
 			encoder = new ConcentusEncodeFilter(
 			ConcentusFrequencies.Frequency_48000,
