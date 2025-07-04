@@ -77,18 +77,17 @@ public class P2PBase : MonoBehaviour
 		}
 		if (audioFrame.samples != null)
 		{
-			// che bliat?
-			// audioFrame.id = 2; <- nahuia
 			List<byte> bulk = new(1024 + 1) { (byte)EBulkPackage.Audio };
 			bulk.AddRange(MessagePackSerializer.Serialize(audioFrame));
 			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+			audioFrame.samples = null;
+			// che bliat?
+			// audioFrame.id = 2; <- nahuia
 			// Debug.Log("audioFrame.samples.Length" + audioFrame.samples.Length);
 			// Debug.Log("bytes.Length"+bytes.Length);
 			// Debug.Log("BYTES");
 			// for (int i = 0; i < 10; i++)
 			//     Debug.Log(bytes[i]);
-
-			audioFrame.samples = null;
 		}
 	}
 	
