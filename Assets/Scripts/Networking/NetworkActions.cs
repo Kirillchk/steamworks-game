@@ -34,16 +34,14 @@ public class NetworkActions : MonoBehaviour
 	{
 		del.DynamicInvoke(args);
 		byte[] data = MessagePackSerializer.Serialize(args);
-		P2PBase.DelegateBulk.AddRange(
-			MessagePackSerializer.Serialize(
-				new P2PBase.DelegateInvokeMessage()
-				{
-					ID = ID,
-					Index = delegates.IndexOf(del),
-					Length = data.Length,
-					Args = data
-				}
-			)
+		P2PBase.DelegatePacks.Add(
+			new P2PBase.DelegatePack()
+			{
+				ID = ID,
+				Index = delegates.IndexOf(del),
+				Length = data.Length,
+				Args = data
+			}
 		);
 	}
 	internal void InvokeFromBytes(in int ind, in byte[] data) =>

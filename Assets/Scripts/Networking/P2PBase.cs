@@ -40,8 +40,9 @@ public class P2PBase : MonoBehaviour
 	}
 
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
+	internal static List<DelegatePack> DelegatePacks = new();
 	[MessagePackObject]
-	public struct DelegateInvokeMessage 
+	public struct DelegatePack
 	{
 		[Key(0)]
 		public Vector3 ID;
@@ -52,7 +53,6 @@ public class P2PBase : MonoBehaviour
 		[Key(3)]
 		public byte[] Args;
 	}
-	internal static List<byte> DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
 	public static AudioFrame audioFrame = new AudioFrame();
 	protected HSteamNetConnection connection;
 	protected bool isActive = false;
@@ -62,15 +62,17 @@ public class P2PBase : MonoBehaviour
 		if (!isActive || connection == HSteamNetConnection.Invalid) return;
 		if (TransformPacks.Count > 0)
 		{
-			List<byte> Bulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
-			Bulk.AddRange(MessagePackSerializer.Serialize(TransformPacks));
-			SendMessageToConnection(Bulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
+			List<byte> bulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
+			bulk.AddRange(MessagePackSerializer.Serialize(TransformPacks));
+			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.UnreliableNoNagle);
 			TransformPacks.Clear();
 		}
-		if (DelegateBulk.Count > 1)
+		if (DelegatePacks.Count > 0)
 		{
-			SendMessageToConnection(DelegateBulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
-			DelegateBulk = new(128 + 1) { (byte)EBulkPackage.Delegate };
+			List<byte> bulk = new(64 + 1) { (byte)EBulkPackage.Delegate };
+			bulk.AddRange(MessagePackSerializer.Serialize(DelegatePacks));
+			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
+			DelegatePacks.Clear();
 		}
 		if (audioFrame.samples != null)
 		{
@@ -103,17 +105,21 @@ public class P2PBase : MonoBehaviour
 			}
 			case EBulkPackage.Delegate:
 			{
-				for (int i = 0; i < bulkData.Length; i += 20)
-				{
-					Span<byte> part1 = bulkData.AsSpan(i, 20);
+				var packs = MessagePackSerializer.Deserialize<List<DelegatePack>>(bulkData);
+				foreach (var pack in packs) 
+					networkActionScripts[pack.ID].InvokeFromBytes(pack.Index,pack.Args);
+				
+				//for (int i = 0; i < bulkData.Length; i += 20)
+				//{
+				//	Span<byte> part1 = bulkData.AsSpan(i, 20);
 
-					Vector3 id = MemoryMarshal.Read<Vector3>(part1[0..12]);
-					int index = MemoryMarshal.Read<int>(part1[12..16]);
-					int length = MemoryMarshal.Read<int>(part1[16..20]);
-					byte[] args = bulkData[(i + 20)..(i + 20 + length)];
-					i += length;
-					networkActionScripts[id].InvokeFromBytes(index, args);
-				}	
+				//	Vector3 id = MemoryMarshal.Read<Vector3>(part1[0..12]);
+				//	int index = MemoryMarshal.Read<int>(part1[12..16]);
+				//	int length = MemoryMarshal.Read<int>(part1[16..20]);
+				//	byte[] args = bulkData[(i + 20)..(i + 20 + length)];
+				//	i += length;
+				//	networkActionScripts[id].InvokeFromBytes(index, args);
+				//}	
 				break;
 			}
 			case EBulkPackage.Audio:
