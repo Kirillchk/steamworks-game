@@ -38,7 +38,6 @@ public class P2PBase : MonoBehaviour
 		[Key(3)]
 		public Vector3? newScl;
 	}
-
 	internal static Dictionary<Vector3, NetworkActions> networkActionScripts = new();
 	internal static List<DelegatePack> DelegatePacks = new();
 	[MessagePackObject]
@@ -108,25 +107,13 @@ public class P2PBase : MonoBehaviour
 				var packs = MessagePackSerializer.Deserialize<List<DelegatePack>>(bulkData);
 				foreach (var pack in packs) 
 					networkActionScripts[pack.ID].InvokeFromBytes(pack.Index,pack.Args);
-				
-				//for (int i = 0; i < bulkData.Length; i += 20)
-				//{
-				//	Span<byte> part1 = bulkData.AsSpan(i, 20);
-
-				//	Vector3 id = MemoryMarshal.Read<Vector3>(part1[0..12]);
-				//	int index = MemoryMarshal.Read<int>(part1[12..16]);
-				//	int length = MemoryMarshal.Read<int>(part1[16..20]);
-				//	byte[] args = bulkData[(i + 20)..(i + 20 + length)];
-				//	i += length;
-				//	networkActionScripts[id].InvokeFromBytes(index, args);
-				//}	
 				break;
 			}
 			case EBulkPackage.Audio:
 			{
-					AudioFrame audioFrame = MessagePackSerializer.Deserialize<AudioFrame>(bulkData);
-                    OnAudioRecieve?.Invoke(audioFrame);
-                    break;
+				AudioFrame audioFrame = MessagePackSerializer.Deserialize<AudioFrame>(bulkData);
+				OnAudioRecieve?.Invoke(audioFrame);
+				break;
 			}
 			default: 
 			{
