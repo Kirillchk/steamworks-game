@@ -8,7 +8,7 @@ using MessagePack;
 using Adrenak.UniMic;
 public class P2PBase : MonoBehaviour
 {
-	public enum k_nSteamNetworkingSend : int
+	enum k_nSteamNetworkingSend : int
 	{
 		// https://github.com/rlabrecque/SteamworksSDK/blob/main/public/steam/steamnetworkingtypes.h#L954
 		Unreliable = 0,
