@@ -45,6 +45,8 @@ public class P2PSteamBehaviour : MonoBehaviour
 		List<byte[]> res = new();
 		if (numMessages > 0)
 			Debug.Log($"Received {numMessages} messages this frame");
+		else
+			return null;
 		for (int i = 0; i < numMessages; i++)
 		{
 			try
