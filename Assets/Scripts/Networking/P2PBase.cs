@@ -1,12 +1,10 @@
 using UnityEngine;
 using Steamworks;
-using System;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using Adrenak.UniVoice;
 using MessagePack;
 using Adrenak.UniMic;
-public class P2PBase : MonoBehaviour
+public class P2PBase : P2PSteamBehaviour
 {
 	enum k_nSteamNetworkingSend : int
 	{
@@ -55,12 +53,10 @@ public class P2PBase : MonoBehaviour
 	}
 	public static MicAudioSource source;
 	public static AudioFrame audioFrame = new AudioFrame();
-
-	protected HSteamNetConnection connection;
-	protected bool isActive = false;
-	void LateUpdate()
+	void SendPackages()
 	{
-		if (!isActive || connection == HSteamNetConnection.Invalid) return;
+		if (!isActive || connection == HSteamNetConnection.Invalid)
+			return;
 		if (TransformPacks.Count > 0)
 		{
 			List<byte> bulk = new(1024 + 1) { (byte)EBulkPackage.Transform };
@@ -81,230 +77,49 @@ public class P2PBase : MonoBehaviour
 			bulk.AddRange(MessagePackSerializer.Serialize(audioFrame));
 			SendMessageToConnection(bulk.ToArray(), (int)k_nSteamNetworkingSend.Reliable);
 			audioFrame.samples = null;
-			// che bliat?
-			// audioFrame.id = 2; <- nahuia
-			// Debug.Log("audioFrame.samples.Length" + audioFrame.samples.Length);
-			// Debug.Log("bytes.Length"+bytes.Length);
-			// Debug.Log("BYTES");
-			// for (int i = 0; i < 10; i++)
-			//     Debug.Log(bytes[i]);
 		}
 	}
-	
-	void ProcesData(EBulkPackage bulkPurpose, in byte[] bulkData) {	
-		switch(bulkPurpose)
-		{
-			case EBulkPackage.Transform:
-			{
-				var packs = MessagePackSerializer.Deserialize<List<TransformPack>>(bulkData);
-				foreach (var pack in packs)
-					networkTransforms[pack.ID].TransformSync(pack);
-				break;
-			}
-			case EBulkPackage.Delegate:
-			{
-				var packs = MessagePackSerializer.Deserialize<List<DelegatePack>>(bulkData);
-				foreach (var pack in packs) 
-					networkActionScripts[pack.ID].InvokeFromBytes(pack.Index, pack.Args);
-				break;
-			}
-			case EBulkPackage.Audio:
-			{
-				var audioFrame = MessagePackSerializer.Deserialize<AudioFrame>(bulkData);
-				source.RecieveFrame(audioFrame);
-				break;
-			}
-			default: 
-			{
-				Debug.LogError("UNSUPORTED BULK");
-				break;
-			}
-		}
-	}
-	void SendMessageToConnection(in byte[] data, in int nSendFlags)
-	{
-		if (!isActive || connection == HSteamNetConnection.Invalid)
-		{
-			Debug.LogError("Cannot send - no active connection!");
+	void ProcesData(in List<byte[]> data) {
+		if (data == null)
 			return;
-		}
-		GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-		try {
-			IntPtr pData = handle.AddrOfPinnedObject();
-			EResult result = SteamNetworkingSockets.SendMessageToConnection(
-				connection,
-				pData,
-				(uint)data.Length,
-				nSendFlags,
-				out long messageNumber
-			);
-			//if (result != EResult.k_EResultOK)
-			//	Debug.LogError($"Failed to send message: {result}");
-			//else 
-			//	Debug.Log($"Message sent successfully (ID: {messageNumber}, Size: {data.Length} bytes)");
-		} catch (Exception e) {
-			Debug.LogError($"Error sending message: {e}");
-		} finally {
-			handle.Free();
-		}
-	}
-	void TryRecive(){
-		if (!isActive || connection == HSteamNetConnection.Invalid)
-			return;
-		// Receive messages
-		IntPtr[] messages = new IntPtr[10];
-		int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
-		
-		if (numMessages > 0)
-			Debug.Log($"Received {numMessages} messages this frame");
-		for (int i = 0; i < numMessages; i++)
+		for (int i = 0; i < data.Count; i++)
 		{
-			try {
-				SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
-				byte[] data = new byte[message.m_cbSize];
-				Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
-				ProcesData((EBulkPackage)data[0], data[1..]);
-			} catch (Exception e) {
-				Debug.LogError($"Error processing message: {e}");
-			} finally {
-				SteamNetworkingMessage_t.Release(messages[i]);
-			}
-		}
-	}
-	void Update() => TryRecive();
-	void Awake()
-	{
-		if (!SteamManager.Initialized)
-		{
-			Debug.LogError("Steam not initialized!");
-			return;
-		}
-
-		try {
-			SteamNetworkingUtils.InitRelayNetworkAccess();
-		} catch (Exception e) {
-			Debug.LogError($"Network initialization error: {e}");
-		}
-
-		DontDestroyOnLoad(gameObject);
-		Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
-	}
-
-	void OnConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t callback)
-	{
-		Debug.Log($"Connection status changed:\n" +
-				$"State: {callback.m_info.m_eState}\n" +
-				$"Reason: {callback.m_info.m_eEndReason}\n" +
-				$"Remote: {callback.m_info.m_identityRemote.GetSteamID()}\n" +
-				$"OldState: {callback.m_eOldState}");
-
-		switch (callback.m_info.m_eState)
-		{
-			case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connecting:
-				if (callback.m_info.m_identityRemote.GetSteamID() != CSteamID.Nil && !isActive)
-				{
-					if (SteamNetworkingSockets.AcceptConnection(callback.m_hConn) == EResult.k_EResultOK)
+			byte[] bulk = data[i];
+			var bulkPurpose = (EBulkPackage)bulk[0];
+			var bulkData = bulk[1..];
+			switch (bulkPurpose)
+			{
+				case EBulkPackage.Transform:
 					{
-						connection = callback.m_hConn;
-						isActive = true;
-						Debug.Log("Accepted incoming connection");
+						var packs = MessagePackSerializer.Deserialize<List<TransformPack>>(bulkData);
+						foreach (var pack in packs)
+							networkTransforms[pack.ID].TransformSync(pack);
+						break;
 					}
-					else
+				case EBulkPackage.Delegate:
 					{
-						Debug.LogError("Failed to accept connection");
-						// SteamNetworkingSockets.CloseConnection(callback.m_hConn, 0, "Failed to accept", false);
+						var packs = MessagePackSerializer.Deserialize<List<DelegatePack>>(bulkData);
+						foreach (var pack in packs)
+							networkActionScripts[pack.ID].InvokeFromBytes(pack.Index, pack.Args);
+						break;
 					}
-				}
-				break;
-				
-			case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
-				if (isActive) 
-					Debug.Log("already active");
-				else {
-					bool result = SteamNetworkingSockets.AcceptConnection(callback.m_hConn) == EResult.k_EResultOK;
-					Debug.Log(result?"Successfully acepted":"failed wtf");
-				}
-				break;
-				
-			case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
-				Debug.Log("Connection closed");
-				break;
-			case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
-				Debug.Log("Connection closed: " + callback.m_info.m_szEndDebug);
-				SteamNetworkingSockets.CloseConnection(callback.m_hConn, 0, "Connection closed", false);
-				isActive = false;
-				break;
+				case EBulkPackage.Audio:
+					{
+						var audioFrame = MessagePackSerializer.Deserialize<AudioFrame>(bulkData);
+						source.RecieveFrame(audioFrame);
+						break;
+					}
+				default:
+					{
+						Debug.LogError("UNSUPORTED BULK");
+						break;
+					}
+			}
 		}
 	}
-	internal bool isHost = true;
-	//host
-	HSteamListenSocket listenSocket;
-    internal void Listen()
-    {
-        SteamNetworkingConfigValue_t[] configuration = new SteamNetworkingConfigValue_t[2];
-        
-        // Connection timeout
-        configuration[0].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_TimeoutConnected;
-        configuration[0].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
-        configuration[0].m_val.m_int32 = 5000;
-        
-        // Larger buffer size
-        configuration[1].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_SendBufferSize;
-        configuration[1].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
-        configuration[1].m_val.m_int32 = 65536;
-        
-        listenSocket = SteamNetworkingSockets.CreateListenSocketP2P(0, configuration.Length, configuration);
-        Debug.Log("Listening for P2P connections");
-    }
-	//client
-	LobbyManager lobby;
-    public void Connect()
-    {
-        lobby = GetComponent<LobbyManager>();
-        if (lobby == null || LobbyManager.lobbyId == CSteamID.Nil)
-        {
-            Debug.LogError("Lobby not initialized!");
-            return;
-        }
-
-        CSteamID playerID = SteamMatchmaking.GetLobbyMemberByIndex(LobbyManager.lobbyId, 0);
-        if (playerID == CSteamID.Nil)
-        {
-            Debug.LogError("No members in lobby!");
-            return;
-        }
-
-        SteamNetworkingConfigValue_t[] configuration = new SteamNetworkingConfigValue_t[2];
-        
-        // Connection timeout
-        configuration[0].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_TimeoutConnected;
-        configuration[0].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
-        configuration[0].m_val.m_int32 = 5000;
-        
-        // Larger buffer size
-        configuration[1].m_eValue = ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_SendBufferSize;
-        configuration[1].m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32;
-        configuration[1].m_val.m_int32 = 65536;
-
-        SteamNetworkingIdentity identity = new SteamNetworkingIdentity();
-        identity.SetSteamID(playerID);
-        
-        connection = SteamNetworkingSockets.ConnectP2P(ref identity, 0, configuration.Length, configuration);
-        isActive = true;
-        Debug.Log($"Connecting to {playerID}");
-    }
-	void OnDestroy()
-	{
-		if (connection != HSteamNetConnection.Invalid)
-		{
-			SteamNetworkingSockets.CloseConnection(connection, 0, "Shutting down", false);
-			connection = HSteamNetConnection.Invalid;
-		}
-        if (listenSocket != HSteamListenSocket.Invalid)
-        {
-            SteamNetworkingSockets.CloseListenSocket(listenSocket);
-            listenSocket = HSteamListenSocket.Invalid;
-        }
-	}
+	void Update()
+		=> ProcesData(TryRecive());
+	void LateUpdate()
+		=> SendPackages();
 }
 
