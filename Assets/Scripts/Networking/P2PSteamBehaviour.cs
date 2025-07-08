@@ -54,8 +54,9 @@ public class P2PSteamBehaviour : MonoBehaviour
 			try
 			{
 				SteamNetworkingMessage_t message = Marshal.PtrToStructure<SteamNetworkingMessage_t>(messages[i]);
-				res[i] = new byte[message.m_cbSize];
-				Marshal.Copy(message.m_pData, res[i], 0, message.m_cbSize);
+				byte[] data = new byte[message.m_cbSize];
+				Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
+				res.Add(data); // Use Add instead of direct index access
 				message.Release();
 			}
 			catch (Exception e)
