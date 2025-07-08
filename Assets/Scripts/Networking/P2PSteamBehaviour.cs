@@ -57,7 +57,6 @@ public class P2PSteamBehaviour : MonoBehaviour
 				byte[] data = new byte[message.m_cbSize];
 				Marshal.Copy(message.m_pData, data, 0, message.m_cbSize);
 				res.Add(data); // Use Add instead of direct index access
-				message.Release();
 			}
 			catch (Exception e)
 			{
