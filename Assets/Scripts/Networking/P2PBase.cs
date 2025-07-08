@@ -118,7 +118,7 @@ public class P2PBase : P2PSteamBehaviour
 		}
 	}
 	void Update()
-		=> ProcesData(TryRecive());
+		=> ProcesData(TryReceive());
 	void LateUpdate()
 		=> SendPackages();
 }

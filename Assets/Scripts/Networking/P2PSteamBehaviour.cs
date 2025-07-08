@@ -35,18 +35,20 @@ public class P2PSteamBehaviour : MonoBehaviour
 		}
 	}
 	// fucking hell
-	internal List<byte[]> TryRecive()
+	internal List<byte[]> TryReceive()
 	{
 		if (!isActive || connection == HSteamNetConnection.Invalid)
 			return null;
 		// wha? fuck limit is 10 packs
 		IntPtr[] messages = new IntPtr[10];
 		int numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(connection, messages, messages.Length);
-		List<byte[]> res = new();
-		if (numMessages > 0)
-			Debug.Log($"Received {numMessages} messages this frame");
-		else
+		
+		if (numMessages <= 0)
 			return null;
+
+  		Debug.Log($"Received {numMessages} messages this frame");
+	    List<byte[]> res = new(numMessages); 
+
 		for (int i = 0; i < numMessages; i++)
 		{
 			try
@@ -58,7 +60,7 @@ public class P2PSteamBehaviour : MonoBehaviour
 			}
 			catch (Exception e)
 			{
-				Debug.LogError($"Error processing message: {e}");
+				Debug.LogError($"iter: {i} Error processing message: {e}");
 			}
 			finally
 			{
