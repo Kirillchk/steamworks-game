@@ -132,7 +132,7 @@ public class P2PSteamBehaviour : MonoBehaviour
 				break;
 		}
 	}
-	internal bool isHost = true;
+	internal bool isHost;
 	//host
 	HSteamListenSocket listenSocket;
     internal void Listen()

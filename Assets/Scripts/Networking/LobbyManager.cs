@@ -53,7 +53,7 @@ public class LobbyManager : MonoBehaviour
 		P2PBase p2p = GetComponent<P2PBase>();
 		if(p2p != null)
 			Destroy(p2p); 
-		gameObject.AddComponent<P2PBase>();
+		gameObject.AddComponent<P2PBase>().isHost = false;
 		SteamMatchmaking.JoinLobby(lobbyID);
 	}
 	public void JoinLobbyButton() => SteamFriends.ActivateGameOverlay("Friends");	
@@ -62,7 +62,7 @@ public class LobbyManager : MonoBehaviour
 		P2PBase p2p = GetComponent<P2PBase>();
 		if(p2p != null)
 			Destroy(p2p); 
-		gameObject.AddComponent<P2PBase>();
+		gameObject.AddComponent<P2PBase>().isHost = true;
 		SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, MaxLobbyMembers);
 		SceneManager.LoadScene("Lobby");
 	}
