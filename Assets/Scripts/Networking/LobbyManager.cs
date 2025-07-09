@@ -27,17 +27,18 @@ public class LobbyManager : MonoBehaviour
 		});
 		Callback<LobbyEnter_t>.Create(callback =>
 		{
-			Debug.Log($"Lobby ID: {callback.m_ulSteamIDLobby} Lobby users {SteamMatchmaking.GetNumLobbyMembers(lobbyId)}");		
+			Debug.Log($"Lobby ID: {callback.m_ulSteamIDLobby} Lobby users {SteamMatchmaking.GetNumLobbyMembers(lobbyId)}");
 			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
-			if(SceneManager.GetActiveScene()!= SceneManager.GetSceneByName("Lobby"))
+			if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Lobby"))
 				SceneManager.LoadScene("Lobby");
 
-			P2PBase networking =  gameObject.AddComponent<P2PBase>();
-	
+			P2PBase networking = gameObject.AddComponent<P2PBase>();
+
 			if (networking.isHost)
 				networking.Listen();
 			else
 				networking.Connect();
+			Debug.Log($"network is {networking.isHost}");
 		});
 		Callback<LobbyChatUpdate_t>.Create(callback => {
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
@@ -54,6 +55,7 @@ public class LobbyManager : MonoBehaviour
 		if(p2p != null)
 			Destroy(p2p); 
 		gameObject.AddComponent<P2PBase>().isHost = false;
+		Debug.Log("SET TO FALSE");
 		SteamMatchmaking.JoinLobby(lobbyID);
 	}
 	public void JoinLobbyButton() => SteamFriends.ActivateGameOverlay("Friends");	
@@ -63,6 +65,7 @@ public class LobbyManager : MonoBehaviour
 		if(p2p != null)
 			Destroy(p2p); 
 		gameObject.AddComponent<P2PBase>().isHost = true;
+		Debug.Log("SET TO TRUE");
 		SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, MaxLobbyMembers);
 		SceneManager.LoadScene("Lobby");
 	}
