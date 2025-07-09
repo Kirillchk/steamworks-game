@@ -32,7 +32,7 @@ public class LobbyManager : MonoBehaviour
 			if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Lobby"))
 				SceneManager.LoadScene("Lobby");
 
-			P2PBase networking = gameObject.AddComponent<P2PBase>();
+			P2PBase networking = GetComponent<P2PBase>();
 
 			if (networking.isHost)
 				networking.Listen();
