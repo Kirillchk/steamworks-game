@@ -34,11 +34,10 @@ public class LobbyManager : MonoBehaviour
 
 			P2PBase networking = GetComponent<P2PBase>()??gameObject.AddComponent<P2PBase>();
 
-			if (networking.isHost)
+			if (P2PBase.isHost)
 				networking.Listen();
 			else
 				networking.Connect();
-			Debug.Log($"network is {networking.isHost}");
 		});
 		Callback<LobbyChatUpdate_t>.Create(callback => {
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
@@ -54,7 +53,8 @@ public class LobbyManager : MonoBehaviour
 		P2PBase p2p = GetComponent<P2PBase>();
 		if(p2p != null)
 			Destroy(p2p); 
-		gameObject.AddComponent<P2PBase>().isHost = false;
+		gameObject.AddComponent<P2PBase>();
+		P2PBase.isHost = false;
 		Debug.Log("SET TO FALSE");
 		SteamMatchmaking.JoinLobby(lobbyID);
 	}
@@ -63,8 +63,9 @@ public class LobbyManager : MonoBehaviour
 	{
 		P2PBase p2p = GetComponent<P2PBase>();
 		if(p2p != null)
-			Destroy(p2p); 
-		gameObject.AddComponent<P2PBase>().isHost = true;
+			Destroy(p2p);
+		gameObject.AddComponent<P2PBase>();
+		P2PBase.isHost = true;
 		Debug.Log("SET TO TRUE");
 		SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, MaxLobbyMembers);
 		SceneManager.LoadScene("Lobby");

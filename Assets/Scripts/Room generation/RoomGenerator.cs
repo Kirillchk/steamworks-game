@@ -108,7 +108,7 @@ public class RoomGenerator : MonoBehaviour
 			Destroy(secondDoorObject);
 			res = !intersects;
 
-			Debug.Log($"IND:{ind} sucsess: {res}");
+			// Debug.Log($"IND:{ind} sucsess: {res}");
 			if (res)
 				ind++;
 

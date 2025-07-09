@@ -6,6 +6,7 @@ using MessagePack;
 using Adrenak.UniMic;
 public class P2PBase : P2PSteamBehaviour
 {
+	static internal bool isHost = false;
 	enum k_nSteamNetworkingSend : int
 	{
 		// https://github.com/rlabrecque/SteamworksSDK/blob/main/public/steam/steamnetworkingtypes.h#L954
