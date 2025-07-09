@@ -5,6 +5,9 @@ public class LobbyManager : MonoBehaviour
 {
 	private const int MaxLobbyMembers = 4;
 	public static CSteamID lobbyId;
+	static int playersOnline {
+		get => SteamMatchmaking.GetNumLobbyMembers(lobbyId);
+	}
 	private void Awake()
 	{
 		DontDestroyOnLoad(gameObject);
@@ -27,23 +30,26 @@ public class LobbyManager : MonoBehaviour
 		});
 		Callback<LobbyEnter_t>.Create(callback =>
 		{
-			Debug.Log($"Lobby ID: {callback.m_ulSteamIDLobby} Lobby users {SteamMatchmaking.GetNumLobbyMembers(lobbyId)}");
+			Debug.Log($"Lobby ID: {callback.m_ulSteamIDLobby} Lobby users {playersOnline}");
 			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 			if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Lobby"))
 				SceneManager.LoadScene("Lobby");
 
-			P2PBase networking = GetComponent<P2PBase>()??gameObject.AddComponent<P2PBase>();
+			P2PBase networking = GetComponent<P2PBase>() ?? gameObject.AddComponent<P2PBase>();
 
 			if (P2PBase.isHost)
 				networking.Listen();
 			else
 				networking.Connect();
 		});
-		Callback<LobbyChatUpdate_t>.Create(callback => {
+		Callback<LobbyChatUpdate_t>.Create(callback =>
+		{
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
+			PlayableBehavior.Players[playersOnline].GetComponent<NetworkIdentity>().isOwner = false;
 			Debug.Log($"{callback.m_ulSteamIDUserChanged} just {action}");
 		});
-		Callback<GameLobbyJoinRequested_t>.Create(callback => {
+		Callback<GameLobbyJoinRequested_t>.Create(callback =>
+		{
 			SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
 		});
 	}
