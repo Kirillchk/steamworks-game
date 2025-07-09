@@ -19,18 +19,10 @@ public class LobbyManager : MonoBehaviour
 		Callback<LobbyCreated_t>.Create(callback =>
 		{
 			if (callback.m_eResult == EResult.k_EResultOK)
-			{
-				Debug.Log($"Lobby created successfully! Lobby ID: {callback.m_ulSteamIDLobby}");
 				lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
-				Debug.Log($"my steam id{SteamUser.GetSteamID()}");
-			}
-			else
-				Debug.LogError($"Failed to create lobby. Error: {callback.m_eResult}");
-			Debug.Log(SteamUser.GetSteamID());
 		});
 		Callback<LobbyEnter_t>.Create(callback =>
 		{
-			Debug.Log($"Lobby ID: {callback.m_ulSteamIDLobby} Lobby users {playersOnline}");
 			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 			if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Lobby"))
 				SceneManager.LoadScene("Lobby");
@@ -45,26 +37,16 @@ public class LobbyManager : MonoBehaviour
 		Callback<LobbyChatUpdate_t>.Create(callback =>
 		{
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
+			// fix thiso bulshido
 			PlayableBehavior.Players[playersOnline].GetComponent<NetworkIdentity>().isOwner = false;
-			Debug.Log($"{callback.m_ulSteamIDUserChanged} just {action}");
 		});
 		Callback<GameLobbyJoinRequested_t>.Create(callback =>
 		{
 			SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
 		});
 	}
-	public void JoinLobby(CSteamID lobbyID)
-	{
-		Debug.Log($"Joining lobby: {lobbyID}");
-		P2PBase p2p = GetComponent<P2PBase>();
-		if(p2p != null)
-			Destroy(p2p); 
-		gameObject.AddComponent<P2PBase>();
-		P2PBase.isHost = false;
-		Debug.Log("SET TO FALSE");
-		SteamMatchmaking.JoinLobby(lobbyID);
-	}
-	public void JoinLobbyButton() => SteamFriends.ActivateGameOverlay("Friends");	
+	public void JoinLobbyButton()
+		=> SteamFriends.ActivateGameOverlay("Friends");	
 	public void HostLobbyButton()
 	{
 		P2PBase p2p = GetComponent<P2PBase>();
@@ -72,7 +54,6 @@ public class LobbyManager : MonoBehaviour
 			Destroy(p2p);
 		gameObject.AddComponent<P2PBase>();
 		P2PBase.isHost = true;
-		Debug.Log("SET TO TRUE");
 		SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, MaxLobbyMembers);
 		SceneManager.LoadScene("Lobby");
 	}
