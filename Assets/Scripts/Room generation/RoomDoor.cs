@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class RoomDoor : MonoBehaviour
 {
+	// Absolute vector
+	public Vector3 VectorA { get => SnapVector(transform.position - transform.parent.position); }
+	// Local vector
+	public Vector3 VectorB { get => SnapVector(transform.localPosition) * -1; }
 	[SerializeField] GameObject openDoorPref;
 	[SerializeField] GameObject closedDoorPref;
 	private void createDoor(GameObject doorPref)
@@ -11,9 +15,7 @@ public class RoomDoor : MonoBehaviour
 			transform.position + doorPref.transform.position,
 			new()
 		);
-
-		// Debug.Log($"{transform.localPosition}, {SnapVector(transform.localPosition)}");
-
+		
 		newDoor.transform.RotateAround(
 			transform.position,
 			Vector3.up,
@@ -32,10 +34,6 @@ public class RoomDoor : MonoBehaviour
 		createDoor(closedDoorPref);
 	public void Open() =>
 		createDoor(openDoorPref);
-	public Vector3 GetVector1() =>
-		SnapVector(transform.position - transform.parent.position);
-	public Vector3 GetVector2() =>
-		SnapVector(transform.localPosition) * -1;
 	Vector3 SnapVector(Vector3 input)
 	{
 		Vector3 rounded = new(

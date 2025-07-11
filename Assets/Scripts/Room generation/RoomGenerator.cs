@@ -44,20 +44,12 @@ public class RoomGenerator : MonoBehaviour
 
 	async void Start()
 	{
-		//RoomColliders.Add(
-		//	Instantiate(
-		//		Rooms[0],
-		//		new Vector3(),
-		//		new Quaternion()
-		//	).GetComponent<BoxCollider>()
-		//);
 		await Task.Delay(10);
 		while (ind < AmountOfRooms)
 		{
 
 			// await Task.Delay((int)(slowering * 500));	
 			// Debug.Log("PRE INIT");
-			bool res;
 
 			// Selects random doors and inits new room
 			GameObject firstdoorObject = getRandomDoor();
@@ -80,8 +72,8 @@ public class RoomGenerator : MonoBehaviour
 
 			// Applies calculated rotation angle to align selected doors
 
-			Vector3 vec1 = firstdoorObject.GetComponent<RoomDoor>().GetVector1();
-			Vector3 vec2 = secondDoorObject.GetComponent<RoomDoor>().GetVector2();
+			Vector3 vec1 = firstdoorObject.GetComponent<RoomDoor>().VectorA;
+			Vector3 vec2 = secondDoorObject.GetComponent<RoomDoor>().VectorB;
 			Vector3 orient = Vector3.up;
 
 			//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, slowering);
@@ -102,14 +94,12 @@ public class RoomGenerator : MonoBehaviour
 				Destroy(newRoom);
 			}
 			else
-			{
 				firstdoorObject.GetComponent<RoomDoor>().Open();
-			}
+			
 			Destroy(secondDoorObject);
-			res = !intersects;
+			// Debug.Log($"IND:{ind} sucsess: {!intersects}");
 
-			// Debug.Log($"IND:{ind} sucsess: {res}");
-			if (res)
+			if (!intersects)
 				ind++;
 
 			await Task.Yield();
