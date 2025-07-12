@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -16,7 +17,7 @@ public class MapGenerator : MonoBehaviour
 		Vector3 firstDoorPosition = firstDoorObject.transform.position;
 
 		GameObject newRoom = Instantiate(roomPref, firstDoorPosition, new Quaternion());
-		GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().GetRadomDoor(rng);
+		GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().roomDoors.RandomElement(rng);
 
 		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
 		//Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
@@ -89,8 +90,9 @@ public static class RandomElements
 {
 	public static T RandomElement<T>(this T[] array, System.Random rng) =>
 		array[rng.Next(array.Length)];
+	public static T RandomElement<T>(this List<T> array, System.Random rng) =>
+		array[rng.Next(array.Count)];
 }
-
 public static class ColliderDrawer
 {
     public static void DrawCollider(Collider collider, Color color, float duration = 0.1f)

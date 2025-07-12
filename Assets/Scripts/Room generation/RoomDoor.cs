@@ -3,12 +3,12 @@ using UnityEngine;
 public class RoomDoor : MonoBehaviour
 {
 	// Absolute vector
-	public Vector3 VectorA { get => SnapVector(transform.position - transform.parent.position); }
+	public Vector3 VectorA => SnapVector(transform.position - transform.parent.position); 
 	// Local vector
-	public Vector3 VectorB { get => SnapVector(transform.localPosition) * -1; }
+	public Vector3 VectorB => SnapVector(transform.localPosition) * -1; 
 	[SerializeField] GameObject openDoorPref;
 	[SerializeField] GameObject closedDoorPref;
-	private void createDoor(GameObject doorPref)
+	void createDoor(GameObject doorPref)
 	{
 		GameObject newDoor = Instantiate(
 			doorPref,
@@ -27,7 +27,6 @@ public class RoomDoor : MonoBehaviour
 		);
 
 		newDoor.transform.SetParent(transform.parent);
-		transform.parent.GetComponent<RoomBehaviour>().roomDoors.Remove(gameObject);
 		Destroy(gameObject);
 	}
 	public void Close() =>

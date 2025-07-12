@@ -1,14 +1,15 @@
+using System.Threading.Tasks;
 using UnityEngine;
 public class FacilityGeneration : MapGenerator
 {
 	public int AmountOfRooms = 10;
-	int RoomsCount = 0;
 	[SerializeField] GameObject[] Rooms;
 	GameObject[] Doors => GameObject.FindGameObjectsWithTag("DoorMark");
 	async void Start()
 	{
-		while (RoomsCount < AmountOfRooms)
+		for (int i = 0; AmountOfRooms > i; i++)
 		{
+			Debug.Log("blia");
 			var room = Rooms.RandomElement(rng);
 			var door = Doors.RandomElement(rng);
 			await AddRoom(door, room);

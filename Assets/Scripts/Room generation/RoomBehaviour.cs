@@ -1,9 +1,10 @@
-using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RoomBehaviour : MonoBehaviour
 {
-	public List<GameObject> roomDoors;
-	public GameObject GetRadomDoor(System.Random rng) =>
-		roomDoors[rng.Next(roomDoors.Count)];
+	public GameObject[] roomDoors => GetComponentsInChildren<Transform>(true)
+    	.Where(t => t.CompareTag("DoorMark"))
+    	.Select(t => t.gameObject)
+    	.ToArray();	
 }
