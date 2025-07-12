@@ -1,22 +1,65 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Steamworks;
+using Unity.VisualScripting;
 using UnityEngine;
-public class RoomGenerator : MonoBehaviour
+public class MapGenerator : MonoBehaviour
 {
-	int ind = 0;
-	// public float slowering = 5;
-	public int AmountOfRooms = 10;
-	System.Random rng = new(0);
-	[SerializeField] GameObject[] Rooms;
-	GameObject getRandomRoom() =>
-		Rooms[rng.Next(Rooms.Length)];
-	GameObject getRandomDoor()
+	static public float slowering = 0;
+	static protected System.Random rng = new(0);
+	static protected async Task AddRoom(GameObject firstDoorObject, GameObject roomPref)
 	{
-		GameObject[] Doors = GameObject.FindGameObjectsWithTag("DoorMark");
-		return Doors[rng.Next(Doors.Length)];
+		//await Task.Delay((int)(slowering * 500));
+		//Debug.Log("PRE INIT");
+
+		var firstDoor = firstDoorObject.GetComponent<RoomDoor>();
+
+		// Selects random doors and inits new room
+		Vector3 firstDoorPosition = firstDoorObject.transform.position;
+
+		GameObject newRoom = Instantiate(roomPref, firstDoorPosition, new Quaternion());
+		GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().GetRadomDoor(rng);
+
+		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
+		//Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
+		//await Task.Delay((int)(slowering * 500));
+		//Debug.Log("INIT");
+
+		// Smashes doors together
+		newRoom.transform.position -= secondDoorObject.transform.position - firstDoorPosition;
+
+		//await Task.Delay((int)(slowering * 500));
+		//Debug.Log("SMASH");
+
+		// Applies calculated rotation angle to align selected doors
+		Vector3 vec1 = firstDoor.VectorA;
+		Vector3 vec2 = secondDoorObject.GetComponent<RoomDoor>().VectorB;
+		Vector3 orient = Vector3.up;
+
+		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, slowering);
+		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up * 2, Color.blue, slowering);
+		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up * 3, Color.yellow, slowering);
+
+		float angle = Vector3.SignedAngle(vec1, vec2, orient * -1);
+		newRoom.transform.RotateAround(firstDoorPosition, orient, angle);
+
+		//await Task.Delay((int)(slowering * 500));
+		//Debug.Log("ROTUNDA");
+
+		var roomCollider = newRoom.GetComponent<BoxCollider>();
+		bool intersects = checkColisions(roomCollider);
+
+		if (intersects)
+		{
+			firstDoor.Close();
+			Destroy(newRoom);
+		}
+		else
+			firstDoor.Open();
+
+		Destroy(secondDoorObject);
+		//Debug.Log($"IND:{RoomsCount} sucsess: {!intersects}");
+		await Task.Yield();
 	}
-	bool checkColisions(BoxCollider comp)
+	static bool checkColisions(BoxCollider comp)
 	{
 		comp.enabled = false;
 		// TODO: Rewrite with Physics.BoxCast() for prod
@@ -41,75 +84,13 @@ public class RoomGenerator : MonoBehaviour
 		comp.enabled = true;
 		return false;
 	}
-
-	async void Start()
-	{
-		await Task.Delay(10);
-		while (ind < AmountOfRooms)
-		{
-
-			// await Task.Delay((int)(slowering * 500));	
-			// Debug.Log("PRE INIT");
-
-			// Selects random doors and inits new room
-			GameObject firstdoorObject = getRandomDoor();
-			Vector3 firstDoorPosition = firstdoorObject.transform.position;
-
-			GameObject newRoom = Instantiate(getRandomRoom(), firstDoorPosition, new Quaternion());
-			GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().GetRadomDoor(rng);
-
-			//Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
-			//Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
-
-			// await Task.Delay((int)(slowering * 500));
-			// Debug.Log("INIT");
-
-			//smashes doors together
-			newRoom.transform.position -= secondDoorObject.transform.position - firstDoorPosition;
-
-			// await Task.Delay((int)(slowering * 500));
-			// Debug.Log("SMASH");
-
-			// Applies calculated rotation angle to align selected doors
-
-			Vector3 vec1 = firstdoorObject.GetComponent<RoomDoor>().VectorA;
-			Vector3 vec2 = secondDoorObject.GetComponent<RoomDoor>().VectorB;
-			Vector3 orient = Vector3.up;
-
-			//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, slowering);
-			//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up * 2, Color.blue, slowering);
-			//Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up * 3, Color.yellow, slowering);
-
-			float angle = Vector3.SignedAngle(vec1, vec2, orient * -1);
-			newRoom.transform.RotateAround(firstDoorPosition, orient, angle);
-
-			//await Task.Delay((int)(slowering * 500));
-			//Debug.Log("ROTUNDA");
-
-			var roomCollider = newRoom.GetComponent<BoxCollider>();
-			bool intersects = checkColisions(roomCollider);
-			if (intersects)
-			{
-				firstdoorObject.GetComponent<RoomDoor>().Close();
-				Destroy(newRoom);
-			}
-			else
-				firstdoorObject.GetComponent<RoomDoor>().Open();
-			
-			Destroy(secondDoorObject);
-			// Debug.Log($"IND:{ind} sucsess: {!intersects}");
-
-			if (!intersects)
-				ind++;
-
-			await Task.Yield();
-		}
-
-		foreach (GameObject door in GameObject.FindGameObjectsWithTag("DoorMark"))
-			door.GetComponent<RoomDoor>().Close();
-		PlayableBehavior.Players[SteamMatchmaking.GetNumLobbyMembers(LobbyManager.lobbyId)-1].Possess();
-	}
 }
+public static class RandomElements
+{
+	public static T RandomElement<T>(this T[] array, System.Random rng) =>
+		array[rng.Next(array.Length)];
+}
+
 public static class ColliderDrawer
 {
     public static void DrawCollider(Collider collider, Color color, float duration = 0.1f)
