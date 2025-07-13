@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using UnityEngine;
 public class FacilityGeneration : MapGenerator
 {
@@ -7,12 +6,13 @@ public class FacilityGeneration : MapGenerator
 	GameObject[] Doors => GameObject.FindGameObjectsWithTag("DoorMark");
 	async void Start()
 	{
-		for (int i = 0; AmountOfRooms > i; i++)
+		for (int i = AmountOfRooms; i >= 0; i--)
 		{
-			Debug.Log($"blia doors:{Doors.Length}");
 			var room = Rooms.RandomElement(rng);
 			var door = Doors.RandomElement(rng);
-			await AddRoom(door, room);
+			bool failed = await AddRoom(door, room);
+			Debug.Log($"faied?{failed} : {i}");
+			if (failed) i++;
 		}
 
 		foreach (var d in Doors)

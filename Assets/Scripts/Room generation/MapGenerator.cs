@@ -5,7 +5,7 @@ public class MapGenerator : MonoBehaviour
 {
 	static public float slowering = 5;
 	static protected System.Random rng = new(0);
-	static protected async Task AddRoom(GameObject firstDoorObject, GameObject roomPref)
+	static protected async Task<bool> AddRoom(GameObject firstDoorObject, GameObject roomPref)
 	{
 		//await Task.Delay((int)(slowering * 500));
 		//Debug.Log("PRE INIT");
@@ -58,6 +58,7 @@ public class MapGenerator : MonoBehaviour
 		Destroy(secondDoorObject);
 		//Debug.Log($"sucsess: {!intersects}");
 		await Task.Yield();
+		return intersects;
 	}
 	static bool checkColisions(BoxCollider comp)
 	{
