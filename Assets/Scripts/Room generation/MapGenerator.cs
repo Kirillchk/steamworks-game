@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
-	static public float slowering = 0;
+	static public float slowering = 5;
 	static protected System.Random rng = new(0);
 	static protected async Task AddRoom(GameObject firstDoorObject, GameObject roomPref)
 	{
@@ -57,7 +56,7 @@ public class MapGenerator : MonoBehaviour
 			firstDoor.Open();
 
 		Destroy(secondDoorObject);
-		//Debug.Log($"IND:{RoomsCount} sucsess: {!intersects}");
+		//Debug.Log($"sucsess: {!intersects}");
 		await Task.Yield();
 	}
 	static bool checkColisions(BoxCollider comp)
@@ -74,7 +73,7 @@ public class MapGenerator : MonoBehaviour
 
 		//foreach (var col in colliders)
 		//{
-		//	Debug.LogWarning($"IND:{ind} {col.bounds} intersects {comp.bounds}");
+		//	Debug.LogWarning($"{col.bounds} intersects {comp.bounds}");
 		//	ColliderDrawer.DrawCollider(col, Color.green, slowering);
 		//}
 		//ColliderDrawer.DrawCollider(comp, Color.red, slowering);

@@ -678,9 +678,17 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: -2.5
       objectReference: {fileID: 0}
+    - target: {fileID: 960630333953285149, guid: 39d29f43f815ff7b1a80487c7d32b60e, type: 3}
+      propertyPath: VectorB.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2314802274357060761, guid: 39d29f43f815ff7b1a80487c7d32b60e, type: 3}
       propertyPath: m_Name
       value: Room 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2556131880624287213, guid: 39d29f43f815ff7b1a80487c7d32b60e, type: 3}
+      propertyPath: VectorB.x
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3330785208798138587, guid: 39d29f43f815ff7b1a80487c7d32b60e, type: 3}
       propertyPath: m_LocalScale.x

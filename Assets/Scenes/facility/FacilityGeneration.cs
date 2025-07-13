@@ -9,7 +9,7 @@ public class FacilityGeneration : MapGenerator
 	{
 		for (int i = 0; AmountOfRooms > i; i++)
 		{
-			Debug.Log("blia");
+			Debug.Log($"blia doors:{Doors.Length}");
 			var room = Rooms.RandomElement(rng);
 			var door = Doors.RandomElement(rng);
 			await AddRoom(door, room);
