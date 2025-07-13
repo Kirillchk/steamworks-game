@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomDoor : MonoBehaviour
 {
+	public List<GameObject> RoomBanList = new();
 	// Absolute vector
 	public Vector3 VectorA => SnapVector(transform.position - transform.parent.position);
 	// Local vector

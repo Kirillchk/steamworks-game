@@ -11,6 +11,7 @@ public class MapGenerator : MonoBehaviour
 		//Debug.Log("PRE INIT");
 
 		var firstDoor = firstDoorObject.GetComponent<RoomDoor>();
+		if (firstDoor.RoomBanList.Contains(roomPref)) return true;
 
 		// Selects random doors and inits new room
 		Vector3 firstDoorPosition = firstDoorObject.transform.position;
@@ -49,7 +50,7 @@ public class MapGenerator : MonoBehaviour
 
 		if (intersects)
 		{
-			firstDoor.Close();
+			firstDoor.RoomBanList.Add(roomPref);
 			Destroy(newRoom);
 		}
 		else
