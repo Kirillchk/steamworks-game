@@ -5,7 +5,13 @@ public class RoomDoor : MonoBehaviour
 {
 	public List<GameObject> RoomBanList = new();
 	// Absolute vector
-	public Vector3 VectorA => SnapVector(transform.position - transform.parent.position);
+	public Vector3 VectorA => SnapVector(helper.transform.position - transform.parent.position);
+	GameObject helper;
+	void Start()
+	{
+		helper = Instantiate(new GameObject("Helper"), transform.parent.transform);
+		helper.transform.localPosition = -VectorB;
+	} 
 	// Local vector
 	public Vector3 VectorB;
 	[SerializeField] GameObject openDoorPref;
@@ -23,7 +29,7 @@ public class RoomDoor : MonoBehaviour
 			Vector3.up,
 			Vector3.SignedAngle(
 				Vector3.left,
-				SnapVector(transform.localPosition),
+				VectorB*-1,
 				Vector3.up
 			) + transform.parent.eulerAngles.y
 		);
@@ -55,6 +61,9 @@ public class RoomDoor : MonoBehaviour
 		return rounded.normalized;
 	}
 	[ExecuteInEditMode, ContextMenu("CalcVectorB")]
-	public void CalcVectorB() =>
+	public Vector3 CalcVectorB()
+	{
 		Debug.Log($"VectorB for this door is {SnapVector(transform.localPosition) * -1}");
+		return SnapVector(transform.localPosition) * -1;
+	}
 }

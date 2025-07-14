@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
-	static public float slowering = 5;
+	static public float slowering = 3;
 	static protected System.Random rng = new(0);
 	static protected async Task<bool> AddRoom(GameObject firstDoorObject, GameObject roomPref)
 	{
