@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class DebugShaderexperement : MonoBehaviour
 {
+	public Color DetailsColor;
     [ExecuteInEditMode, ContextMenu("FUN")]
     public async void fun()
     {
@@ -11,10 +12,10 @@ public class DebugShaderexperement : MonoBehaviour
         
         for (float t = 0; t < 1; t += Time.deltaTime / 3)
         {
-            Shader.SetGlobalColor("_Details", Color.Lerp(Color.black, Color.gray, t));
+            Shader.SetGlobalColor("_Details", Color.Lerp(Color.black, DetailsColor, t));
             await Task.Delay((int)(Time.deltaTime * 500));
         }
-        Shader.SetGlobalColor("_Details", Color.gray);
+        Shader.SetGlobalColor("_Details", DetailsColor);
     }
 
     [ExecuteInEditMode, ContextMenu("Reset")]
