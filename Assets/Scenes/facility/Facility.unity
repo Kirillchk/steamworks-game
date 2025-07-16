@@ -823,7 +823,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8731a474b805534b9afeea4690862e01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AmountOfRooms: 25
+  AmountOfRooms: 50
   Rooms:
   - {fileID: 6942087937448238840, guid: f3ac5246169dd64b183a99ddeef0171f, type: 3}
   - {fileID: 8077757653175733104, guid: 673d99b80dad2bedbbf0ba4e576f0893, type: 3}
@@ -1493,8 +1493,8 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
 --- !u!114 &1492670414
 MonoBehaviour:
   m_ObjectHideFlags: 0
