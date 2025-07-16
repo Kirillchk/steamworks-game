@@ -9,9 +9,12 @@ public class RoomDoor : MonoBehaviour
 	GameObject helper;
 	void Start()
 	{
-		helper = Instantiate(new GameObject("Helper"), transform.parent.transform);
+		helper = new("Helper");
+		helper.transform.parent = transform.parent;
 		helper.transform.localPosition = -VectorB;
-	} 
+	}
+	void OnDestroy() => 
+		Destroy(helper);
 	// Local vector
 	public Vector3 VectorB;
 	[SerializeField] GameObject openDoorPref;

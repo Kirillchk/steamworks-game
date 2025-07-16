@@ -65,6 +65,7 @@ public class MapGenerator : MonoBehaviour
 	{
 		comp.enabled = false;
 		// TODO: Rewrite with Physics.BoxCast() for prod
+		// TODO: check multiple colliders
 		var colliders = Physics.OverlapBox(
 			comp.transform.TransformPoint(comp.center),
 			comp.size * 0.5f,
@@ -73,12 +74,12 @@ public class MapGenerator : MonoBehaviour
 			QueryTriggerInteraction.Collide
 		);
 
-		//foreach (var col in colliders)
-		//{
-		//	Debug.LogWarning($"{col.bounds} intersects {comp.bounds}");
-		//	ColliderDrawer.DrawCollider(col, Color.green, slowering);
-		//}
-		//ColliderDrawer.DrawCollider(comp, Color.red, slowering);
+		foreach (var col in colliders)
+		{
+			Debug.LogWarning($"{col.bounds} intersects {comp.bounds}");
+			ColliderDrawer.DrawCollider(col, Color.green, slowering);
+		}
+		ColliderDrawer.DrawCollider(comp, Color.red, slowering);
 
 		if (colliders.Length > 0)
 			return true;
