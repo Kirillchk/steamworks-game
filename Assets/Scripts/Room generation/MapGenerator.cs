@@ -45,7 +45,7 @@ public class MapGenerator : MonoBehaviour
 		//await Task.Delay((int)(slowering * 500));
 		//Debug.Log("ROTUNDA");
 
-		var roomCollider = newRoom.GetComponent<BoxCollider>();
+		var roomCollider = newRoom.GetComponents<BoxCollider>();
 		bool intersects = checkColisions(roomCollider);
 
 		if (intersects)
@@ -61,30 +61,32 @@ public class MapGenerator : MonoBehaviour
 		await Task.Yield();
 		return intersects;
 	}
-	static bool checkColisions(BoxCollider comp)
+	static bool checkColisions(BoxCollider[] comps)
 	{
-		comp.enabled = false;
-		// TODO: Rewrite with Physics.BoxCast() for prod
-		// TODO: check multiple colliders
-		var colliders = Physics.OverlapBox(
-			comp.transform.TransformPoint(comp.center),
-			comp.size * 0.5f,
-			comp.transform.rotation,
-			LayerMask.GetMask("LVL"),
-			QueryTriggerInteraction.Collide
-		);
-
-		foreach (var col in colliders)
+		foreach (var comp in comps)
+			comp.enabled = false;
+		foreach (var comp in comps)
 		{
-			Debug.LogWarning($"{col.bounds} intersects {comp.bounds}");
-			ColliderDrawer.DrawCollider(col, Color.green, slowering);
+			// TODO: Rewrite with Physics.BoxCast() for prod
+			var colliders = Physics.OverlapBox(
+				comp.transform.TransformPoint(comp.center),
+				comp.size * 0.5f,
+				comp.transform.rotation,
+				LayerMask.GetMask("LVL"),
+				QueryTriggerInteraction.Collide
+			);
+			//foreach (var col in colliders)
+			//{
+			//	Debug.LogWarning($"{col.bounds} intersects {comp.bounds}");
+			//	ColliderDrawer.DrawCollider(col, Color.green, slowering);
+			//}
+			//ColliderDrawer.DrawCollider(comp, Color.red, slowering);
+			if (colliders.Length > 0)
+				return true;
 		}
-		ColliderDrawer.DrawCollider(comp, Color.red, slowering);
-
-		if (colliders.Length > 0)
-			return true;
-
-		comp.enabled = true;
+		foreach (var comp in comps)
+			comp.enabled = true;
+		
 		return false;
 	}
 }
