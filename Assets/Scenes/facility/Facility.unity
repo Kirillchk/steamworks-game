@@ -823,14 +823,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8731a474b805534b9afeea4690862e01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AmountOfRooms: 50
-  Rooms:
+  Section1:
+  - {fileID: 3908310714207409709, guid: 16a5176e72376264ba3ace6a523e014b, type: 3}
   - {fileID: 6942087937448238840, guid: f3ac5246169dd64b183a99ddeef0171f, type: 3}
   - {fileID: 8077757653175733104, guid: 673d99b80dad2bedbbf0ba4e576f0893, type: 3}
-  - {fileID: 4584240482944381310, guid: 7c857b81a36cbbb83ac24ae1c4886b57, type: 3}
-  - {fileID: 4897039143788525353, guid: 92a2e0caf69506e91b8d71ac5fc9b47a, type: 3}
-  - {fileID: 379066431764712994, guid: b1a16588207d4dfe0976681c83736298, type: 3}
-  - {fileID: 5399195416199066020, guid: bc9b32a88c18751419ddf2d9570ac129, type: 3}
+  CoolRooms1: []
+  Section2: []
+  CoolRooms2: []
 --- !u!43 &643239350
 Mesh:
   m_ObjectHideFlags: 0
