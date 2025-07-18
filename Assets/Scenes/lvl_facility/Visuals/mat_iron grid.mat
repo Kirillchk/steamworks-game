@@ -60,13 +60,13 @@ Material:
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
-    - _Threshold: 0.2
+    - _Threshold: 0.24
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
     - _Dot_Product: {r: 0, g: 1, b: 0, a: 0}
-    - _Dot_product: {r: 0, g: 1, b: 0, a: 0}
+    - _Dot_product: {r: 0, g: 5, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &4301507129565588098
