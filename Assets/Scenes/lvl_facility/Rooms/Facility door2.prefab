@@ -44,5 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0699b4e4367464499c8f4645d5f8a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DoorType: main
+  RoomBanList: []
+  VectorB: {x: 0, y: 0, z: 0}
   openDoorPref: {fileID: 171565545617175864, guid: f611e28d2a53455589d4070c02122704, type: 3}
   closedDoorPref: {fileID: 171565545617175864, guid: 16db52bf1597350dc92fec26a0aa471a, type: 3}
