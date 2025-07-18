@@ -1608,7 +1608,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 40
+  m_VersionIndex: 43
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3221,7 +3221,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 40
+  m_VersionIndex: 43
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3442,7 +3442,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 222
+  m_VersionIndex: 225
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -5092,9 +5092,9 @@ MonoBehaviour:
   m_Textures2: []
   m_Textures3: []
   m_Tangents:
-  - {x: 1, y: 0, z: 0.00000017881396, w: -1}
-  - {x: 1, y: 0, z: 0.00000017881396, w: -1}
-  - {x: 1, y: 0, z: 0.00000017881396, w: -1}
+  - {x: 1, y: 0, z: 0.00000017881395, w: -1}
+  - {x: 1, y: 0, z: 0.00000017881395, w: -1}
+  - {x: 1, y: 0, z: 0.00000017881395, w: -1}
   - {x: 1, y: 0, z: 0, w: -1}
   - {x: 1, y: 0, z: 0, w: -1}
   - {x: 1, y: 0, z: 0, w: -1}
@@ -5176,24 +5176,24 @@ MonoBehaviour:
   - {x: -1, y: 0, z: 0.00000015894575, w: 1}
   - {x: -1, y: 0, z: 0.00000015894575, w: 1}
   - {x: -1, y: 0, z: 0.00000015894575, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305118, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305118, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305118, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305118, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305118, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305118, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305117, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305117, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305117, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305117, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305117, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305117, w: 1}
   - {x: -1, y: 0, z: 0, w: 1}
   - {x: -1, y: 0, z: 0, w: 1}
   - {x: -1, y: 0, z: 0, w: 1}
   - {x: -1, y: 0, z: 0.00000015894773, w: 1}
   - {x: -1, y: 0, z: 0.00000015894773, w: 1}
   - {x: -1, y: 0, z: 0.00000015894773, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
   - {x: -1, y: 0, z: 0, w: 1}
   - {x: -1, y: 0, z: 0, w: 1}
   - {x: -1, y: 0, z: 0, w: 1}
@@ -5248,14 +5248,14 @@ MonoBehaviour:
   - {x: -1, y: 0, z: 0, w: 1}
   - {x: -1, y: 0, z: 0, w: 1}
   - {x: -1, y: 0, z: 0, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
-  - {x: 1, y: 0, z: 0.0000014305112, w: 1}
-  - {x: -1, y: 0, z: 0.0000001887501, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
+  - {x: 1, y: 0, z: 0.0000014305114, w: 1}
+  - {x: -1, y: 0, z: 0.00000018875012, w: 1}
   - {x: -1, y: 0, z: 0.00000019868433, w: 1}
-  - {x: -1, y: 0, z: 0.0000001887501, w: 1}
-  - {x: -1, y: 0, z: 0.00000017881587, w: 1}
+  - {x: -1, y: 0, z: 0.00000018875012, w: 1}
+  - {x: -1, y: 0, z: 0.00000017881588, w: 1}
   - {x: 1, y: 0, z: 0.0000014305116, w: 1}
   - {x: 1, y: 0, z: 0.0000014305116, w: 1}
   - {x: 1, y: 0, z: 0.0000014305116, w: 1}
@@ -5273,7 +5273,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 40
+  m_VersionIndex: 43
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -6960,19 +6960,11 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 502
+  m_VersionIndex: 505
   m_IsSelectable: 1
-  m_SelectedFaces: 27000000
-  m_SelectedEdges:
-  - a: 30
-    b: 31
-  - a: 31
-    b: 29
-  - a: 29
-    b: 28
-  - a: 28
-    b: 30
-  m_SelectedVertices: 1d0000001e0000001f0000001c000000
+  m_SelectedFaces: 
+  m_SelectedEdges: []
+  m_SelectedVertices: 
 --- !u!1 &6597695436779518189
 GameObject:
   m_ObjectHideFlags: 0
@@ -8581,7 +8573,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 40
+  m_VersionIndex: 43
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -10164,9 +10156,9 @@ MonoBehaviour:
   - {x: 1, y: 0, z: 0.0000006357837, w: -1}
   - {x: 1, y: 0, z: 0.0000019073486, w: -1}
   - {x: 1, y: 0, z: 0.0000006357837, w: -1}
-  - {x: 1, y: 0, z: -0.0000006357829, w: -1}
+  - {x: 1, y: 0, z: -0.00000063578284, w: -1}
   - {x: -1, y: 0, z: -0.0000006357833, w: 1}
-  - {x: -1, y: 0, z: 0.0000006357821, w: 1}
+  - {x: -1, y: 0, z: 0.00000063578204, w: 1}
   - {x: -1, y: 0, z: -0.0000006357833, w: 1}
   - {x: -1, y: 0, z: -0.0000019073486, w: 1}
   - {x: -0.00000047683716, y: 0, z: 1, w: 1}
@@ -10194,7 +10186,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 40
+  m_VersionIndex: 43
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
