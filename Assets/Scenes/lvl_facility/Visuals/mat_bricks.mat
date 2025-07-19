@@ -44,10 +44,10 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Reverse: 0
-    - _Threshold: 0.05
+    - _Reverse: 1
+    - _Threshold: 0.15
     m_Colors:
-    - _Dot_product: {r: 0, g: 6, b: 0, a: 0}
+    - _Dot_product: {r: 0, g: 10, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &3509726595912495113

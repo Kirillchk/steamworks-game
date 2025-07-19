@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        groundLayer = LayerMask.GetMask("Ground");
+        groundLayer = LayerMask.GetMask("Default");
     }
 
     void Update()
@@ -67,10 +67,6 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded && !((Input.GetKey(KeyCode.W) ^ Input.GetKey(KeyCode.S)) || (Input.GetKey(KeyCode.A) ^ Input.GetKey(KeyCode.D))))
             moveSpeed = 1;
 
-
-
-
-
         if (!isGrounded)
         {
             Physics.gravity += Vector3.up * gravityScale;
@@ -96,12 +92,9 @@ public class PlayerMovement : MonoBehaviour
         if (moveSpeed < 1)
             moveSpeed = 1;
 
-
-
         moveDirection = (transform.right * moveX + transform.forward * moveZ).normalized;
 
         rb.linearVelocity = new Vector3(moveDirection.x * moveSpeed, rb.linearVelocity.y, moveDirection.z * moveSpeed);
-        Debug.Log(rb.linearVelocity);
         prevMoveX = moveX;
         prevMoveZ = moveZ;
     }

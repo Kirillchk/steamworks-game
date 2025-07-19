@@ -50,7 +50,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3540128908645681219, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
       propertyPath: m_Name
-      value: Room tamplate
+      value: FacilityRoom
+      objectReference: {fileID: 0}
+    - target: {fileID: 3540128908645681219, guid: 295754aed949f2e08bd577e01d20643f, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
