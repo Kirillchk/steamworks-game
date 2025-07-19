@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1829748214771902682}
   - component: {fileID: 7552055272626732385}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Door
   m_TagString: DoorMark
   m_Icon: {fileID: 4162164826716764455, guid: 0000000000000000d000000000000000, type: 0}

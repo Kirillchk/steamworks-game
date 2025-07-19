@@ -16,7 +16,7 @@ public class NetworkTransform : MonoBehaviour
 		ID = networkIdentity.uniqueVector;
 		P2PBase.networkTransforms[ID] = this;
 	}
-	void Update() =>
+	void LateUpdate() =>
 		sendTransform();
 	void sendTransform()
 	{
