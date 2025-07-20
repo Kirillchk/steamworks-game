@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
+	public static WHY Finished;
 	static public float slowering = .5F;
 	static protected System.Random rng = new(0);
 	static protected async Task<bool> AddRoom(GameObject firstDoorObject, GameObject roomPref, string doorType = null)
@@ -23,7 +24,7 @@ public class MapGenerator : MonoBehaviour
 			Destroy(newRoom);
 			return true;
 		}
-			
+
 
 		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
 		//Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
@@ -61,7 +62,7 @@ public class MapGenerator : MonoBehaviour
 		}
 		else
 			firstDoor.Open();
-		
+
 		newRoom.GetComponent<RoomBehaviour>().EnableBack();
 		Destroy(secondDoorObject);
 		//Debug.Log($"sucsess: {!intersects}");
@@ -93,10 +94,11 @@ public class MapGenerator : MonoBehaviour
 		}
 		foreach (var comp in comps)
 			comp.enabled = true;
-		
+
 		return false;
 	}
 }
+public delegate void WHY();
 public static class RandomElements
 {
 	public static T RandomElement<T>(this T[] array, System.Random rng) =>

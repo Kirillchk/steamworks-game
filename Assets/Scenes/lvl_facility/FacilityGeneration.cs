@@ -9,14 +9,14 @@ public class FacilityGeneration : MapGenerator
 	GameObject[] Doors => GameObject.FindGameObjectsWithTag("DoorMark");
 	async void Start()
 	{
-		for (int i = Section1.Length-1; i >= 0; i--)
+		for (int i = Section1.Length - 1; i >= 0; i--)
 		{
 			var door = Doors.RandomElement(rng);
 			bool failed = await AddRoom(door, Section1[i]);
 			Debug.Log($"SEC1 faied?{failed} : {i}");
 			if (failed) i++;
 		}
-		for (int i = CoolRooms1.Length-1; i >= 0; i--)
+		for (int i = CoolRooms1.Length - 1; i >= 0; i--)
 		{
 			var door = Doors.RandomElement(rng);
 			bool failed = await AddRoom(door, CoolRooms1[i], "main");
@@ -24,7 +24,7 @@ public class FacilityGeneration : MapGenerator
 			if (failed) i++;
 		}
 		foreach (var d in Doors)
-			if(d.GetComponent<RoomDoor>().DoorType != "main")
+			if (d.GetComponent<RoomDoor>().DoorType != "main")
 				d.GetComponent<RoomDoor>().Close();
 		await Task.Delay(20);
 		for (int i = Section2.Length - 1; i >= 0; i--)
@@ -34,7 +34,7 @@ public class FacilityGeneration : MapGenerator
 			Debug.Log($"SEC2 faied? {failed} : {i}");
 			if (failed) i++;
 		}
-		for (int i = CoolRooms2.Length-1; i >= 0; i--)
+		for (int i = CoolRooms2.Length - 1; i >= 0; i--)
 		{
 			var door = Doors.RandomElement(rng);
 			bool failed = await AddRoom(door, CoolRooms2[i]);
@@ -44,7 +44,7 @@ public class FacilityGeneration : MapGenerator
 		foreach (var d in Doors)
 			d.GetComponent<RoomDoor>().Close();
 
-
+		Finished.Invoke();
 		//PlayableBehavior.Players[SteamMatchmaking.GetNumLobbyMembers(LobbyManager.lobbyId)-1].Possess();
 	}
 }

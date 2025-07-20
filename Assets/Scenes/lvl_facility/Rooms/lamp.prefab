@@ -134,14 +134,14 @@ GameObject:
   - component: {fileID: 1873073653727519953}
   - component: {fileID: 2280863483740931851}
   - component: {fileID: 7739773870754133508}
-  - component: {fileID: 5371217239461545116}
+  - component: {fileID: -5943803433987115593}
   m_Layer: 0
   m_Name: lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7579908292286010490
 Transform:
   m_ObjectHideFlags: 0
@@ -261,7 +261,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!59 &5371217239461545116
+--- !u!59 &-5943803433987115593
 HingeJoint:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -271,15 +271,15 @@ HingeJoint:
   serializedVersion: 3
   m_ConnectedBody: {fileID: 0}
   m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 1, z: 0}
+  m_Anchor: {x: 0, y: 0.99999994, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
-  m_UseSpring: 1
+  m_UseSpring: 0
   m_Spring:
-    spring: 1
-    damper: 1
-    targetPosition: 5.33
+    spring: 0
+    damper: 0
+    targetPosition: 0
   m_UseMotor: 0
   m_Motor:
     targetVelocity: 0
