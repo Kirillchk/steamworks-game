@@ -5,9 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 	public float moveSpeed = 1f;
-	public float jumpForce = 5f;
-	public float lookSpeedX = 2f;
-	public float lookSpeedY = 2f;
+	public float jumpForce = .6f;
 	public Transform playerCamera;
 	private Rigidbody rb;
 	private float rotationX = 0f;
@@ -15,8 +13,6 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] Vector3 moveDirection;
 	[SerializeField] LayerMask groundLayer;
 	[SerializeField] float maxDistance = 1.3f;
-	[SerializeField] float acceleration = 1;
-	[SerializeField] float speedLimit = 5;
 
 	void Start()
 	{
@@ -29,8 +25,8 @@ public class PlayerMovement : MonoBehaviour
 	void Update()
 	{
 		// Handle mouse look (for rotating camera)
-		float mouseX = Input.GetAxis("Mouse X") * lookSpeedX;
-		float mouseY = Input.GetAxis("Mouse Y") * lookSpeedY;
+		float mouseX = Input.GetAxis("Mouse X");
+		float mouseY = Input.GetAxis("Mouse Y");
 
 		rotationX -= mouseY;
 		rotationX = Mathf.Clamp(rotationX, -90f, 90f);
@@ -43,9 +39,9 @@ public class PlayerMovement : MonoBehaviour
 			isGrounded = false;
 
 		if (!isGrounded)
-			rb.linearDamping = 0;
+			rb.linearDamping = 1;
 		else
-			rb.linearDamping = 10;	
+			rb.linearDamping = 5;	
 		// Handle movement (WASD)
 
 		float speed = 10;
@@ -53,8 +49,9 @@ public class PlayerMovement : MonoBehaviour
 				Input.GetAxis("Horizontal"),
 				0,
 				Input.GetAxis("Vertical")
-			).normalized*speed/30;		
-		// sprint = Input.GetKey(KeyCode.LeftShift);
+			).normalized*speed/20;
+		if (Input.GetKey(KeyCode.LeftShift))
+			speed =15;
 		if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
 			rb.linearVelocity += Vector3.up * jumpForce*2;
 
@@ -64,5 +61,4 @@ public class PlayerMovement : MonoBehaviour
 			rb.linearVelocity += vector3;
 	
 	}
-	
 }
