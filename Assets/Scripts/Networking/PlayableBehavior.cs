@@ -15,7 +15,7 @@ public class PlayableBehavior : MonoBehaviour
 		rigid.constraints = RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
 		var movement = gameObject.AddComponent<PlayerMovement>();
 		GameObject camerainstance = Instantiate(CameraPrefab, gameObject.transform);
-		movement.playerCamera = camerainstance.transform;
+		//movement.playerCamera = camerainstance.transform;
 	}
 	void Start() => Players.Add(this);
 }

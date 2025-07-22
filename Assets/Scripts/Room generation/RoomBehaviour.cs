@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class RoomBehaviour : MonoBehaviour
@@ -10,9 +9,8 @@ public class RoomBehaviour : MonoBehaviour
 		.Select(t => t.gameObject)
 		.ToArray();
 	public GameObject[] EnableOnInit;
-	public async void EnableBack()
+	public void EnableBack()
 	{
-		await Task.Delay(20);
 		foreach (GameObject obj in EnableOnInit)
 			obj.SetActive(true);
 	}

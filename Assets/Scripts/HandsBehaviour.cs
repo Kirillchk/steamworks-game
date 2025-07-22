@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class HandsBehaviour : MonoBehaviour
 {
-    SpringJoint springJoint;
+    SpringJoint spring;
     public Camera playerCamera;
 	Rigidbody rb;
 	void Start() => rb = GetComponent<Rigidbody>();
@@ -14,7 +14,7 @@ public class HandsBehaviour : MonoBehaviour
         }
 		if(!Input.GetMouseButton(0)) // Left mouse button released
         {
-            ReleaseSpringJoint();
+            Releasespring();
         }
 		if (Input.GetMouseButton(1))
 		{
@@ -23,11 +23,11 @@ public class HandsBehaviour : MonoBehaviour
 		}
 
         // Continuously draw the spring connection in Play mode
-		if (springJoint != null && springJoint.connectedBody != null)
+		if (spring != null && spring.connectedBody != null)
 		{
 			Debug.DrawLine(
-				springJoint.transform.TransformPoint(springJoint.anchor),
-				springJoint.connectedAnchor,
+				spring.transform.TransformPoint(spring.anchor),
+				spring.connectedAnchor,
 				Color.green
 			);
 		}
@@ -45,20 +45,20 @@ public class HandsBehaviour : MonoBehaviour
 
 			if (target != null)
 			{
-				springJoint ??= gameObject.AddComponent<SpringJoint>();
-				springJoint.autoConfigureConnectedAnchor = false;
-				springJoint.spring = 200;
-				springJoint.connectedMassScale = 3;
-				springJoint.massScale = 3;
-				springJoint.maxDistance = .05f;
-				springJoint.minDistance = .01f;
-				springJoint.anchor = new(0,1f,0);
-				springJoint.damper = 50;
+				spring ??= gameObject.AddComponent<SpringJoint>();
+				spring.autoConfigureConnectedAnchor = false;
+				spring.spring = 300;
+				spring.connectedMassScale = 3;
+				spring.massScale = 3;
+				spring.maxDistance = .05f;
+				spring.minDistance = .01f;
+				spring.anchor = new(0,1f,0);
+				spring.damper = 50;
 				Debug.DrawLine(ray.origin, hit.point, Color.red, 2f);
-				springJoint.connectedBody = target;
+				spring.connectedBody = target;
 			}
 			//else  
-			//	springJoint.connectedAnchor = hit.point;
+			//	spring.connectedAnchor = hit.point;
 		}
 		else
 		{
@@ -67,22 +67,22 @@ public class HandsBehaviour : MonoBehaviour
 		//rb.constraints = RigidbodyConstraints.None;
 
     }
-	void ReleaseSpringJoint()
+	void Releasespring()
 	{
-		Destroy(springJoint);
-		springJoint = null;
+		Destroy(spring);
+		spring = null;
 		rb.constraints = RigidbodyConstraints.FreezeRotation;
 	}
     // Optional: Draw Gizmos in the Scene view for better visualization
 	private void OnDrawGizmos()
 	{
-		if (springJoint != null && springJoint.connectedBody != null)
+		if (spring != null && spring.connectedBody != null)
 		{
 			Gizmos.color = Color.cyan;
-			Vector3 anchorPos = springJoint.transform.TransformPoint(springJoint.anchor);
-			Gizmos.DrawLine(anchorPos, springJoint.connectedAnchor);
+			Vector3 anchorPos = spring.transform.TransformPoint(spring.anchor);
+			Gizmos.DrawLine(anchorPos, spring.connectedAnchor);
 			Gizmos.DrawSphere(anchorPos, 0.05f);
-			Gizmos.DrawSphere(springJoint.connectedAnchor, 0.05f);
+			Gizmos.DrawSphere(spring.connectedAnchor, 0.05f);
 		}
 	}
 }

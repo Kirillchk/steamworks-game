@@ -45,7 +45,10 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Reverse: 0
+    - _Smoothness: 0
     - _Threshold: 0.2
+    - _metalic: 0
+    - _tiling: 4
     m_Colors:
     - _Dot_product: {r: 0, g: 5, b: 0, a: 0}
   m_BuildTextureStacks: []
