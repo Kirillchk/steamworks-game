@@ -5,9 +5,10 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 	public float jumpForce = .6f,
-		moveSpeed = 15, walkSpeed = 15, runMultiplier = 2, acceler = 2,
-		groundDamping = 5, airDamping = 1;
+		walkSpeed = 15, runMultiplier = 2, acceler = 2,
+		groundDamping = 5, airDamping = 1, distance = 0.1f;
 	float rotationX = 0f;
+	[SerializeField]bool isGrounded;
 	internal Transform playerCamera;
 	Rigidbody rb;
 	void Start()
@@ -28,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
 		playerCamera.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
 		transform.Rotate(Vector3.up * mouseX);
 
-		bool isGrounded = Physics.Raycast(
+		isGrounded = Physics.Raycast(
 			transform.position,
 			Vector3.down,
 			1.1f,
@@ -46,17 +47,17 @@ public class PlayerMovement : MonoBehaviour
 				Input.GetAxis("Vertical")
 			).normalized * acceler;
 
-		Vector3 vector3 =
-			playerCamera.forward * move.z +
-			playerCamera.right * move.x;
-		vector3.y = 0;
+		Vector3 cameraVec = //wasd fix
+			playerCamera.right * move.x +
+			playerCamera.forward * move.z;
+		cameraVec.y = 0;
 
 		var speedLimit = Input.GetKey(KeyCode.LeftShift) ? walkSpeed * runMultiplier : walkSpeed;
 
-		if ((rb.linearVelocity + vector3).magnitude <= speedLimit)
-			rb.linearVelocity += vector3;
+		if ((rb.linearVelocity + cameraVec).magnitude <= speedLimit)
+			rb.linearVelocity += cameraVec;
 		if (move == Vector3.zero)
-			rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new(0, rb.linearVelocity.y), 1);
-	
+			rb.linearVelocity = Vector3.MoveTowards(rb.linearVelocity, new(0, rb.linearVelocity.y), distance);
+		Debug.Log(rb.linearVelocity);
 	}
 }
