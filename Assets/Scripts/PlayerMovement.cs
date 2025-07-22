@@ -35,23 +35,23 @@ public class PlayerMovement : MonoBehaviour
 			LayerMask.GetMask("Default")
 		);
 
+		if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+			rb.linearVelocity += Vector3.up * jumpForce;
+
 		rb.linearDamping = isGrounded ? groundDamping : airDamping;
-		// Handle movement (WASD)
+		
 		var move = new Vector3(
 				Input.GetAxis("Horizontal"),
 				0,
 				Input.GetAxis("Vertical")
 			).normalized * acceler;
 
-		var speedLimit = Input.GetKey(KeyCode.LeftShift) ? walkSpeed * runMultiplier : walkSpeed;
-
-		if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-			rb.linearVelocity += Vector3.up * jumpForce;
-
 		Vector3 vector3 =
 			playerCamera.forward * move.z +
 			playerCamera.right * move.x;
 		vector3.y = 0;
+
+		var speedLimit = Input.GetKey(KeyCode.LeftShift) ? walkSpeed * runMultiplier : walkSpeed;
 
 		if ((rb.linearVelocity + vector3).magnitude <= speedLimit)
 			rb.linearVelocity += vector3;
