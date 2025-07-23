@@ -1,63 +1,78 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
 	public static WHY Finished;
-	static public float slowering = .5F;
+	static public float slowering = 2.5f;
 	static protected System.Random rng = new(0);
+	
 	static protected async Task<bool> AddRoom(GameObject firstDoorObject, GameObject roomPref, string doorType = null)
 	{
-		//await Task.Delay((int)(slowering * 500));
-		//Debug.Log("PRE INIT");
+		await Task.Delay((int)(slowering * 500));
+		Debug.Log("PRE INIT");
 
+		Debug.Log($"isnull{firstDoorObject.IsUnityNull()}");
 		var firstDoor = firstDoorObject.GetComponent<RoomDoor>();
-		if (firstDoor.RoomBanList.Contains(roomPref)) return true;
 
-		// Selects random doors and inits new room
+		// Inits new room and selects random doors  
 		Vector3 firstDoorPosition = firstDoorObject.transform.position;
 
 		GameObject newRoom = Instantiate(roomPref, firstDoorPosition, new Quaternion());
-		GameObject secondDoorObject = newRoom.GetComponent<RoomBehaviour>().roomDoors.RandomElement(rng);
-		if (secondDoorObject.GetComponent<RoomDoor>().DoorType == doorType && doorType != null)
-		{
+
+		//select non banned second door
+		List<GameObject> nonBanned = newRoom.GetComponent<RoomBehaviour>().roomDoors.ToList();
+		firstDoor.RoomBanDict.TryGetValue(roomPref, out var Banned);
+		nonBanned.RemoveAll(x => (Banned??Enumerable.Empty<GameObject>().ToList()).Contains(x));
+
+		if (nonBanned.Count == 0) {
+			Destroy(newRoom);
+			return true;
+		}
+		GameObject secondDoorObject = nonBanned.RandomElement(rng);
+
+		if (secondDoorObject.GetComponent<RoomDoor>().DoorType == doorType && doorType != null){
 			Destroy(newRoom);
 			return true;
 		}
 
-
-		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
-		//Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
-		//await Task.Delay((int)(slowering * 500));
-		//Debug.Log("INIT");
+		Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
+		Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
+		await Task.Delay((int)(slowering * 500));
+		Debug.Log("INIT");
 
 		// Smashes doors together
 		newRoom.transform.position -= secondDoorObject.transform.position - firstDoorPosition;
 
-		//await Task.Delay((int)(slowering * 500));
-		//Debug.Log("SMASH");
+		await Task.Delay((int)(slowering * 500));
+		Debug.Log("SMASH");
 
 		// Applies calculated rotation angle to align selected doors
 		Vector3 vec1 = firstDoor.VectorA;
 		Vector3 vec2 = secondDoorObject.GetComponent<RoomDoor>().VectorB;
 		Vector3 orient = Vector3.up;
 
-		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, slowering);
-		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up * 2, Color.blue, slowering);
-		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up * 3, Color.yellow, slowering);
+		Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, slowering);
+		Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up * 2, Color.blue, slowering);
+		Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up * 3, Color.yellow, slowering);
 
 		float angle = Vector3.SignedAngle(vec1, vec2, orient * -1);
 		newRoom.transform.RotateAround(firstDoorPosition, orient, angle);
 
-		//await Task.Delay((int)(slowering * 500));
-		//Debug.Log("ROTUNDA");
+		await Task.Delay((int)(slowering * 500));
+		Debug.Log("ROTUNDA");
 
 		var roomCollider = newRoom.GetComponents<BoxCollider>();
 		bool intersects = checkColisions(roomCollider);
 
 		if (intersects)
 		{
-			firstDoor.RoomBanList.Add(roomPref);
+			if (!firstDoor.RoomBanDict.TryGetValue(roomPref, out _))
+				firstDoor.RoomBanDict[roomPref] = new();
+			firstDoor.RoomBanDict[roomPref].Add(secondDoorObject);
 			Destroy(newRoom);
 		}
 		else
@@ -65,7 +80,6 @@ public class MapGenerator : MonoBehaviour
 
 		newRoom.GetComponent<RoomBehaviour>().EnableBack();
 		Destroy(secondDoorObject);
-		//Debug.Log($"sucsess: {!intersects}");
 		await Task.Yield();
 		return intersects;
 	}

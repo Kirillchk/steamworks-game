@@ -58,6 +58,5 @@ public class PlayerMovement : MonoBehaviour
 			rb.linearVelocity += cameraVec;
 		if (move == Vector3.zero)
 			rb.linearVelocity = Vector3.MoveTowards(rb.linearVelocity, new(0, rb.linearVelocity.y), distance);
-		Debug.Log(rb.linearVelocity);
 	}
 }

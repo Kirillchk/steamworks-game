@@ -4,7 +4,7 @@ using UnityEngine;
 public class RoomDoor : MonoBehaviour
 {
 	public string DoorType = "";
-	public List<GameObject> RoomBanList = new();
+	public Dictionary<GameObject, List<GameObject>> RoomBanDict = new();
 	// Absolute vector
 	public Vector3 VectorA => SnapVector(helper.transform.position - transform.parent.position);
 	GameObject helper;

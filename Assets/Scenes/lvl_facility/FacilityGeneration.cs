@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 public class FacilityGeneration : MapGenerator
 {
+	public GameObject pref;
+	List<GameObject> DEBUGOBJECTS = new();
 	[SerializeField] GameObject[] Section1;
 	[SerializeField] GameObject[] CoolRooms1;
 	[SerializeField] GameObject[] Section2;
@@ -18,7 +21,13 @@ public class FacilityGeneration : MapGenerator
 		}
 		for (int i = CoolRooms1.Length - 1; i >= 0; i--)
 		{
+			foreach (var d in DEBUGOBJECTS)
+				Destroy(d);
+			var doorsCache = Doors;
+			foreach (var d in doorsCache)
+				DEBUGOBJECTS.Add(Instantiate(pref, d.transform.position, new Quaternion()));
 			var door = Doors.RandomElement(rng);
+			Debug.Log($"this one:{door.transform.position}");
 			bool failed = await AddRoom(door, CoolRooms1[i], "main");
 			Debug.Log($"CLR1 faied?{failed} : {i}");
 			if (failed) i++;

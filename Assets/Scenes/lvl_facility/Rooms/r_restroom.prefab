@@ -195,7 +195,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6483463357756089572}
-  m_Mesh: {fileID: 4300000, guid: 8a7fbb9b311d10169ace57e09b0e251b, type: 2}
+  m_Mesh: {fileID: 4300000, guid: bdcf5489b762fed2687dc8718841c4b3, type: 2}
 --- !u!64 &8643946015118278426
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -217,7 +217,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 8a7fbb9b311d10169ace57e09b0e251b, type: 2}
+  m_Mesh: {fileID: 4300000, guid: bdcf5489b762fed2687dc8718841c4b3, type: 2}
 --- !u!1 &7394236211374465667
 GameObject:
   m_ObjectHideFlags: 0
@@ -742,6 +742,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: VectorB.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7552055272626732385, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
