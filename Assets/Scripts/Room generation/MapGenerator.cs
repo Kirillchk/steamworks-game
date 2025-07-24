@@ -2,82 +2,84 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
-	public static Action Finished;
+	static public Action Finished;
 	static protected System.Random rng = new(0);
-	//static public float slowering = 2.5f;
-	static protected async Task<bool> AddRoom(GameObject firstDoorObject, GameObject roomPref, string doorType = null)
+	static public float slowering = 1f;
+	static GameObject newRoom, firstDoorObject, secondDoorObject, roomPref;
+	static protected async Task<bool> AddRoom(GameObject doorToBuild, GameObject roomToBuild, string shouldNotBeType = null)
 	{
-		//await Task.Delay((int)(slowering * 500));
-		//Debug.Log("PRE INIT");
+		firstDoorObject = doorToBuild;
+		roomPref = roomToBuild;
 
-		var firstDoor = firstDoorObject.GetComponent<RoomDoor>();
-		Vector3 firstDoorPosition = firstDoorObject.transform.position;
-
-		// Inits new room and selects random door 
-		GameObject newRoom = Instantiate(roomPref, firstDoorPosition, new Quaternion());
+		newRoom = Instantiate(roomPref, firstDoorObject.transform.position, new Quaternion());
 
 		List<GameObject> nonBanned = newRoom.GetComponent<RoomBehaviour>().roomDoors.ToList();
-		firstDoor.RoomBanDict.TryGetValue(roomPref, out var Banned);
-		nonBanned.RemoveAll(x => (Banned??Enumerable.Empty<GameObject>().ToList()).Contains(x));
+		firstDoorObject.GetComponent<RoomDoor>().RoomBanDict.TryGetValue(roomPref, out var Banned);
+		nonBanned.RemoveAll(x => (Banned ?? Enumerable.Empty<GameObject>().ToList()).Contains(x));
 
-		if (nonBanned.Count == 0) {
+		if (nonBanned.Count == 0)
+		{
 			Destroy(newRoom);
 			return true;
 		}
-		GameObject secondDoorObject = nonBanned.RandomElement(rng);
-
-		if (secondDoorObject.GetComponent<RoomDoor>().DoorType == doorType && doorType != null){
+		secondDoorObject = select2ndDoor(nonBanned);
+		if (secondDoorObject.GetComponent<RoomDoor>().DoorType == shouldNotBeType && shouldNotBeType != null)
+		{
 			Destroy(newRoom);
 			return true;
 		}
 
-		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + Vector3.up, Color.red, slowering);
-		//Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
-		//await Task.Delay((int)(slowering * 500));
-		//Debug.Log("INIT");
-
-		// Smashes doors together
-		newRoom.transform.position -= secondDoorObject.transform.position - firstDoorPosition;
-
-		//await Task.Delay((int)(slowering * 500));
-		//Debug.Log("SMASH");
-
-		// Applies calculated rotation angle to align selected doors
-		Vector3 vec1 = firstDoor.VectorA;
-		Vector3 vec2 = secondDoorObject.GetComponent<RoomDoor>().VectorB;
-		Vector3 orient = Vector3.up;
-
-		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec1 + Vector3.up, Color.red, slowering);
-		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + vec2 + Vector3.up * 2, Color.blue, slowering);
-		//Debug.DrawLine(firstDoorPosition, firstDoorPosition + orient + Vector3.up * 3, Color.yellow, slowering);
-
-		float angle = Vector3.SignedAngle(vec1, vec2, orient * -1);
-		newRoom.transform.RotateAround(firstDoorPosition, orient, angle);
-
-		//await Task.Delay((int)(slowering * 500));
-		//Debug.Log("ROTUNDA");
-
-		var roomCollider = newRoom.GetComponents<BoxCollider>();
-		bool intersects = checkColisions(roomCollider);
-
+		await connectDoors();
+		bool intersects = checkColisions(newRoom.GetComponents<BoxCollider>());
 		if (intersects)
 		{
-			if (!firstDoor.RoomBanDict.TryGetValue(roomPref, out _))
-				firstDoor.RoomBanDict[roomPref] = new();
-			firstDoor.RoomBanDict[roomPref].Add(secondDoorObject);
+			if (!firstDoorObject.GetComponent<RoomDoor>().RoomBanDict.TryGetValue(roomPref, out _))
+				firstDoorObject.GetComponent<RoomDoor>().RoomBanDict[roomPref] = new();
+			firstDoorObject.GetComponent<RoomDoor>().RoomBanDict[roomPref].Add(secondDoorObject);
 			Destroy(newRoom);
 		}
 		else
-			firstDoor.Open();
+			firstDoorObject.GetComponent<RoomDoor>().Open();
 
 		newRoom.GetComponent<RoomBehaviour>().EnableBack();
 		Destroy(secondDoorObject);
 		await Task.Yield();
 		return intersects;
+	}
+	static async Task connectDoors()
+	{
+		//Debug.DrawLine(firstDoorObject.transform.position, firstDoorObject.transform.position + Vector3.up, Color.red, slowering);
+		//Debug.DrawLine(secondDoorObject.transform.position, secondDoorObject.transform.position + Vector3.up, Color.blue, slowering);
+		//await Task.Delay((int)(slowering * 500));
+		//Debug.Log("INIT");
+
+		// Smashes doors together
+		newRoom.transform.position -= secondDoorObject.transform.position - firstDoorObject.transform.position;
+
+		//await Task.Delay((int)(slowering * 500));
+		//Debug.Log("SMASH");
+
+		// Applies calculated rotation angle to align selected doors
+		Vector3 vec1 = firstDoorObject.GetComponent<RoomDoor>().VectorA;
+		Vector3 vec2 = secondDoorObject.GetComponent<RoomDoor>().VectorB;
+		Vector3 orient = Vector3.up;
+
+		//Debug.DrawLine(firstDoorObject.transform.position, firstDoorObject.transform.position + vec1 + Vector3.up, Color.red, slowering);
+		//Debug.DrawLine(firstDoorObject.transform.position, firstDoorObject.transform.position + vec2 + Vector3.up * 2, Color.blue, slowering);
+		//Debug.DrawLine(firstDoorObject.transform.position, firstDoorObject.transform.position + orient + Vector3.up * 3, Color.yellow, slowering);
+
+		float angle = Vector3.SignedAngle(vec1, vec2, orient * -1);
+		newRoom.transform.RotateAround(firstDoorObject.transform.position, orient, angle);
+		
+		//await Task.Delay((int)(slowering * 500));
+		//Debug.Log("ROTUNDA");
+	}
+	static GameObject select2ndDoor(List<GameObject> nonBanned)
+	{
+		return nonBanned.RandomElement(rng);
 	}
 	static bool checkColisions(BoxCollider[] comps)
 	{
@@ -108,7 +110,7 @@ public class MapGenerator : MonoBehaviour
 		return false;
 	}
 }
-public static class RandomElements
+static public class RandomElements
 {
 	public static T RandomElement<T>(this T[] array, System.Random rng) =>
 		array[rng.Next(array.Length)];
