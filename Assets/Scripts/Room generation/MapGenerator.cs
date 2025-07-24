@@ -6,10 +6,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
-	public static WHY Finished;
-	//static public float slowering = 2.5f;
+	public static Action Finished;
 	static protected System.Random rng = new(0);
-	
+	//static public float slowering = 2.5f;
 	static protected async Task<bool> AddRoom(GameObject firstDoorObject, GameObject roomPref, string doorType = null)
 	{
 		//await Task.Delay((int)(slowering * 500));
@@ -109,7 +108,6 @@ public class MapGenerator : MonoBehaviour
 		return false;
 	}
 }
-public delegate void WHY();
 public static class RandomElements
 {
 	public static T RandomElement<T>(this T[] array, System.Random rng) =>
