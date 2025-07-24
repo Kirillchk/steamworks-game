@@ -9,9 +9,9 @@ public class MapGenerator : MonoBehaviour
 	static protected System.Random rng = new(0);
 	static public float slowering = 1f;
 	static GameObject newRoom, firstDoorObject, secondDoorObject;
-	static protected async Task<bool> AddRoom(GameObject doorToBuild, GameObject roomToBuild, string shouldNotBeType = null)
+	static protected async Task<bool> AddRoom(GameObject doorToConnect, GameObject roomToBuild, string shouldNotBeType = null)
 	{
-		firstDoorObject = doorToBuild;
+		firstDoorObject = doorToConnect;
 
 		newRoom = Instantiate(roomToBuild, firstDoorObject.transform.position, new Quaternion());
 
