@@ -8,16 +8,15 @@ public class MapGenerator : MonoBehaviour
 	static public Action Finished;
 	static protected System.Random rng = new(0);
 	static public float slowering = 1f;
-	static GameObject newRoom, firstDoorObject, secondDoorObject, roomPref;
+	static GameObject newRoom, firstDoorObject, secondDoorObject;
 	static protected async Task<bool> AddRoom(GameObject doorToBuild, GameObject roomToBuild, string shouldNotBeType = null)
 	{
 		firstDoorObject = doorToBuild;
-		roomPref = roomToBuild;
 
-		newRoom = Instantiate(roomPref, firstDoorObject.transform.position, new Quaternion());
+		newRoom = Instantiate(roomToBuild, firstDoorObject.transform.position, new Quaternion());
 
 		List<GameObject> nonBanned = newRoom.GetComponent<RoomBehaviour>().roomDoors.ToList();
-		firstDoorObject.GetComponent<RoomDoor>().RoomBanDict.TryGetValue(roomPref, out var Banned);
+		firstDoorObject.GetComponent<RoomDoor>().RoomBanDict.TryGetValue(roomToBuild, out var Banned);
 		nonBanned.RemoveAll(x => (Banned ?? Enumerable.Empty<GameObject>().ToList()).Contains(x));
 
 		if (nonBanned.Count == 0)
@@ -36,9 +35,9 @@ public class MapGenerator : MonoBehaviour
 		bool intersects = checkColisions(newRoom.GetComponents<BoxCollider>());
 		if (intersects)
 		{
-			if (!firstDoorObject.GetComponent<RoomDoor>().RoomBanDict.TryGetValue(roomPref, out _))
-				firstDoorObject.GetComponent<RoomDoor>().RoomBanDict[roomPref] = new();
-			firstDoorObject.GetComponent<RoomDoor>().RoomBanDict[roomPref].Add(secondDoorObject);
+			if (!firstDoorObject.GetComponent<RoomDoor>().RoomBanDict.TryGetValue(roomToBuild, out _))
+				firstDoorObject.GetComponent<RoomDoor>().RoomBanDict[roomToBuild] = new();
+			firstDoorObject.GetComponent<RoomDoor>().RoomBanDict[roomToBuild].Add(secondDoorObject);
 			Destroy(newRoom);
 		}
 		else
@@ -49,6 +48,7 @@ public class MapGenerator : MonoBehaviour
 		await Task.Yield();
 		return intersects;
 	}
+	static protected Func<List<GameObject>, GameObject> select2ndDoor = (nonbanned) => nonbanned.RandomElement(rng);
 	static async Task connectDoors()
 	{
 		//Debug.DrawLine(firstDoorObject.transform.position, firstDoorObject.transform.position + Vector3.up, Color.red, slowering);
@@ -76,10 +76,6 @@ public class MapGenerator : MonoBehaviour
 		
 		//await Task.Delay((int)(slowering * 500));
 		//Debug.Log("ROTUNDA");
-	}
-	static GameObject select2ndDoor(List<GameObject> nonBanned)
-	{
-		return nonBanned.RandomElement(rng);
 	}
 	static bool checkColisions(BoxCollider[] comps)
 	{
