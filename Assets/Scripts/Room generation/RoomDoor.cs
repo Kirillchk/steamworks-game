@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class RoomDoor : MonoBehaviour
 {
+	public static List<GameObject> Doors = new();
 	public string DoorType = "";
 	public Dictionary<GameObject, List<GameObject>> RoomBanDict = new();
 	// Absolute vector
@@ -10,12 +11,16 @@ public class RoomDoor : MonoBehaviour
 	GameObject helper;
 	void Start()
 	{
+		Doors.Add(gameObject);
 		helper = new("Helper");
 		helper.transform.parent = transform.parent;
 		helper.transform.localPosition = -VectorB;
 	}
-	void OnDestroy() => 
+	void OnDestroy()
+	{
+		Doors.Remove(gameObject);
 		Destroy(helper);
+	}
 	// Local vector
 	public Vector3 VectorB;
 	[SerializeField] GameObject openDoorPref;
