@@ -1,34 +1,18 @@
-using System.Threading.Tasks;
-using Unity.VisualScripting;
+
+using System;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class DebugShaderexperement : MonoBehaviour
 {
+	public float tolerance1 = .005f, tolerance2 = .005f, percentage = .8f;
+	public GameObject quad; 
 	public Color DetailsColor;
-	[ExecuteInEditMode, ContextMenu("FUN")]
-	void yes() => fun(true);
-	public void fun(bool toDark)
-	{
-		Shader.SetGlobalColor("_Details", toDark ? DetailsColor : Color.black);
-		Shader.SetGlobalFloat("_DetailsAlpha", 1);
-	}
-	[ExecuteInEditMode, ContextMenu("Reset")]
-	public void Reset()
-	{
-		Shader.SetGlobalColor("_Details", new Color(0, 0, 0, 0));
-		Shader.SetGlobalFloat("_DetailsAlpha", 0);
-	}
-
-	public GameObject quad; // Reference to your quad GameObject
-	float blackThreshold = .05f; // Adjust this to define what you consider "black"
-								 // Call this method to count black pixels
+	Color currentColor;
 	RenderTexture renderTexture;
 	Renderer quadRenderer;
-	int totalRes;
+	float totalRes;
 	bool isDarkEnough()
 	{
-		// Save current active render texture
 		RenderTexture previous = RenderTexture.active;
 		try
 		{
@@ -40,25 +24,26 @@ public class DebugShaderexperement : MonoBehaviour
 			tempTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
 			tempTexture.Apply();
 
-			// Count black pixels
 			int blackPixelCount = 0;
+			int glowPixelCount = 0;
 			Color[] pixels = tempTexture.GetPixels();
 
 			foreach (Color pixel in pixels)
 			{
-				// Check if pixel is below threshold in all channels
-				if ((pixel.r <= blackThreshold &&
-					pixel.g <= blackThreshold &&
-					pixel.b <= blackThreshold)
-					|| colorsApprox(pixel, DetailsColor, .05f))
-				{
+				var isBlack = colorsApprox(pixel, new(0, 0, 0), tolerance1);
+				var isGlow = colorsApprox(pixel, currentColor, tolerance2);
+				if (isBlack)
 					blackPixelCount++;
-				}
+				else if (isGlow)
+					glowPixelCount++;
 			}
-			// Clean up
 			Destroy(tempTexture);
-
-			return blackPixelCount / totalRes >= 1;
+			var dark = blackPixelCount;
+			var light = totalRes - blackPixelCount - glowPixelCount;
+			var all = totalRes - glowPixelCount;
+			var res = light / all <= 1-percentage;
+			Debug.Log($"{res}-{light}/{all}={light / all}");
+			return res;
 		}
 		finally
 		{
@@ -66,25 +51,24 @@ public class DebugShaderexperement : MonoBehaviour
 			RenderTexture.active = previous;
 		}
 	}
-	// Example usage
+	bool isDark = false;
 	void FixedUpdate()
 	{
-		var isDark = isDarkEnough();
-		Debug.Log(isDark ? "dark" : "not dark");
-		//fun(isDark);
+		isDark = isDarkEnough();
+		Shader.SetGlobalColor("_Details", currentColor);
+		Shader.SetGlobalFloat("_DetailsAlpha", isDark ? 1 : 0);
+		currentColor = isDark ? Color.Lerp(currentColor, DetailsColor, .001f) : Color.black;
 	}
 	void Start()
 	{
 		quadRenderer = quad.GetComponent<Renderer>();
 		renderTexture = quadRenderer.material.mainTexture as RenderTexture;
 		totalRes = renderTexture.width * renderTexture.height;
+		Shader.SetGlobalColor("_Details", currentColor);
 	}
 	// Add this method to your DebugShaderexperement class
-	bool colorsApprox(Color a, Color b, float tolerance = 0.05f)
-	{
-		return Mathf.Abs(a.r - b.r) < tolerance &&
-			Mathf.Abs(a.g - b.g) < tolerance &&
-			Mathf.Abs(a.b - b.b) < tolerance;
-		// Note: We're not comparing alpha unless you need to
-	}
+	bool colorsApprox(Color a, Color b, float tolerance)=>
+		Mathf.Abs(a.r - b.r) <= tolerance &&
+		Mathf.Abs(a.g - b.g) <= tolerance &&
+		Mathf.Abs(a.b - b.b) <= tolerance;
 }
