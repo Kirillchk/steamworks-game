@@ -24,7 +24,7 @@ public class DebugShaderexperement : MonoBehaviour
 		try
 		{
 			// Create a temporary Texture2D to read pixels
-			Texture2D tempTexture = new (renderTexture.width, renderTexture.height, TextureFormat.RGB24, false);
+			Texture2D tempTexture = new(renderTexture.width, renderTexture.height, TextureFormat.RGB24, false);
 
 			RenderTexture.active = renderTexture;
 			tempTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
@@ -57,9 +57,21 @@ public class DebugShaderexperement : MonoBehaviour
 			// Restore previous render texture
 			RenderTexture.active = previous;
 		}
-		bool colorsApprox(Color a, Color b)=>
+		bool colorsApprox(Color a, Color b) =>
 			Mathf.Abs(a.r - b.r) <= tolerance &&
 			Mathf.Abs(a.g - b.g) <= tolerance &&
 			Mathf.Abs(a.b - b.b) <= tolerance;
+	}
+	[ExecuteInEditMode, ContextMenu("TurnOn")]
+	void TurnOn()
+	{
+		Shader.SetGlobalColor("_Details", DetailsColor);
+		Shader.SetGlobalFloat("_DetailsAlpha", 1);
+	}
+	[ExecuteInEditMode, ContextMenu("TurnOff")]
+	void TurnOff()
+	{
+		Shader.SetGlobalColor("_Details", Color.black);
+		Shader.SetGlobalFloat("_DetailsAlpha", 0);
 	}
 }
