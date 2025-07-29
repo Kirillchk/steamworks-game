@@ -634,6 +634,10 @@ PrefabInstance:
       value: lamp
       objectReference: {fileID: 0}
     - target: {fileID: 9110909975978257975, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9110909975978257975, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
