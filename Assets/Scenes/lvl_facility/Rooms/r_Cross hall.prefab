@@ -342,6 +342,10 @@ PrefabInstance:
       propertyPath: m_Anchor.y
       value: 4.5
       objectReference: {fileID: 0}
+    - target: {fileID: 6377615648774954214, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7579908292286010490, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.25
@@ -385,6 +389,10 @@ PrefabInstance:
     - target: {fileID: 9110909975978257975, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
       propertyPath: m_Name
       value: lamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 9110909975978257975, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -453,6 +461,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Facility door
       objectReference: {fileID: 0}
+    - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: VectorB.z
       value: -1
@@ -518,6 +530,10 @@ PrefabInstance:
     - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: m_Name
       value: Facility door (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: VectorB.z
@@ -585,6 +601,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Facility door (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: VectorB.x
       value: -1
@@ -650,6 +670,10 @@ PrefabInstance:
     - target: {fileID: 1308908570910100451, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
       propertyPath: m_Name
       value: r_Cross hall
+      objectReference: {fileID: 0}
+    - target: {fileID: 1308908570910100451, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4081180321099552375, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
       propertyPath: m_Size.x
@@ -857,6 +881,10 @@ PrefabInstance:
     - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: m_Name
       value: Facility door (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: VectorB.x

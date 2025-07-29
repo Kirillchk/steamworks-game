@@ -17,7 +17,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6430871276035139937
 Transform:
@@ -127,7 +127,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5700593478032955780
 Transform:
@@ -237,7 +237,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4416089631690642849
 Transform:
@@ -381,6 +381,10 @@ PrefabInstance:
     - target: {fileID: 1308908570910100451, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
       propertyPath: m_Name
       value: r_baracs
+      objectReference: {fileID: 0}
+    - target: {fileID: 1308908570910100451, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4081180321099552375, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
       propertyPath: m_Size.x
@@ -528,6 +532,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Facility door2 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2210410990898818715, guid: 1ff9066f84f7a7b26a32d3f5fbf0a778, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: 1ff9066f84f7a7b26a32d3f5fbf0a778, type: 3}
       propertyPath: VectorB.x
       value: 1
@@ -593,6 +601,10 @@ PrefabInstance:
     - target: {fileID: 2210410990898818715, guid: 1ff9066f84f7a7b26a32d3f5fbf0a778, type: 3}
       propertyPath: m_Name
       value: Facility door2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2210410990898818715, guid: 1ff9066f84f7a7b26a32d3f5fbf0a778, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: 1ff9066f84f7a7b26a32d3f5fbf0a778, type: 3}
       propertyPath: VectorB.x

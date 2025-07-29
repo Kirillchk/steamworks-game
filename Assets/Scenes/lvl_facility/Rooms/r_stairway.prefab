@@ -1490,7 +1490,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8318193287982896133
 Transform:
@@ -1600,7 +1600,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2475813525915575326
 Transform:
@@ -1745,6 +1745,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Facility door (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: VectorB.x
       value: -1
@@ -1810,6 +1814,10 @@ PrefabInstance:
     - target: {fileID: 1308908570910100451, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
       propertyPath: m_Name
       value: r_stairway
+      objectReference: {fileID: 0}
+    - target: {fileID: 1308908570910100451, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4081180321099552375, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
       propertyPath: m_Size.x
@@ -1926,6 +1934,10 @@ PrefabInstance:
     - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: m_Name
       value: Facility door
+      objectReference: {fileID: 0}
+    - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: VectorB.x
