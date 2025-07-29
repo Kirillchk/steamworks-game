@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: mat_roof1
-  m_Shader: {fileID: -6465566751694194690, guid: 1fc43a4b51134ceed84400b34fb8ece8, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: cd3f20532ff3bf9d4871d0a03361fe80, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -45,7 +45,10 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Reverse: 0
+    - _Smoothness: 0
     - _Threshold: 0.43
+    - _metalic: 0
+    - _tiling: 0.2
     m_Colors:
     - _Dot_product: {r: 0, g: 5, b: 0, a: 0}
   m_BuildTextureStacks: []

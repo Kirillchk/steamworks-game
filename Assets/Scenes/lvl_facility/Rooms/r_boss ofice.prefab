@@ -58,6 +58,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: c1478f5af1d6ab5e8b60398dbdd03908, type: 2}
+  - {fileID: 2100000, guid: 85700a5b93c2b3bf6b8f6adbc2069475, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -86,7 +87,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3571425727328941491}
-  m_Mesh: {fileID: 4300000, guid: edb9646bfdfe101c4af39c42dbe66d6d, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 9773f3c37ae1355f2adeb1bf0bc6aa27, type: 2}
 --- !u!64 &5069682168309863677
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -108,7 +109,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: edb9646bfdfe101c4af39c42dbe66d6d, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 9773f3c37ae1355f2adeb1bf0bc6aa27, type: 2}
 --- !u!1 &3781811860096759001
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,6 +168,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: bca8e01ddf7d71b34a10d103f5b3afc1, type: 2}
+  - {fileID: 2100000, guid: 12ded5fc8a8ee41caa3e55a7a0ce82a7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -276,6 +278,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 52ae2588d59a83b08b88de7201da0ab4, type: 2}
+  - {fileID: 2100000, guid: 62aa10f4f5c02476d9da15dd492f1fc6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -304,7 +307,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6407900242337426361}
-  m_Mesh: {fileID: 4300000, guid: 86541032238d27975ae526cca55cb361, type: 2}
+  m_Mesh: {fileID: 4300000, guid: ea3d6dec689d1e0ceab2f4bace8d4440, type: 2}
 --- !u!64 &492408686394249901
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -326,7 +329,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 86541032238d27975ae526cca55cb361, type: 2}
+  m_Mesh: {fileID: 4300000, guid: ea3d6dec689d1e0ceab2f4bace8d4440, type: 2}
 --- !u!1001 &2600607277180263886
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -378,6 +381,10 @@ PrefabInstance:
     - target: {fileID: 1308908570910100451, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
       propertyPath: m_Name
       value: r_boss ofice
+      objectReference: {fileID: 0}
+    - target: {fileID: 1308908570910100451, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4081180321099552375, guid: 0420e12f6d8dc846ea9b119f54ebdaca, type: 3}
       propertyPath: m_Size.x
@@ -517,6 +524,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Facility door
       objectReference: {fileID: 0}
+    - target: {fileID: 2210410990898818715, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7552055272626732385, guid: a3c080ee13ccb03aa8c279ed97283811, type: 3}
       propertyPath: VectorB.x
       value: 0
@@ -543,6 +554,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2775058528773758066}
     m_Modifications:
+    - target: {fileID: 6377615648774954214, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7579908292286010490, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -586,6 +601,10 @@ PrefabInstance:
     - target: {fileID: 9110909975978257975, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
       propertyPath: m_Name
       value: lamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 9110909975978257975, guid: ac575dbf73a4975d9a4c938d2f0bfab8, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
