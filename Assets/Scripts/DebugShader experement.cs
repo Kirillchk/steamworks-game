@@ -1,10 +1,7 @@
-
-using System;
 using UnityEngine;
-
 public class DebugShaderexperement : MonoBehaviour
 {
-	public float tolerance1 = .005f, tolerance2 = .005f, percentage = .8f;
+	static float tolerance = .005f, percentage = 1;
 	public GameObject quad; 
 	public Color DetailsColor;
 	Color currentColor;
@@ -27,22 +24,21 @@ public class DebugShaderexperement : MonoBehaviour
 			int blackPixelCount = 0;
 			int glowPixelCount = 0;
 			Color[] pixels = tempTexture.GetPixels();
-
 			foreach (Color pixel in pixels)
 			{
-				var isBlack = colorsApprox(pixel, new(0, 0, 0), tolerance1);
-				var isGlow = colorsApprox(pixel, currentColor, tolerance2);
+				var isBlack = colorsApprox(pixel, new(0, 0, 0), tolerance);
+				var isGlow = colorsApprox(pixel, currentColor, tolerance);
 				if (isBlack)
 					blackPixelCount++;
 				else if (isGlow)
 					glowPixelCount++;
 			}
 			Destroy(tempTexture);
-			var dark = blackPixelCount;
+
 			var light = totalRes - blackPixelCount - glowPixelCount;
 			var all = totalRes - glowPixelCount;
 			var res = light / all <= 1-percentage;
-			Debug.Log($"{res}-{light}/{all}={light / all}");
+			Debug.Log($"{res}:{light}/{all}={light / all}");
 			return res;
 		}
 		finally
@@ -50,14 +46,17 @@ public class DebugShaderexperement : MonoBehaviour
 			// Restore previous render texture
 			RenderTexture.active = previous;
 		}
+		bool colorsApprox(Color a, Color b, float tolerance)=>
+			Mathf.Abs(a.r - b.r) <= tolerance &&
+			Mathf.Abs(a.g - b.g) <= tolerance &&
+			Mathf.Abs(a.b - b.b) <= tolerance;
 	}
-	bool isDark = false;
 	void FixedUpdate()
 	{
-		isDark = isDarkEnough();
+		var isDark = isDarkEnough();
 		Shader.SetGlobalColor("_Details", currentColor);
 		Shader.SetGlobalFloat("_DetailsAlpha", isDark ? 1 : 0);
-		currentColor = isDark ? Color.Lerp(currentColor, DetailsColor, .001f) : Color.black;
+		currentColor = isDark ? Color.Lerp(currentColor, DetailsColor, .0001f) : Color.black;
 	}
 	void Start()
 	{
@@ -66,9 +65,4 @@ public class DebugShaderexperement : MonoBehaviour
 		totalRes = renderTexture.width * renderTexture.height;
 		Shader.SetGlobalColor("_Details", currentColor);
 	}
-	// Add this method to your DebugShaderexperement class
-	bool colorsApprox(Color a, Color b, float tolerance)=>
-		Mathf.Abs(a.r - b.r) <= tolerance &&
-		Mathf.Abs(a.g - b.g) <= tolerance &&
-		Mathf.Abs(a.b - b.b) <= tolerance;
 }
