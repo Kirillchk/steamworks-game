@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class HandsBehaviour : MonoBehaviour
@@ -7,64 +8,90 @@ public class HandsBehaviour : MonoBehaviour
 	Rigidbody rb;
 	void Start()
 	{
+		leftHand.HandOffset = new(-.5f, 0, 1);
+		rightHand.HandOffset = new(.5f, 0, 1);
 		rb = GetComponent<Rigidbody>();
+		Hand.HandPref = HandPref;
 	}
 	void Update()
 	{
-		if (Input.GetMouseButtonDown(0))
-			CastRayFromCameraCenter(leftHand);
-		if (!Input.GetMouseButton(0))
-			Releasespring(leftHand);
-		if (Input.GetMouseButtonDown(1))
-			CastRayFromCameraCenter(rightHand);
-		if (!Input.GetMouseButton(1))
-			Releasespring(rightHand);
-
-	}
-
-	void CastRayFromCameraCenter(Hand hand)
-	{
-		Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-		RaycastHit hit;
-		if (!Physics.Raycast(ray, out hit, 10, ~0, QueryTriggerInteraction.Ignore))
-			return;
-
-		if (hit.transform.gameObject.tag != "Grab" && hit.transform.gameObject.tag != "Pickup")
-			return;
-
+		bool res = Physics.Raycast(
+			Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)),
+			out RaycastHit hit,
+			10, ~0, QueryTriggerInteraction.Ignore
+		);
 		var target = hit.transform.gameObject;
-
-		hand.HandJoint ??= gameObject.AddComponent<SpringJoint>();
-		hand.HandJoint.autoConfigureConnectedAnchor = false;
-		hand.HandJoint.spring = 300;
-		hand.HandJoint.connectedMassScale = 3;
-		hand.HandJoint.massScale = 3;
-		hand.HandJoint.maxDistance = .05f;
-		hand.HandJoint.minDistance = .01f;
-		hand.HandJoint.anchor = new(0, 1f, 0);
-		hand.HandJoint.damper = 50;
-		Debug.DrawLine(ray.origin, hit.point, Color.red, 2f);
-		if (target.GetComponent<Rigidbody>() != null)
-		{
-			hand.HandJoint.connectedBody = target.GetComponent<Rigidbody>();
-			hand.HandTexture = Instantiate(HandPref, hit.point, new(), target.transform);
-		}
-		else
-		{
-			hand.HandJoint.connectedAnchor = hit.point;
-			hand.HandTexture = Instantiate(HandPref, hit.point, new());
-		}
+		if (!res)
+			return;
+		if (Input.GetMouseButtonDown(0))
+			leftHand.Grab(target, hit.point, this);
+		if (!Input.GetMouseButton(0))
+			leftHand.Relese();
+		if (Input.GetMouseButtonDown(1))
+			rightHand.Grab(target, hit.point, this);
+		if (!Input.GetMouseButton(1))
+			rightHand.Relese();
+		if (Input.GetKeyDown(KeyCode.Q))
+			leftHand.PickUp(target, gameObject);
+		if (Input.GetKeyDown(KeyCode.E))
+			rightHand.PickUp(target, gameObject);
 	}
-	void Releasespring(Hand hand)
+	public SpringJoint newSpring()
 	{
-		Destroy(hand.HandTexture);
-		Destroy(hand.HandJoint);
-		hand.HandJoint = null;
+		SpringJoint spring = gameObject.AddComponent<SpringJoint>();
+		spring.autoConfigureConnectedAnchor = false;
+		spring.spring = 300;
+		spring.connectedMassScale = 3;
+		spring.massScale = 3;
+		spring.maxDistance = .05f;
+		spring.minDistance = .01f;
+		spring.anchor = new(0, 1f, 0);
+		spring.damper = 50;
+
+		return spring;
 	}
-}
-public class Hand
-{
-	public GameObject HandTexture = null;
-	public SpringJoint HandJoint = null;
-	public bool isEmpty = true;
+	public class Hand
+	{
+		public static GameObject HandPref;
+		public GameObject HandTexture = null;
+		public SpringJoint HandJoint = null;
+		public Vector3 HandOffset;
+		public void Grab(GameObject target, Vector3 point, HandsBehaviour handBeh)
+		{
+			if (target.tag != "Grab")
+				return;
+			HandJoint = handBeh.newSpring();
+			if (target.GetComponent<Rigidbody>() != null)
+			{
+				HandJoint.connectedBody = target.GetComponent<Rigidbody>();
+				HandTexture = Instantiate(HandPref, point, new(), target.transform);
+			}
+			else
+			{
+				HandJoint.connectedAnchor = point;
+				HandTexture = Instantiate(HandPref, point, new());
+			}
+		}
+		public void Relese()
+		{
+			Destroy(HandTexture);
+			Destroy(HandJoint);
+			HandJoint = null;
+		}
+		public void PickUp(GameObject target, GameObject gameObject)
+		{
+			if (target.tag != "Pickup")
+				return;
+				
+			target.transform.parent = gameObject.transform;
+			target.transform.rotation = new();
+			target.transform.localPosition = HandOffset;
+			var targetRB = target.GetComponent<Rigidbody>();
+			targetRB.useGravity = false;
+			targetRB.isKinematic = true;
+			var colliders = target.GetComponents<Collider>();
+			foreach (var collider in colliders)
+				collider.enabled = false;
+		}
+	}
 }

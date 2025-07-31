@@ -6,7 +6,7 @@ PhysicsMaterial:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: physmat_player
+  m_Name: PM_Sliding
   serializedVersion: 2
   m_DynamicFriction: 0
   m_StaticFriction: 0
