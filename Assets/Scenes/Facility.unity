@@ -455,7 +455,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DetailsColor: {r: 0.61748517, g: 0.61748517, b: 0.61748517, a: 1}
   renderTexture: {fileID: 8400000, guid: 975d88a5aea3904a5b627177e48f8e1f, type: 2}
-  MainScreen: {fileID: 0}
 --- !u!1 &1403170188
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,6 +744,10 @@ PrefabInstance:
     - target: {fileID: 2455184636331641997, guid: f1d3c9c07b2c2c3709026ff8b64845fc, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 83
+      objectReference: {fileID: 0}
+    - target: {fileID: 2860793542202617436, guid: f1d3c9c07b2c2c3709026ff8b64845fc, type: 3}
+      propertyPath: m_TagString
+      value: Grab
       objectReference: {fileID: 0}
     - target: {fileID: 2860793542202617436, guid: f1d3c9c07b2c2c3709026ff8b64845fc, type: 3}
       propertyPath: m_StaticEditorFlags

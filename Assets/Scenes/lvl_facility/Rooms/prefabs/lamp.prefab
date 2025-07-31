@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: -5943803433987115593}
   m_Layer: 0
   m_Name: lamp
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

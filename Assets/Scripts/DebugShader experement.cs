@@ -11,21 +11,26 @@ public class DebugShaderexperement : MonoBehaviour
 		Shader.SetGlobalColor("_Details", currentColor);
 	}
 	bool isDarkPrev = false;
-	int counter = 0;
+	int sameInARow = 0;
 	void FixedUpdate()
 	{
 		var isDark = isDarkEnough();
+		
 		if (isDark == isDarkPrev)
-			counter++;
+		{
+			if (sameInARow + 1 != int.MaxValue)
+				sameInARow++;
+		}
 		else
-			counter = 0;
+			sameInARow = 0;
 		isDarkPrev = isDark;
-		if (counter >= 150 && isDark)
+
+		if (sameInARow >= 150 && isDark)
 		{
 			currentColor = Color.Lerp(currentColor, DetailsColor, .0001f);
 			Shader.SetGlobalFloat("_DetailsAlpha", 1);
 		}
-		else
+		else if (sameInARow >= 5 && !isDark)
 		{
 			currentColor = Color.black;
 			Shader.SetGlobalFloat("_DetailsAlpha", 0);
