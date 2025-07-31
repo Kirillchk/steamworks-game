@@ -8,7 +8,7 @@ public class DebugShaderexperement : MonoBehaviour
 	void Start()
 	{
 		totalRes = renderTexture.width * renderTexture.height;
-		Shader.SetGlobalColor("_Details", currentColor);
+		Shader.SetGlobalColor("_Details", Color.black);
 	}
 	bool isDarkPrev = false;
 	int sameInARow = 0;
