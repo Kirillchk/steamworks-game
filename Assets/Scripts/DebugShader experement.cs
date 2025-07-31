@@ -3,6 +3,7 @@ public class DebugShaderexperement : MonoBehaviour
 {
 	public Color DetailsColor;
 	public RenderTexture renderTexture;
+	public RenderTexture MainScreen;
 	static Color currentColor;
 	static float totalRes;
 	void Start()
