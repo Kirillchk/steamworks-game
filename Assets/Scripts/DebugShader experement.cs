@@ -3,7 +3,6 @@ public class DebugShaderexperement : MonoBehaviour
 {
 	public Color DetailsColor;
 	public RenderTexture renderTexture;
-	public RenderTexture MainScreen;
 	static Color currentColor;
 	static float totalRes;
 	void Start()
@@ -11,12 +10,27 @@ public class DebugShaderexperement : MonoBehaviour
 		totalRes = renderTexture.width * renderTexture.height;
 		Shader.SetGlobalColor("_Details", currentColor);
 	}
+	bool isDarkPrev = false;
+	int counter = 0;
 	void FixedUpdate()
 	{
 		var isDark = isDarkEnough();
-		currentColor = isDark ? Color.Lerp(currentColor, DetailsColor, .0001f) : Color.black;
+		if (isDark == isDarkPrev)
+			counter++;
+		else
+			counter = 0;
+		isDarkPrev = isDark;
+		if (counter >= 150 && isDark)
+		{
+			currentColor = Color.Lerp(currentColor, DetailsColor, .0001f);
+			Shader.SetGlobalFloat("_DetailsAlpha", 1);
+		}
+		else
+		{
+			currentColor = Color.black;
+			Shader.SetGlobalFloat("_DetailsAlpha", 0);
+		}
 		Shader.SetGlobalColor("_Details", currentColor);
-		Shader.SetGlobalFloat("_DetailsAlpha", isDark ? 1 : 0);
 	}
 	bool isDarkEnough()
 	{
