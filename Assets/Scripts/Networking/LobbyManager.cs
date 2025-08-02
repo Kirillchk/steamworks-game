@@ -39,6 +39,8 @@ public class LobbyManager : MonoBehaviour
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
 			// fix thiso bulshido
 			PlayableBehavior.Players[playersOnline].GetComponent<NetworkIdentity>().isOwner = false;
+			if (playersOnline!=1)
+				PlayableBehavior.Players[playersOnline].Possess();
 		});
 		Callback<GameLobbyJoinRequested_t>.Create(callback =>
 		{
