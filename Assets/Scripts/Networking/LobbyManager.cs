@@ -24,8 +24,8 @@ public class LobbyManager : MonoBehaviour
 		Callback<LobbyEnter_t>.Create(callback =>
 		{
 			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
-			if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Lobby"))
-				SceneManager.LoadScene("Lobby");
+			if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Facility"))
+				SceneManager.LoadScene("Facility");
 
 			P2PBase networking = GetComponent<P2PBase>() ?? gameObject.AddComponent<P2PBase>();
 
@@ -55,7 +55,7 @@ public class LobbyManager : MonoBehaviour
 		gameObject.AddComponent<P2PBase>();
 		P2PBase.isHost = true;
 		SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, MaxLobbyMembers);
-		SceneManager.LoadScene("Lobby");
+		SceneManager.LoadScene("Facility");
 	}
 }
 

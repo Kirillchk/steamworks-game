@@ -16,12 +16,14 @@ public class HandsBehaviour : MonoBehaviour
 	}
     void Update()
     {
-		if (Input.GetKeyDown(PickButton) && holding != null)
-			Drop();
+		if (Input.GetMouseButtonDown(DragButton) && holding != null)
+			holding.GetComponent<ItemBehaviour>()?.UseItem.Invoke();
 		if (Input.GetMouseButtonUp(DragButton))
 			Relese();
+		if (Input.GetKeyDown(PickButton) && holding != null)
+			Drop();
 		// TODO: turn into a helper or smth
-		bool res = Physics.Raycast(
+			bool res = Physics.Raycast(
 			Camera.main.ViewportPointToRay(new (0.5f, 0.5f, 0)),
 			out RaycastHit hit,
 			10, ~0, QueryTriggerInteraction.Ignore
@@ -29,7 +31,7 @@ public class HandsBehaviour : MonoBehaviour
 		if (!res)
 			return;
 		var target = hit.transform.gameObject;
-		if (Input.GetMouseButtonDown(DragButton))
+		if (Input.GetMouseButtonDown(DragButton) && holding == null)
 		{
 			if (target.tag == "Pickup")
 				Drag(target, hit.point);
