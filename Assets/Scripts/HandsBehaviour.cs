@@ -5,13 +5,11 @@ public class HandsBehaviour : MonoBehaviour
 {
 	public GameObject HandPref;
 	protected GameObject holding = null, HandTexture = null;
-	protected Vector3 HandOffset;
 	protected Quaternion HandRotation;
 	static Rigidbody rb;
 	SpringJoint HandJoint = null;
 	void Start()
 	{
-		HandOffset = new(-.5f, 0, 1);
 		rb = GetComponent<Rigidbody>();
 	}
 	public void Grab(GameObject target, Vector3 point)
@@ -20,12 +18,12 @@ public class HandsBehaviour : MonoBehaviour
 			return;
 		HandJoint = gameObject.AddComponent<SpringJoint>();
 		HandJoint.autoConfigureConnectedAnchor = false;
-		HandJoint.spring = 300;
+		HandJoint.spring = 10;
 		HandJoint.connectedMassScale = 3;
 		HandJoint.massScale = 3;
 		HandJoint.maxDistance = .05f;
-		HandJoint.minDistance = .01f;
-		HandJoint.anchor = new(0, 1f, 0);
+		HandJoint.minDistance = 0;
+		HandJoint.anchor = new(0, 0, .5f);
 		HandJoint.damper = 50;
 		if (target.GetComponent<Rigidbody>() != null)
 		{
@@ -51,7 +49,7 @@ public class HandsBehaviour : MonoBehaviour
 		holding = target;
 		target.transform.parent = gameObject.transform;
 		target.transform.rotation = new();
-		target.transform.localPosition = HandOffset;
+		target.transform.localPosition = new(0,0,.5f);
 		var targetRB = target.GetComponent<Rigidbody>();
 		targetRB.useGravity = false;
 		targetRB.isKinematic = true;

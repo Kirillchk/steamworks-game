@@ -4,11 +4,12 @@ public class RightHandBehaviour : HandsBehaviour
 {
 	void Start()
 	{
-		HandOffset = new(.5f, 0, 1);
 		HandRotation = Quaternion.Euler(0,90,0);
 	}
     void Update()
     {
+		if (Input.GetKeyDown(KeyCode.E) && holding != null)
+			Drop();
 		// TODO: turn into a helper or smth
 		bool res = Physics.Raycast(
 			Camera.main.ViewportPointToRay(new (0.5f, 0.5f, 0)),
@@ -22,12 +23,7 @@ public class RightHandBehaviour : HandsBehaviour
 			Grab(target, hit.point);
 		if (!Input.GetMouseButton(1))
 			Relese();
-		if (Input.GetKeyDown(KeyCode.E))
-		{
-			if (holding == null)
-				PickUp(target);
-			else
-				Drop();
-		}
+		if (Input.GetKeyDown(KeyCode.E) && holding == null)
+			PickUp(target);
     }
 }
