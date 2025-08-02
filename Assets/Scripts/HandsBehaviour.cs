@@ -3,26 +3,73 @@ using UnityEngine;
 
 public class HandsBehaviour : MonoBehaviour
 {
-	public GameObject HandPref;
+	public GameObject HandPref, PlayerRef, DragPointRef;
 	protected GameObject holding = null, HandTexture = null;
 	protected Quaternion HandRotation;
+	protected KeyCode PickButton;
+	protected int DragButton;
 	static Rigidbody rb;
 	SpringJoint HandJoint = null;
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
 	}
-	public void Grab(GameObject target, Vector3 point)
-	{
-		if (target.tag != "Grab" && target.tag != "Pickup")
+    void Update()
+    {
+		if (Input.GetKeyDown(PickButton) && holding != null)
+			Drop();
+		if (Input.GetMouseButtonUp(DragButton))
+			Relese();
+		// TODO: turn into a helper or smth
+		bool res = Physics.Raycast(
+			Camera.main.ViewportPointToRay(new (0.5f, 0.5f, 0)),
+			out RaycastHit hit,
+			10, ~0, QueryTriggerInteraction.Ignore
+		);
+		if (!res)
 			return;
-		HandJoint = gameObject.AddComponent<SpringJoint>();
+		var target = hit.transform.gameObject;
+		if (Input.GetMouseButtonDown(DragButton))
+		{
+			if (target.tag == "Pickup")
+				Drag(target, hit.point);
+			else if (target.tag == "Grab")
+				Grapple(target, hit.point);
+		}
+		if (Input.GetKeyDown(PickButton) && holding == null)
+			PickUp(target);
+    }
+	public void Drag(GameObject target, Vector3 point)
+	{
+		if (target.tag != "Pickup")
+			return;
+		HandJoint = DragPointRef.AddComponent<SpringJoint>();
 		HandJoint.autoConfigureConnectedAnchor = false;
-		HandJoint.spring = 10;
+		HandJoint.spring = 300;
 		HandJoint.connectedMassScale = 3;
 		HandJoint.massScale = 3;
-		HandJoint.maxDistance = .05f;
+		HandJoint.maxDistance = .1f;
 		HandJoint.minDistance = 0;
+		HandJoint.anchor = new(0, 0, .5f);
+		HandJoint.damper = 300;
+		if (target.GetComponent<Rigidbody>() != null)
+		{
+			HandTexture = Instantiate(HandPref, point, HandRotation, target.transform);
+			HandJoint.connectedBody = HandTexture.GetComponent<Rigidbody>();
+			HandTexture.GetComponent<FixedJoint>().connectedBody = target.GetComponent<Rigidbody>();
+		}
+	}
+	public void Grapple(GameObject target, Vector3 point)
+	{
+		if (target.tag != "Grab")
+			return;
+		HandJoint = PlayerRef.AddComponent<SpringJoint>();
+		HandJoint.autoConfigureConnectedAnchor = false;
+		HandJoint.spring = 310;
+		HandJoint.connectedMassScale = 3;
+		HandJoint.massScale = 3;
+		HandJoint.maxDistance = .1f;
+		HandJoint.minDistance = .05f;
 		HandJoint.anchor = new(0, 0, .5f);
 		HandJoint.damper = 50;
 		if (target.GetComponent<Rigidbody>() != null)
@@ -38,9 +85,11 @@ public class HandsBehaviour : MonoBehaviour
 	}
 	public void Relese()
 	{
+		Debug.Log("RELEASING");
 		Destroy(HandTexture);
 		Destroy(HandJoint);
 		HandJoint = null;
+		Debug.Log("RELEASED");
 	}
 	public void PickUp(GameObject target)
 	{
