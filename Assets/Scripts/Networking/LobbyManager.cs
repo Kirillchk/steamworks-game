@@ -20,6 +20,7 @@ public class LobbyManager : MonoBehaviour
 		{
 			if (callback.m_eResult == EResult.k_EResultOK)
 				lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
+			PlayableBehavior.Players[playersOnline].Possess();
 		});
 		Callback<LobbyEnter_t>.Create(callback =>
 		{
@@ -39,8 +40,11 @@ public class LobbyManager : MonoBehaviour
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
 			// fix thiso bulshido
 			PlayableBehavior.Players[playersOnline].GetComponent<NetworkIdentity>().isOwner = false;
-			if (playersOnline!=1)
-				PlayableBehavior.Players[playersOnline].Possess();
+			for (int i = 0; i > playersOnline; i ++) {
+				Debug.Log($"Summoning {i}");
+				PlayableBehavior.Players[i].SummonPlayer();
+			}
+			PlayableBehavior.Players[playersOnline].Possess();
 		});
 		Callback<GameLobbyJoinRequested_t>.Create(callback =>
 		{

@@ -10,11 +10,11 @@ public class PlayableBehavior : MonoBehaviour
 	[ContextMenu("Possess")]
 	public void Possess()
 	{
-		Instantiate(ControllablePref);
+		Instantiate(ControllablePref, gameObject.transform);
 	}
 	[ContextMenu("SummonPlayer")]
 	public void SummonPlayer()
 	{
-		Instantiate(UncontrollablePref);
+		Instantiate(UncontrollablePref, gameObject.transform);
 	}
 }
