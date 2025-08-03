@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Threading.Tasks;
+[RequireComponent(typeof(NetworkIdentity))]
 public class NetworkTransform : MonoBehaviour
 {
 	[SerializeField] Vector3 ID;

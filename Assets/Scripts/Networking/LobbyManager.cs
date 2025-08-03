@@ -6,7 +6,14 @@ public class LobbyManager : MonoBehaviour
 	private const int MaxLobbyMembers = 4;
 	public static CSteamID lobbyId;
 	public static int PlayersOnline {
-		get => SteamMatchmaking.GetNumLobbyMembers(lobbyId);
+		get{
+			try {
+				var res = SteamMatchmaking.GetNumLobbyMembers(lobbyId);
+				return res;
+			} catch {
+				return 1;
+			}
+		}
 	}
 	private void Awake()
 	{
