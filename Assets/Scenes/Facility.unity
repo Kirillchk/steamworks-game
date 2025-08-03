@@ -377,53 +377,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a7bd710b6b79aa99a32ddab44981e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 7
+  jumpForce: 2
   walkSpeed: 7
   runMultiplier: 2
   acceler: 2
-  groundDamping: 7
-  airDamping: 0
+  daming: 5
   penalty: 1
-  timeToLimit: 3
-  gravityScaleUp: 3
-  gravityScaleDown: 6
   gravityScale: 1
-  gravity: -9.81
-  time: 0
+  rayCastLengh: 1.1
+  magnitude: 0
+  g: -9.81
+  speedLimit: 0
+  drag: 0
   move: {x: 0, y: 0, z: 0}
   wishDir: {x: 0, y: 0, z: 0}
-  transVec: {x: 0, y: 0, z: 0}
-  velToAdd: {x: 0, y: 0, z: 0}
-  velFromWASD: {x: 0, y: 0, z: 0}
   vel: {x: 0, y: 0, z: 0}
-  forceMode: 5
-  g: -9.81
   isGrounded: 0
-  firstTime: 1
-  animationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0.00000011111111
-      value: 0
-      inSlope: 2.0000005
-      outSlope: 2.0000005
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.5
-      value: 1
-      inSlope: 2.0000005
-      outSlope: 2.0000005
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  jump: 0
 --- !u!136 &1036909472
 CapsuleCollider:
   m_ObjectHideFlags: 0
