@@ -18,12 +18,13 @@ public class LobbyManager : MonoBehaviour
 		}
 		Callback<LobbyCreated_t>.Create(callback =>
 		{
+			Debug.Log("Dispatched LobbyCreated_t");
 			if (callback.m_eResult == EResult.k_EResultOK)
 				lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
-			PlayableBehavior.Players[playersOnline].Possess();
 		});
 		Callback<LobbyEnter_t>.Create(callback =>
 		{
+			Debug.Log("Dispatched LobbyEnter_t");
 			lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
 			if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Facility"))
 				SceneManager.LoadScene("Facility");
@@ -34,20 +35,24 @@ public class LobbyManager : MonoBehaviour
 				networking.Listen();
 			else
 				networking.Connect();
+			PlayableBehavior.Players[playersOnline].Possess();
 		});
 		Callback<LobbyChatUpdate_t>.Create(callback =>
 		{
+			Debug.Log($"Dispatched LobbyChatUpdate_t {playersOnline}");
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
 			// fix thiso bulshido
-			PlayableBehavior.Players[playersOnline].GetComponent<NetworkIdentity>().isOwner = false;
-			for (int i = 0; i > playersOnline; i ++) {
-				Debug.Log($"Summoning {i}");
-				PlayableBehavior.Players[i].SummonPlayer();
-			}
-			PlayableBehavior.Players[playersOnline].Possess();
+			PlayableBehavior.Players[playersOnline-1].GetComponent<NetworkIdentity>().isOwner = false;
+			//for (int i = 0; i > playersOnline-1; i ++) {
+			//	Debug.Log($"Summoning {i}");
+			//	PlayableBehavior.Players[i].SummonPlayer();
+			//}
+			//PlayableBehavior.Players[playersOnline].Possess();
+			PlayableBehavior.Players[playersOnline-1].SummonPlayer();
 		});
 		Callback<GameLobbyJoinRequested_t>.Create(callback =>
 		{
+			Debug.Log("Dispatched GameLobbyJoinRequested_t");
 			SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
 		});
 	}
