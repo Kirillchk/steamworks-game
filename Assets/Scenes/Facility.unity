@@ -285,7 +285,7 @@ GameObject:
   - component: {fileID: 1036909468}
   - component: {fileID: 1036909467}
   - component: {fileID: 1036909470}
-  - component: {fileID: 1036909471}
+  - component: {fileID: 1036909478}
   - component: {fileID: 1036909472}
   - component: {fileID: 1036909474}
   - component: {fileID: 1036909475}
@@ -377,41 +377,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a7bd710b6b79aa99a32ddab44981e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 5
-  walkSpeed: 15
+  jumpForce: 7
+  walkSpeed: 7
   runMultiplier: 2
   acceler: 2
-  groundDamping: 5
-  airDamping: 1
-  distance: 0.1
+  groundDamping: 7
+  airDamping: 0
+  penalty: 1
+  timeToLimit: 3
+  gravityScaleUp: 3
+  gravityScaleDown: 6
+  gravityScale: 1
+  gravity: -9.81
+  time: 0
+  move: {x: 0, y: 0, z: 0}
+  wishDir: {x: 0, y: 0, z: 0}
+  transVec: {x: 0, y: 0, z: 0}
+  velToAdd: {x: 0, y: 0, z: 0}
+  velFromWASD: {x: 0, y: 0, z: 0}
+  vel: {x: 0, y: 0, z: 0}
+  forceMode: 5
+  g: -9.81
   isGrounded: 0
---- !u!54 &1036909471
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1036909463}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 5
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
+  firstTime: 1
+  animationCurve:
     serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.00000011111111
+      value: 0
+      inSlope: 2.0000005
+      outSlope: 2.0000005
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 2.0000005
+      outSlope: 2.0000005
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!136 &1036909472
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -447,7 +459,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daee905a27e85806693739f49a0bfba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCamera: {fileID: 1403170191}
 --- !u!114 &1036909475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,6 +473,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DetailsColor: {r: 0.7822064, g: 0.5447353, b: 0, a: 1}
   renderTexture: {fileID: 8400000, guid: 975d88a5aea3904a5b627177e48f8e1f, type: 2}
+--- !u!54 &1036909478
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036909463}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!1 &1403170188
 GameObject:
   m_ObjectHideFlags: 0
