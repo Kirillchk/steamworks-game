@@ -5,9 +5,9 @@ public class HandsBehaviour : MonoBehaviour
 {
 	public GameObject HandPref, PlayerRef, DragPointRef;
 	protected GameObject holding = null, HandTexture = null;
-	protected Quaternion HandRotation;
-	protected KeyCode PickButton;
-	protected int DragButton;
+	public Quaternion HandRotation;
+	public KeyCode PickButton;
+	public int DragButton;
 	static Rigidbody rb;
 	SpringJoint HandJoint = null;
 	void Start()

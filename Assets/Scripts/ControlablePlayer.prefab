@@ -417,7 +417,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2894511645000696193}
-  - component: {fileID: 2934587160953715337}
+  - component: {fileID: 7540107370906799671}
   m_Layer: 0
   m_Name: LeftHand
   m_TagString: Untagged
@@ -441,7 +441,7 @@ Transform:
   - {fileID: 4487332220742386834}
   m_Father: {fileID: 2281271663079142410}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2934587160953715337
+--- !u!114 &7540107370906799671
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -450,12 +450,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 4222570170139720636}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ed8d370d5b353dc0bfe2ad5bf7be297, type: 3}
+  m_Script: {fileID: 11500000, guid: daee905a27e85806693739f49a0bfba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   HandPref: {fileID: 7153843164484801573, guid: 6ececd1b1f916d50c9bc3e8e67755806, type: 3}
   PlayerRef: {fileID: 318512265055712442}
   DragPointRef: {fileID: 7994647789403056505}
+  HandRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
+  PickButton: 113
+  DragButton: 0
 --- !u!1 &6673515239245326747
 GameObject:
   m_ObjectHideFlags: 0
@@ -910,7 +913,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 402621861658037476}
-  - component: {fileID: 7288222758327963660}
+  - component: {fileID: 3939128836544996837}
   m_Layer: 0
   m_Name: RightHand
   m_TagString: Untagged
@@ -934,7 +937,7 @@ Transform:
   - {fileID: 6090572606959823656}
   m_Father: {fileID: 2281271663079142410}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7288222758327963660
+--- !u!114 &3939128836544996837
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -943,9 +946,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8959200225769547357}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2680f18a5bba04a384585dbcbe0baf1, type: 3}
+  m_Script: {fileID: 11500000, guid: daee905a27e85806693739f49a0bfba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   HandPref: {fileID: 7153843164484801573, guid: 6ececd1b1f916d50c9bc3e8e67755806, type: 3}
   PlayerRef: {fileID: 318512265055712442}
   DragPointRef: {fileID: 7994647789403056505}
+  HandRotation: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
+  PickButton: 101
+  DragButton: 1
