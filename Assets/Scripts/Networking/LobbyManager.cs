@@ -35,7 +35,6 @@ public class LobbyManager : MonoBehaviour
 				networking.Listen();
 			else
 				networking.Connect();
-			PlayableBehavior.Players[playersOnline].Possess();
 		});
 		Callback<LobbyChatUpdate_t>.Create(callback =>
 		{
