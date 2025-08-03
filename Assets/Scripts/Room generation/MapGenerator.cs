@@ -6,7 +6,7 @@ using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
 	static public Action Finished = () =>
-		PlayableBehavior.Players[0].Possess();
+		PlayableBehavior.AddPLayers(LobbyManager.PlayersOnline);
 	static protected System.Random rng = new(0);
 	static public float slowering = 1f;
 	static GameObject newRoom, firstDoorObject, secondDoorObject;

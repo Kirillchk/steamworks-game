@@ -5,7 +5,7 @@ public class LobbyManager : MonoBehaviour
 {
 	private const int MaxLobbyMembers = 4;
 	public static CSteamID lobbyId;
-	static int playersOnline {
+	public static int PlayersOnline {
 		get => SteamMatchmaking.GetNumLobbyMembers(lobbyId);
 	}
 	private void Awake()
@@ -38,16 +38,7 @@ public class LobbyManager : MonoBehaviour
 		});
 		Callback<LobbyChatUpdate_t>.Create(callback =>
 		{
-			Debug.Log($"Dispatched LobbyChatUpdate_t {playersOnline}");
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
-			// fix thiso bulshido
-			PlayableBehavior.Players[playersOnline-1].GetComponent<NetworkIdentity>().isOwner = false;
-			//for (int i = 0; i > playersOnline-1; i ++) {
-			//	Debug.Log($"Summoning {i}");
-			//	PlayableBehavior.Players[i].SummonPlayer();
-			//}
-			//PlayableBehavior.Players[playersOnline].Possess();
-			PlayableBehavior.Players[playersOnline-1].SummonPlayer();
 		});
 		Callback<GameLobbyJoinRequested_t>.Create(callback =>
 		{

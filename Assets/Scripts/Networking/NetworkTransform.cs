@@ -7,7 +7,7 @@ public class NetworkTransform : MonoBehaviour
 	Vector3 lastPosition;
 	Quaternion lastRotation;
 	NetworkIdentity networkIdentity;
-	public bool doSendTransform = true;
+	internal bool doSendTransform = true;
 	async void Start()
 	{
 		networkIdentity = GetComponent<NetworkIdentity>(); 
