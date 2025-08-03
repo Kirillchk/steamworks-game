@@ -381,7 +381,7 @@ MonoBehaviour:
   walkSpeed: 7
   runMultiplier: 2
   acceler: 2
-  daming: 5
+  daming: 0
   penalty: 1
   gravityScale: 1
   rayCastLengh: 1.1
@@ -389,9 +389,6 @@ MonoBehaviour:
   g: -9.81
   speedLimit: 0
   drag: 0
-  move: {x: 0, y: 0, z: 0}
-  wishDir: {x: 0, y: 0, z: 0}
-  vel: {x: 0, y: 0, z: 0}
   isGrounded: 0
   jump: 0
 --- !u!136 &1036909472
