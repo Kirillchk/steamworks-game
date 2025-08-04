@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpForce: 5
-  walkSpeed: 15
+  walkSpeed: 10
   runMultiplier: 2
   acceler: 2
   daming: 5
