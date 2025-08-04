@@ -103,6 +103,7 @@ public class HandsBehaviour : MonoBehaviour
 		target.transform.localPosition = new(0, 0, .5f);
 
 		var item = target.GetComponent<ItemBehaviour>();
+		item.TakeOwnership();
 		item.Sync(item.PickUp);
 	}
 	public void Drop()
