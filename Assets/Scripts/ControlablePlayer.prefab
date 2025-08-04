@@ -109,19 +109,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpForce: 5
-  walkSpeed: 15
+  walkSpeed: 10
   runMultiplier: 2
   acceler: 2
   daming: 5
   penalty: 1
   gravityScale: 3
-  rayCastLengh: 1.1
+  rayCastLengh: 1.01
   magnitude: 0
   g: -9.81
   speedLimit: 0
   drag: 0
+  jumpBufferTime: 0.1
+  jumpBufferCount: 0
   isGrounded: 0
   jump: 0
+  move: {x: 0, y: 0, z: 0}
+  wishDir: {x: 0, y: 0, z: 0}
+  vel: {x: 0, y: 0, z: 0}
 --- !u!54 &6547196426199138179
 Rigidbody:
   m_ObjectHideFlags: 0
