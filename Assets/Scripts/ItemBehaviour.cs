@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class ItemBehaviour : MonoBehaviour
+public class ItemBehaviour : NetworkActions
 {
 	public Action UseItem;
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using MessagePack;
-
+[RequireComponent(typeof(NetworkIdentity))]
 public class NetworkActions : MonoBehaviour
 {
 	Vector3 ID;

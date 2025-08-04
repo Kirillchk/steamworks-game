@@ -1,5 +1,4 @@
 using UnityEngine;
-[RequireComponent(typeof(NetworkIdentity))]
 public class NetworkIdentity : MonoBehaviour
 {
 	internal Vector3 uniqueVector;
