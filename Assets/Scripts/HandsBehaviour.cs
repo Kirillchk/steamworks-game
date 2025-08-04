@@ -100,23 +100,16 @@ public class HandsBehaviour : MonoBehaviour
 		holding = target;
 		target.transform.parent = gameObject.transform;
 		target.transform.rotation = new();
-		target.transform.localPosition = new(0,0,.5f);
-		var targetRB = target.GetComponent<Rigidbody>();
-		targetRB.useGravity = false;
-		targetRB.isKinematic = true;
-		var colliders = target.GetComponents<Collider>();
-		foreach (var collider in colliders)
-			collider.enabled = false;
+		target.transform.localPosition = new(0, 0, .5f);
+
+		var item = target.GetComponent<ItemBehaviour>();
+		item.Sync(item.PickUp);
 	}
 	public void Drop()
 	{
 		holding.transform.parent = null;
-		var RB = holding.GetComponent<Rigidbody>();
-		RB.useGravity = true;
-		RB.isKinematic = false;
-		var colliders = holding.GetComponents<Collider>();
-		foreach (var collider in colliders)
-			collider.enabled = true;
+		var item = holding.GetComponent<ItemBehaviour>();
+		item.Sync(item.Drop);
 		holding = null;
 	}
 }
