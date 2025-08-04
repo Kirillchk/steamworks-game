@@ -4,8 +4,8 @@ public class PlayerMovement : MonoBehaviour
 	public float jumpForce = 8,
 		walkSpeed = 10, runMultiplier = 2, acceler,
 		daming = 5, penalty = 1, gravityScale = 3,
-		rayCastLengh = 1.1f, magnitude, g = -9.81f,
-		speedLimit, drag;
+		rayCastLengh = 1.01f, magnitude, g = -9.81f,
+		speedLimit, drag, jumpBufferTime = 0.1f, jumpBufferCount = 0;
 	public bool isGrounded, jump;
 	float rotationX = 0f, mouseX, mouseY;
 	public Vector3 move, wishDir, vel;
@@ -18,8 +18,13 @@ public class PlayerMovement : MonoBehaviour
 	}
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+		if (Input.GetKeyDown(KeyCode.Space))
+			jumpBufferCount = jumpBufferTime;
+		jumpBufferCount -= Time.deltaTime;
+		if (jumpBufferCount > 0)
 			jump = true;
+		else
+			jump = false;
 		speedLimit = Input.GetKey(KeyCode.LeftShift) ?
 			isGrounded ? walkSpeed * runMultiplier : walkSpeed / penalty * runMultiplier
 			: isGrounded ? walkSpeed : walkSpeed / penalty;
@@ -49,11 +54,14 @@ public class PlayerMovement : MonoBehaviour
 
 		g = -9.81f * gravityScale;
 		Physics.gravity = Vector3.up * g;
-		if (!isGrounded)
-			jump = false;
-	
-		if (jump)
+
+		if (jump && isGrounded)
+		{
+			rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 			rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+			jump = false;
+			jumpBufferCount = 0;
+		}
 
 		drag = Mathf.Clamp01(1f - daming * Time.deltaTime);
 
