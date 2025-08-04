@@ -189,7 +189,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4a0c17e3f0d2a4e93f2af9a97d5096, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOwner: 0
+  autoset: 0
+  isOwner: 1
 --- !u!114 &-2467888791098239471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +203,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60bfa0489d7e6104dae6ec7ab69d35a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: {x: 0, y: 0, z: 0}
 --- !u!114 &2902325863256359078
 MonoBehaviour:
   m_ObjectHideFlags: 0
