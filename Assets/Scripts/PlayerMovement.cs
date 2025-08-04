@@ -1,20 +1,40 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
 	public float jumpForce = 8,
 		walkSpeed = 10, runMultiplier = 2, acceler,
 		daming = 5, penalty = 1, gravityScale = 3,
 		rayCastLengh = 1.01f, magnitude, g = -9.81f,
-		speedLimit, drag, jumpBufferTime = 0.1f, jumpBufferCount = 0;
+		speedLimit, drag, jumpBufferTime = 0.1f, jumpBufferCount = 0,
+		addStaminaTimeCount = 0, takeStaminaTimeCount = 0;
 	public bool isGrounded, jump;
-	float rotationX = 0f, mouseX, mouseY;
+	int _stamina = 100;
+	public int stamina
+	{
+		get
+		{
+			return _stamina;
+		}
+		set
+		{
+			_stamina = value;
+			onStaminaChange?.Invoke(value);
+		}
+	}
+	public int staminaConsumedPerSeond = 5, staminaRegPerSecond = 4, staminaForJump = 20,
+	staminaLimit = 100;
+	public event Action<int> onStaminaChange;
 	public Vector3 move, wishDir, vel;
+	float rotationX = 0f, mouseX, mouseY;
 	Rigidbody rb;
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
+		speedLimit = walkSpeed;
 	}
 	void Update()
 	{
@@ -25,9 +45,33 @@ public class PlayerMovement : MonoBehaviour
 			jump = true;
 		else
 			jump = false;
-		speedLimit = Input.GetKey(KeyCode.LeftShift) ?
-			isGrounded ? walkSpeed * runMultiplier : walkSpeed / penalty * runMultiplier
-			: isGrounded ? walkSpeed : walkSpeed / penalty;
+
+		if (Input.GetKey(KeyCode.LeftShift) && stamina > 0)
+		{
+			addStaminaTimeCount = 0;
+			//sprint
+			speedLimit = walkSpeed * runMultiplier;
+			takeStaminaTimeCount += Time.deltaTime;
+			if (1 / (float)staminaConsumedPerSeond <= takeStaminaTimeCount)
+			{
+				takeStaminaTimeCount = 0;
+				stamina--;
+			}
+		}
+		else if (stamina < staminaLimit)
+		{
+			takeStaminaTimeCount = 0;
+			//dont sprint
+			speedLimit = walkSpeed;
+			addStaminaTimeCount += Time.deltaTime;
+			if (1 / (float)staminaRegPerSecond <= addStaminaTimeCount)
+			{
+				Debug.Log(1 / staminaRegPerSecond);
+				Debug.Log(addStaminaTimeCount);
+				addStaminaTimeCount = 0;
+				stamina++;
+			}
+		}
 		move = new(
 			Input.GetAxisRaw("Horizontal"),
 			0,
@@ -36,6 +80,8 @@ public class PlayerMovement : MonoBehaviour
 		move = move.normalized;
 		mouseX = Input.GetAxis("Mouse X") * 2;
 		mouseY = Input.GetAxis("Mouse Y") * 2;
+
+
 	}
 	void FixedUpdate()
 	{
@@ -55,12 +101,13 @@ public class PlayerMovement : MonoBehaviour
 		g = -9.81f * gravityScale;
 		Physics.gravity = Vector3.up * g;
 
-		if (jump && isGrounded)
+		if (jump && isGrounded && stamina >= staminaForJump) 
 		{
 			rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 			rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 			jump = false;
 			jumpBufferCount = 0;
+			stamina -= staminaForJump;
 		}
 
 		drag = Mathf.Clamp01(1f - daming * Time.deltaTime);

@@ -2904,7 +2904,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2997,9 +2997,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 506f0970803c5084da03b7922841175b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 0
-  lobbyId:
-    m_SteamID: 0
 --- !u!4 &1997175889
 Transform:
   m_ObjectHideFlags: 0

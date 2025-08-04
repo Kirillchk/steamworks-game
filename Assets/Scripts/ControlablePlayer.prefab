@@ -108,9 +108,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a7bd710b6b79aa99a32ddab44981e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 5
-  walkSpeed: 10
-  runMultiplier: 2
+  jumpForce: 7
+  walkSpeed: 5
+  runMultiplier: 1.5
   acceler: 2
   daming: 5
   penalty: 1
@@ -122,8 +122,14 @@ MonoBehaviour:
   drag: 0
   jumpBufferTime: 0.1
   jumpBufferCount: 0
+  addStaminaTimeCount: 0
+  takeStaminaTimeCount: 0
   isGrounded: 0
   jump: 0
+  staminaConsumedPerSeond: 10
+  staminaRegPerSecond: 10
+  staminaForJump: 10
+  staminaLimit: 100
   move: {x: 0, y: 0, z: 0}
   wishDir: {x: 0, y: 0, z: 0}
   vel: {x: 0, y: 0, z: 0}
