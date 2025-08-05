@@ -6,15 +6,15 @@ using UnityEngine.UI;
 
 public class StatsUpdate : MonoBehaviour
 {
-    PlayerMovement plMove;
+    StaminaSystem stamSys;
     TextMeshProUGUI staminaText;
     async void Awake()
     {
         await Task.Delay(1000);
-        plMove = FindAnyObjectByType<PlayerMovement>();
+        stamSys = FindAnyObjectByType<StaminaSystem>();
         staminaText = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        plMove.onStaminaChange += UpdateStamina;
-        UpdateStamina(plMove.stamina);
+        stamSys.onStaminaChange += UpdateStamina;
+        UpdateStamina(stamSys.stamina);
     }
     void UpdateStamina(int staminaValue)
     {
