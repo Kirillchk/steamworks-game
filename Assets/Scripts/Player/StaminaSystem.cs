@@ -13,8 +13,20 @@ public class StaminaSystem : MonoBehaviour
             onStaminaChange?.Invoke(value);
         }
     }
+    int _staminaHealth = 100;
+    public int staminaHealth
+    {
+        get => _staminaHealth;
+        set
+        {
+            _staminaHealth = value;
+            onStaminaHealthChange?.Invoke(value);
+        }
+    }
     public int staminaLimit = 100;
+    public int staminaHealthLimit = 100;
     public event Action<int> onStaminaChange;
+    public event Action<int> onStaminaHealthChange;
     public enum StaminaChangeType : byte
     {
         Regeneration,
@@ -28,43 +40,27 @@ public class StaminaSystem : MonoBehaviour
     {
         this.state = state;
         changeValue = byHow;
+        if (state == StaminaChangeType.Instant)
+        {
+            Debug.Log(byHow);
+            stamina += (int)byHow;       
+        }
     }
     void Start()
     {
         stamina = staminaLimit;
+        staminaHealth = staminaHealthLimit;
     }
     void Update()
     {
-        switch (state)
+        timer += Time.deltaTime;
+        if (1 / changeValue <= timer)
         {
-            case StaminaChangeType.Regeneration:
-                {
-                    if (stamina >= staminaLimit)
-                        break;
-                    timer += Time.deltaTime;
-                    if (1 / changeValue <= timer)
-                    {
-                        stamina += 1;
-                        timer = 0;
-                    }
-                    break;
-                }
-            case StaminaChangeType.Consumption:
-                {
-                    timer += Time.deltaTime;
-                    if (1 / changeValue <= timer)
-                    {
-                        stamina -= 1;
-                        Debug.Log(stamina);
-                        timer = 0;
-                    }
-                    break;
-                }
-            case StaminaChangeType.Instant:
-                {
-                    stamina += (int)changeValue;
-                    break;
-                }
+            if (state == StaminaChangeType.Regeneration && stamina<staminaLimit)
+                stamina++;
+            else if (state == StaminaChangeType.Consumption && stamina>0)
+                stamina--;
+            timer = 0;
         }
     }
 }

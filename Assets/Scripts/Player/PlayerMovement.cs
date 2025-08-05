@@ -33,7 +33,17 @@ public class PlayerMovement : MonoBehaviour
 		else
 			jump = false;
 
-		if (Input.GetKey(KeyCode.LeftShift) && stamSys.stamina > 0)
+
+		move = new(
+			Input.GetAxisRaw("Horizontal"),
+			0,
+			Input.GetAxisRaw("Vertical")
+		);
+		move = move.normalized;
+		mouseX = Input.GetAxis("Mouse X") * 2;
+		mouseY = Input.GetAxis("Mouse Y") * 2;
+
+		if (Input.GetKey(KeyCode.LeftShift) && stamSys.stamina > 0 && move!=Vector3.zero)
 		{
 			//sprint
 			speedLimit = walkSpeed * runMultiplier;
@@ -45,16 +55,6 @@ public class PlayerMovement : MonoBehaviour
 			speedLimit = walkSpeed;
 			stamSys.ChangeStaminaState(StaminaSystem.StaminaChangeType.Regeneration, staminaRegPerSecond);
 		}
-		move = new(
-			Input.GetAxisRaw("Horizontal"),
-			0,
-			Input.GetAxisRaw("Vertical")
-		);
-		move = move.normalized;
-		mouseX = Input.GetAxis("Mouse X") * 2;
-		mouseY = Input.GetAxis("Mouse Y") * 2;
-
-
 	}
 	void FixedUpdate()
 	{
