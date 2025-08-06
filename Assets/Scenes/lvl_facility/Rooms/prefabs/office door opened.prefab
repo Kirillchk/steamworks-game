@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 943786050060102306}
   - component: {fileID: 1650421293528257248}
   - component: {fileID: 3023230329353687267}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3160694150342608352}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: office door opened
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 6574237965284624140}
   - component: {fileID: 3749006196264582136}
   - component: {fileID: 629440772700732690}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -219,7 +219,7 @@ GameObject:
   - component: {fileID: 7866838153666745754}
   - component: {fileID: 4895180382618793501}
   - component: {fileID: 5589572318072215020}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (1)
   m_TagString: Grab
   m_Icon: {fileID: 0}
@@ -368,7 +368,7 @@ GameObject:
   - component: {fileID: 561965068332599265}
   - component: {fileID: 208363417082191398}
   - component: {fileID: 857520407173505275}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

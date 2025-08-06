@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8344921276481603270}
   - component: {fileID: 3711469842065612969}
   - component: {fileID: 6389210117585391958}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PolyShape
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 603082959690377510}
   - component: {fileID: 5632158379955232368}
   - component: {fileID: 321675941987894078}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: main door opened
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 2147145642112317641}
   - component: {fileID: 7483449822787482485}
   - component: {fileID: 2313228904455240066}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PolyShape (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

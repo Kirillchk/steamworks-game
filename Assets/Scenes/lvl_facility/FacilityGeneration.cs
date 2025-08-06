@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Unity.AI.Navigation;
 using UnityEngine;
 public class FacilityGeneration : MapGenerator
 {
@@ -43,7 +44,6 @@ public class FacilityGeneration : MapGenerator
 		}
 		foreach (var d in RoomDoor.Doors)
 			d.GetComponent<RoomDoor>().Close();
-
 		Finished.Invoke();
 	}
 }

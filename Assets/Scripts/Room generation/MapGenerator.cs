@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity.AI.Navigation;
 using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
 	static public Action Finished = () =>
 		PlayableBehavior.AddPLayers(LobbyManager.PlayersOnline);
+	void Awake() =>
+		Finished += () =>
+			gameObject.GetComponent<NavMeshSurface>().BuildNavMesh();
 	static protected System.Random rng = new(0);
 	static public float slowering = 1f;
 	static GameObject newRoom, firstDoorObject, secondDoorObject;
@@ -74,7 +78,7 @@ public class MapGenerator : MonoBehaviour
 
 		float angle = Vector3.SignedAngle(vec1, vec2, orient * -1);
 		newRoom.transform.RotateAround(firstDoorObject.transform.position, orient, angle);
-		
+
 		//await Task.Delay((int)(slowering * 500));
 		//Debug.Log("ROTUNDA");
 	}

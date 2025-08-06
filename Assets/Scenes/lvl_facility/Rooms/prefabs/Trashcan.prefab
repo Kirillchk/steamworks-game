@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1462443552283489477}
   - component: {fileID: 4313751805942583535}
   - component: {fileID: 4886339519793683335}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder
   m_TagString: Pickup
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 8683497665076354660}
   - component: {fileID: 8017571272254777621}
   - component: {fileID: 3112304565977970687}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Arch
   m_TagString: Pickup
   m_Icon: {fileID: 0}
@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 2572292984118998085}
   - component: {fileID: 4400432944689030262}
   - component: {fileID: 7597252909346298480}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder (1)
   m_TagString: Pickup
   m_Icon: {fileID: 0}
@@ -273,6 +273,10 @@ PrefabInstance:
     - target: {fileID: 3344035833715473391, guid: 142b6f76eb93f657c86ebb0e8af57c49, type: 3}
       propertyPath: m_Name
       value: Trashcan
+      objectReference: {fileID: 0}
+    - target: {fileID: 3344035833715473391, guid: 142b6f76eb93f657c86ebb0e8af57c49, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5278420061801251045, guid: 142b6f76eb93f657c86ebb0e8af57c49, type: 3}
       propertyPath: m_LocalPosition.x
@@ -409,6 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4a0c17e3f0d2a4e93f2af9a97d5096, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoset: 1
   isOwner: 0
 --- !u!114 &4405853819395396304
 MonoBehaviour:
