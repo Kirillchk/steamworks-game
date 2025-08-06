@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -6023690052576964571}
   - component: {fileID: -2467888791098239471}
   - component: {fileID: 2902325863256359078}
+  - component: {fileID: 391465507390040449}
   m_Layer: 0
   m_Name: ControlablePlayer
   m_TagString: Untagged
@@ -122,12 +123,12 @@ MonoBehaviour:
   drag: 0
   jumpBufferTime: 0.1
   jumpBufferCount: 0
+  staminaConsumedPerSeond: 10
+  staminaRegPerSecond: 10
   addStaminaTimeCount: 0
   takeStaminaTimeCount: 0
   isGrounded: 0
   jump: 0
-  staminaConsumedPerSeond: 10
-  staminaRegPerSecond: 10
   staminaForJump: 10
   staminaLimit: 100
   move: {x: 0, y: 0, z: 0}
@@ -223,6 +224,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DetailsColor: {r: 0, g: 0, b: 0, a: 0}
   renderTexture: {fileID: 8400000, guid: 975d88a5aea3904a5b627177e48f8e1f, type: 2}
+--- !u!114 &391465507390040449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 318512265055712442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b9f13e3bdfea9241bf553619f0466e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stamina: 100
 --- !u!1 &554956586110117587
 GameObject:
   m_ObjectHideFlags: 0
