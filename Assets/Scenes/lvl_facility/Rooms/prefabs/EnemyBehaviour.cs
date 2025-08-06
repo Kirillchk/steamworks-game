@@ -1,15 +1,22 @@
 using UnityEngine;
 using UnityEngine.AI;
-
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyBehaviour : MonoBehaviour
 {
+	public Transform Target;
 	NavMeshAgent agent => GetComponent<NavMeshAgent>();
-	void Start()
+	[ContextMenu("Activate")]
+	public void ActivateEnemy()
 	{
-		agent.SetDestination(new Vector3(0, 0, 0));
+		agent.SetDestination(Target.position);
 	}
 	void Update()
-    {
-        
-    }
+	{
+		if (!agent.isOnOffMeshLink)
+			return;
+		agent.Warp(agent.currentOffMeshLinkData.endPos);
+		agent.CompleteOffMeshLink();
+		agent.SetDestination(Target.position);
+		agent.isStopped = false;
+	}
 }

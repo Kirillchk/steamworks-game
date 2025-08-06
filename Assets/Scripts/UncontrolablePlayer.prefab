@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3633324974653760154}
   - component: {fileID: 5927939852766936368}
   - component: {fileID: 6081048248622380351}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: UncontrolablePlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
