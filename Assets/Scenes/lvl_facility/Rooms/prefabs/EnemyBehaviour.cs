@@ -7,14 +7,10 @@ public class EnemyBehaviour : MonoBehaviour
 {
 	public Transform Target;
 	NavMeshAgent agent => GetComponent<NavMeshAgent>();
-	[ContextMenu("Activate")]
-	public void ActivateEnemy()
-	{
-		agent.SetDestination(Target.position);
-	}
 	void FixedUpdate()
 	{
 		if (agent.isOnOffMeshLink) Vent();
+		agent.SetDestination(Target.position);
 	}
 	void Vent()
 	{
@@ -24,6 +20,5 @@ public class EnemyBehaviour : MonoBehaviour
 		var area = agent.currentOffMeshLinkData.owner.GetComponent<NavMeshLink>().area;
 		if (area!= NavMesh.GetAreaFromName("Vent")) return;
 		agent.Warp(agent.currentOffMeshLinkData.endPos);
-		agent.SetDestination(Target.position);
 	}
 }

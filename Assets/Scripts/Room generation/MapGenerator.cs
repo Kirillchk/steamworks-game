@@ -6,11 +6,16 @@ using Unity.AI.Navigation;
 using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
-	static public Action Finished = () =>
-		PlayableBehavior.AddPLayers(LobbyManager.PlayersOnline);
-	void Awake() =>
+	static public Action Finished;
+	void Awake()
+	{
 		Finished += () =>
-			gameObject.GetComponent<NavMeshSurface>().BuildNavMesh();
+			VentLinker.LinkAllVents();
+		Finished += () =>
+			GetComponent<NavMeshSurface>().BuildNavMesh();
+		Finished += () =>
+			PlayableBehavior.AddPLayers(LobbyManager.PlayersOnline);
+	}
 	static protected System.Random rng = new(0);
 	static public float slowering = 1f;
 	static GameObject newRoom, firstDoorObject, secondDoorObject;
