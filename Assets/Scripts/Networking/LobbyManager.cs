@@ -47,7 +47,7 @@ public class LobbyManager : MonoBehaviour
 		{
 			string action = callback.m_rgfChatMemberStateChange == 1 ? "joined" : "left";
 			if (action == "joined")
-				PlayableBehavior.Players[PlayersOnline-1].SummonPlayer();
+				PlayableBehavior.Containers[PlayersOnline-1].SummonPlayer();
 		});
 		Callback<GameLobbyJoinRequested_t>.Create(callback =>
 		{

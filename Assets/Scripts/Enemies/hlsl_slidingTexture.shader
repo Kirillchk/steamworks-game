@@ -1,9 +1,9 @@
 Shader "Unlit/slidingTexture"
 {
-	
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _RotationSpeed ("Rotation Speed", Float) = 1.0
     }
     SubShader
     {
@@ -32,21 +32,49 @@ Shader "Unlit/slidingTexture"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            float _RotationSpeed;
+
+            // Function to rotate UV coordinates
+            float2 rotateUV(float2 uv, float rotation, float2 pivot)
+            {
+                float s = sin(rotation);
+                float c = cos(rotation);
+                
+                // Translate to pivot
+                uv -= pivot;
+                
+                // Rotate
+                float2x2 rotMatrix = float2x2(c, -s, s, c);
+                uv = mul(rotMatrix, uv);
+                
+                // Translate back
+                uv += pivot;
+                
+                return uv;
+            }
 
             v2f vert (appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                o.screenPos = ComputeScreenPos(o.vertex); // Get screen-space position
+                o.screenPos = ComputeScreenPos(o.vertex);
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
+                // Calculate rotation angle based on time
+                float rotationAngle = _Time.y * _RotationSpeed;
+                
                 // Get screen-space UVs (normalized)
                 float2 screenUV = i.screenPos.xy / i.screenPos.w;
-                fixed4 col = tex2D(_MainTex, screenUV);
+                
+                // Rotate UVs around center (0.5, 0.5)
+                float2 rotatedUV = rotateUV(screenUV, rotationAngle, float2(0.5, 0.5));
+                
+                // Sample texture with rotated UVs
+                fixed4 col = tex2D(_MainTex, rotatedUV);
                 return col;
             }
             ENDCG

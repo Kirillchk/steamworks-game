@@ -23,4 +23,20 @@ public class EnemyBehaviour : NetworkActions
 		agent.Warp(agent.currentOffMeshLinkData.endPos);
 		agent.SetDestination(Target.position);
 	}
+	// TODO: add some kind of invoke repeating
+	protected Transform getClosestPlayer()
+	{
+		Transform t = PlayableBehavior.Players[0].transform;
+		float maxDist = float.MaxValue;
+		foreach (var p in PlayableBehavior.Players)
+		{
+			float dist = Vector3.Distance(transform.position, p.transform.position);
+			if (maxDist < dist)
+			{
+				maxDist = dist;
+				t = p.transform;
+			}
+		}
+		return t;
+	}
 }

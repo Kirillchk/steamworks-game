@@ -18,8 +18,8 @@ public class CatEnemyBehaviour : EnemyBehaviour
 			return;
 		agent.isStopped = false;
 		Vent();
+		Target = getClosestPlayer();
 		agent.SetDestination(Target.position);
-		
 	}
 	[CanTriggerSync]
 	public void Startle()
