@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 280b77ded7d9901b6b1cb63bca93de6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DetailsColor: {r: 0, g: 0, b: 0, a: 0}
+  DetailsColor: {r: 0.441446, g: 0.441446, b: 0.441446, a: 0}
   renderTexture: {fileID: 8400000, guid: 975d88a5aea3904a5b627177e48f8e1f, type: 2}
 --- !u!114 &391465507390040449
 MonoBehaviour:

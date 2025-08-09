@@ -3,22 +3,24 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyBehaviour : MonoBehaviour
+public class EnemyBehaviour : NetworkActions
 {
 	public Transform Target;
-	NavMeshAgent agent => GetComponent<NavMeshAgent>();
-	void FixedUpdate()
+	protected NavMeshAgent agent;
+	//TODO: Free this hook somehow
+	void Awake()
 	{
-		if (agent.isOnOffMeshLink) Vent();
-		agent.SetDestination(Target.position);
+		agent = GetComponent<NavMeshAgent>();
 	}
-	void Vent()
+	protected void Vent()
 	{
+		if (!agent.isOnOffMeshLink) return;
 		//TODO: fuck in the ass creator of unitys documentation
 		//everything is either depricated or described with a single sentance
 		//why the fuck is link data still called offmesh if its depricated?????
 		var area = agent.currentOffMeshLinkData.owner.GetComponent<NavMeshLink>().area;
-		if (area!= NavMesh.GetAreaFromName("Vent")) return;
+		if (area != NavMesh.GetAreaFromName("Vent")) return;
 		agent.Warp(agent.currentOffMeshLinkData.endPos);
+		agent.SetDestination(Target.position);
 	}
 }
