@@ -1,5 +1,5 @@
 using UnityEngine;
-public class DebugShaderexperement : MonoBehaviour
+public class ShaderBehaviour : MonoBehaviour
 {
 	public Color DetailsColor;
 	public RenderTexture renderTexture;
