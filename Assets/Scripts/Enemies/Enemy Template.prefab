@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4420457885166473029}
   - component: {fileID: 8022296112797269422}
   - component: {fileID: 4884007118072395110}
+  - component: {fileID: 1606130682020023258}
   m_Layer: 0
   m_Name: Enemy Template
   m_TagString: Untagged
@@ -69,3 +70,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoset: 1
   isOwner: 0
+--- !u!114 &1606130682020023258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3742775608879100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60bfa0489d7e6104dae6ec7ab69d35a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
