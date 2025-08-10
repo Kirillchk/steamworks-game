@@ -21,7 +21,7 @@ public class MapGenerator : MonoBehaviour
 	}
 	public void SummonEnemies()
 	{
-		Instantiate(Animals.RandomElement(rng), new Vector3(.12f,0,.16f), new());
+		Instantiate(Monsters.RandomElement(rng), RoamMark.GetFarrest(Vector3.zero) + Vector3.up * 3, new());
 	}
 	static protected System.Random rng = new(0);
 	static public float slowering = 1f;

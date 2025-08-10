@@ -15,8 +15,6 @@ public class SiluetBehaviour : EnemyBehaviour
 			Vector3 newRotation = new Vector3(0f, currentRotation.y, currentRotation.z);
 			Camera.main.transform.eulerAngles = newRotation;
 		}
-		if (!P2PBase.isHost)
-			return;
 		Target = getClosestPlayer();
 		this.Sync(Chase, Target.position);
 	}
