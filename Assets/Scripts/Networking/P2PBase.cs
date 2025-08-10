@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Adrenak.UniVoice;
 using MessagePack;
 using Adrenak.UniMic;
+using System;
 public class P2PBase : P2PSteamBehaviour
 {
 	static internal bool isHost = false;
@@ -80,7 +81,8 @@ public class P2PBase : P2PSteamBehaviour
 			audioFrame.samples = null;
 		}
 	}
-	void ProcesData(in List<byte[]> data) {
+	void ProcesData(in List<byte[]> data)
+	{
 		if (data == null)
 			return;
 		for (int i = 0; i < data.Count; i++)
@@ -120,7 +122,9 @@ public class P2PBase : P2PSteamBehaviour
 	}
 	void Update()
 		=> ProcesData(TryReceive());
-	void LateUpdate()
-		=> SendPackages();
+	void Start()
+	{
+		InvokeRepeating(nameof(SendPackages),300, .2f);
+	}
 }
 
