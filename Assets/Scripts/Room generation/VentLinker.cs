@@ -16,7 +16,6 @@ public class VentLinker : MonoBehaviour
 		{
 			for (int n = i+1; n < Vents.Count; n++)
 			{
-				Debug.Log($"linking {i} to {n}");
 				var from = Vents[i].transform;
 				var to = Vents[n].transform;
 				var link = Vents[i].AddComponent<NavMeshLink>();

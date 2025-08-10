@@ -87,11 +87,9 @@ public class HandsBehaviour : MonoBehaviour
 	}
 	public void Relese()
 	{
-		Debug.Log("RELEASING");
 		Destroy(HandTexture);
 		Destroy(HandJoint);
 		HandJoint = null;
-		Debug.Log("RELEASED");
 	}
 	public void PickUp(GameObject target)
 	{

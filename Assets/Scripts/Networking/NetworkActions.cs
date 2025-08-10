@@ -28,7 +28,6 @@ public class NetworkActions : MonoBehaviour
 						this,
 						method
 					));
-		Debug.Log($"{methods.Count()}, {ID}");
 	}
 	internal void TriggerSync(in Delegate del, params object[] args)
 	{
