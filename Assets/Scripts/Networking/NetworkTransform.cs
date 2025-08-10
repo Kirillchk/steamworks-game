@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Threading.Tasks;
+using UnityEngine.AI;
 [RequireComponent(typeof(NetworkIdentity))]
 public class NetworkTransform : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class NetworkTransform : MonoBehaviour
 	Vector3 lastPosition;
 	Quaternion lastRotation;
 	NetworkIdentity networkIdentity;
+	NavMeshAgent agent = null;
 	internal bool doSendTransform = true;
 	async void Start()
 	{
@@ -16,6 +18,7 @@ public class NetworkTransform : MonoBehaviour
 		await Task.Yield();
 		ID = networkIdentity.uniqueVector;
 		P2PBase.networkTransforms[ID] = this;
+		agent = GetComponent<NavMeshAgent>();
 	}
 	void LateUpdate() =>
 		sendTransform();
@@ -53,8 +56,9 @@ public class NetworkTransform : MonoBehaviour
 		if (tp.newPos != null)
 		{
 			transform.position = Vector3.Lerp(transform.position, tp.newPos.Value, 0.5f);
-			//TODO: OH FUCK
-			GetComponent<UnityEngine.AI.NavMeshAgent>()?.Warp(tp.newPos.Value);
+			//TODO: OH FUCK?
+			if(agent != null)
+				agent.Warp(tp.newPos.Value);
 		}
 		if (tp.newRot != null)
 			transform.rotation = tp.newRot.Value;
