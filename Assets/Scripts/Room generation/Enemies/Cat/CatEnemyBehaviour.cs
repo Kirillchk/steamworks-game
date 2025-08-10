@@ -5,14 +5,9 @@ public class CatEnemyBehaviour : EnemyBehaviour
 {
 	float startleTimer = 0;
 	Renderer rend;
-	LayerMask layerMask;
 	void Start()
 	{
 		rend = GetComponent<Renderer>();
-		layerMask = ~(
-			(1 << LayerMask.NameToLayer("Ignore Raycast")) |
-			(1 << LayerMask.NameToLayer("LVL")) |
-			(1 << LayerMask.NameToLayer("Movable")));
 	}
 	void FixedUpdate()
 	{
@@ -32,15 +27,5 @@ public class CatEnemyBehaviour : EnemyBehaviour
 		startleTimer = .06f;
 		agent.velocity = Vector3.zero;
 		agent.isStopped = true;
-	}
-	bool isObserved()
-	{
-		GameObject player = Camera.main.gameObject; 
-
-		Vector3 direction = (transform.position - player.transform.position).normalized;
-		float distance = Vector3.Distance(player.transform.position, transform.position);
-
-		var isHit = Physics.Raycast(player.transform.position, direction, out _, distance, layerMask);
-		return !isHit;
 	}
 }

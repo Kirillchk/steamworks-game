@@ -7,10 +7,12 @@ public class EnemyBehaviour : NetworkActions
 {
 	public Transform Target;
 	protected NavMeshAgent agent;
+	GameObject player;
 	//TODO: Free this hook somehow
 	void Awake()
 	{
 		agent = GetComponent<NavMeshAgent>();
+		player = Camera.main.gameObject; 
 	}
 	protected void Vent()
 	{
@@ -38,5 +40,20 @@ public class EnemyBehaviour : NetworkActions
 			}
 		}
 		return t;
+	}
+	protected bool isObserved()
+	{
+		Vector3 direction = (transform.position - player.transform.position).normalized;
+		float distance = Vector3.Distance(player.transform.position, transform.position);
+
+		var isHit = Physics.Raycast(
+			player.transform.position,
+			direction,
+			out _,
+			distance,
+			~(1 << LayerMask.NameToLayer("Ignore Raycast")),
+    		QueryTriggerInteraction.Ignore
+		);
+		return !isHit;
 	}
 }

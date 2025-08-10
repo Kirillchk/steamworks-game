@@ -951,7 +951,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Animals:
   - {fileID: 6361718143054176815, guid: 219ad12a96994c3cdb84e70d25d3624d, type: 3}
-  Monsters: []
+  Monsters:
+  - {fileID: 4261611394888354341, guid: 8fa88427ec60c61eeb9eb41e37d5882c, type: 3}
   Phobias: []
   Section1:
   - {fileID: 6942087937448238840, guid: f3ac5246169dd64b183a99ddeef0171f, type: 3}

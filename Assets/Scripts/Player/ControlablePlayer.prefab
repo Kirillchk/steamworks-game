@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -2467888791098239471}
   - component: {fileID: 2902325863256359078}
   - component: {fileID: 391465507390040449}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: ControlablePlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192,6 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4a0c17e3f0d2a4e93f2af9a97d5096, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueVector: {x: 0, y: 0, z: 0}
   autoset: 0
   isOwner: 1
 --- !u!114 &-2467888791098239471
@@ -244,7 +245,7 @@ GameObject:
   - component: {fileID: 93082923507949928}
   - component: {fileID: 2015349716116098350}
   - component: {fileID: 4883542991281421960}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -346,7 +347,7 @@ GameObject:
   - component: {fileID: 3857624889159915603}
   - component: {fileID: 6609908761740550432}
   - component: {fileID: 33299593401862672}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -481,7 +482,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9015770624865588227}
   - component: {fileID: 5516289432265217346}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Stats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -532,7 +533,7 @@ GameObject:
   - component: {fileID: 5039234286516416546}
   - component: {fileID: 5317090440147523036}
   - component: {fileID: 4135968746872047623}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: lightscan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -659,7 +660,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2894511645000696193}
   - component: {fileID: 7540107370906799671}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: LeftHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -711,7 +712,7 @@ GameObject:
   - component: {fileID: 4820945140439208150}
   - component: {fileID: 4343069296126959793}
   - component: {fileID: 6850858492907014228}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -847,7 +848,7 @@ GameObject:
   - component: {fileID: 6090572606959823656}
   - component: {fileID: 8687337492761277079}
   - component: {fileID: 8640478326540540284}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: LeftHand (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -933,7 +934,7 @@ GameObject:
   - component: {fileID: 6965424146924721144}
   - component: {fileID: 2397995600537542266}
   - component: {fileID: 1703559190811393169}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1007,7 +1008,7 @@ GameObject:
   m_Component:
   - component: {fileID: 109690057198649217}
   - component: {fileID: 7327375666256419958}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: 'drag point '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1068,7 +1069,7 @@ GameObject:
   - component: {fileID: 1499934173889397328}
   - component: {fileID: 6937778747599637111}
   - component: {fileID: 5402803070373158463}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -1206,7 +1207,7 @@ GameObject:
   - component: {fileID: 4487332220742386834}
   - component: {fileID: 4625207778390451823}
   - component: {fileID: 2069678735895759241}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: LeftHand (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1291,7 +1292,7 @@ GameObject:
   m_Component:
   - component: {fileID: 402621861658037476}
   - component: {fileID: 3939128836544996837}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: RightHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
