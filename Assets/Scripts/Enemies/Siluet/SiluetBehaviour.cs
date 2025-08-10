@@ -19,6 +19,9 @@ public class SiluetBehaviour : EnemyBehaviour
 		Target = getClosestPlayer();
 		agent.SetDestination(Target.position);
 	}
+    void OnDestroy() =>
+        CancelInvoke(nameof(CheckPlayerLook));
+
 	void Start()
 	{
 		layerMask = ~(
@@ -27,9 +30,6 @@ public class SiluetBehaviour : EnemyBehaviour
 			(1 << LayerMask.NameToLayer("Movable")));
 		InvokeRepeating(nameof(CheckPlayerLook), 0.5f, 0.5f);
 	}
-    
-    void OnDestroy() =>
-        CancelInvoke(nameof(CheckPlayerLook));
 	void CheckPlayerLook()
 	{
 		player = Camera.main.gameObject;
