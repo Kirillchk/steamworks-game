@@ -31,7 +31,7 @@ public class EnemyBehaviour : NetworkActions
 		foreach (var p in PlayableBehavior.Players)
 		{
 			float dist = Vector3.Distance(transform.position, p.transform.position);
-			if (maxDist < dist)
+			if (dist < maxDist)
 			{
 				maxDist = dist;
 				t = p.transform;
