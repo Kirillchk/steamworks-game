@@ -17,9 +17,14 @@ public class SiluetBehaviour : EnemyBehaviour
 		}
 		if (!P2PBase.isHost)
 			return;
-		Vent();
 		Target = getClosestPlayer();
-		agent.SetDestination(Target.position);
+		this.Sync(Chase, Target.position);
+	}
+	[CanTriggerSync]
+	public void Chase(Vector3 vec)
+	{
+		Vent();
+		agent.SetDestination(vec);
 	}
     void OnDestroy() =>
         CancelInvoke(nameof(CheckPlayerLook));

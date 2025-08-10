@@ -53,8 +53,8 @@ public static class NetworkSyncExtensions
     public static void Sync(this NetworkActions na, Action action)
         => na.TriggerSync(action);
     
-    public static void Sync<T>(this NetworkActions na, Action<T> action)
-        => na.TriggerSync(action);
+    public static void Sync<T>(this NetworkActions na, Action<T> action, T arg)
+        => na.TriggerSync(action, arg);
     
     public static void Sync<T1, T2>(this NetworkActions na, Action<T1, T2> action, T1 arg1, T2 arg2)
         => na.TriggerSync(action, arg1, arg2);
