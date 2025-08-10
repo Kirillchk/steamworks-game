@@ -17,7 +17,7 @@ public class CatEnemyBehaviour : EnemyBehaviour
 	void FixedUpdate()
 	{
 		startleTimer -= .02f;
-		if (rend.isVisible && !(rend.isVisible && !isObserving()))
+		if (rend.isVisible && !(rend.isVisible && !isObserved()))
 			this.Sync(Startle);
 		if (startleTimer > 0)
 			return;
@@ -33,7 +33,7 @@ public class CatEnemyBehaviour : EnemyBehaviour
 		agent.velocity = Vector3.zero;
 		agent.isStopped = true;
 	}
-	bool isObserving()
+	bool isObserved()
 	{
 		GameObject player = Camera.main.gameObject; 
 
