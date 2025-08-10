@@ -111,7 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpForce: 7
   walkSpeed: 5
-  runMultiplier: 1.5
+  runMultiplier: 2
   acceler: 2
   daming: 5
   penalty: 1
@@ -123,14 +123,10 @@ MonoBehaviour:
   drag: 0
   jumpBufferTime: 0.1
   jumpBufferCount: 0
-  staminaConsumedPerSeond: 10
   staminaRegPerSecond: 10
-  addStaminaTimeCount: 0
-  takeStaminaTimeCount: 0
+  staminaSprintPerSecond: 10
   isGrounded: 0
   jump: 0
-  staminaForJump: 10
-  staminaLimit: 100
   move: {x: 0, y: 0, z: 0}
   wishDir: {x: 0, y: 0, z: 0}
   vel: {x: 0, y: 0, z: 0}
@@ -236,7 +232,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b9f13e3bdfea9241bf553619f0466e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stamina: 100
+  staminaLimit: 100
+  staminaHealthLimit: 100
 --- !u!1 &554956586110117587
 GameObject:
   m_ObjectHideFlags: 0

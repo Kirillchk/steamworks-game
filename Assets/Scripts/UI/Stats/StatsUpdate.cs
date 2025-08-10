@@ -1,34 +1,32 @@
-using System;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-
 public class StatsUpdate : MonoBehaviour
 {
-    StaminaSystem stamSys;
     TextMeshProUGUI staminaText;
-    TextMeshProUGUI Health;
-    async void Awake()
+    TextMeshProUGUI health;
+    int previousStamina;
+    int previousHealth;
+    float timer = 0;
+    void Start()
     {
-        await Task.Delay(1000);
-
-        stamSys = FindAnyObjectByType<StaminaSystem>();
-        Health = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        health = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         staminaText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+    }
+    void FixedUpdate()
+    {
+        if (timer <= 1)
+        {
+            timer+=Time.deltaTime;
+            return;
+        }
+        if (StaminaSystem.stamina == previousStamina && StaminaSystem.health == previousHealth)
+                return;
 
-        stamSys.onStaminaHealthChange += UpdateHealth;
-        stamSys.onStaminaChange += UpdateStamina;
-        
-        UpdateHealth(stamSys.staminaHealth);
-        UpdateStamina(stamSys.stamina);
-    }
-    void UpdateStamina(int staminaValue)
-    {
-        staminaText.text = "Stamina:" + staminaValue.ToString();
-    }
-    void UpdateHealth(int HealthValue)
-    {
-        Health.text = "Health:" +  HealthValue.ToString();
+        staminaText.text = "Stamina:" + StaminaSystem.stamina.ToString();
+        health.text = "Health:" + StaminaSystem.health.ToString();
+
+        previousStamina = StaminaSystem.stamina;
+        previousHealth = StaminaSystem.health;
     }
 }
