@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
 	public float jumpForce = 8,
@@ -8,17 +6,16 @@ public class PlayerMovement : MonoBehaviour
 		daming = 5, penalty = 1, gravityScale = 3,
 		rayCastLengh = 1.01f, magnitude, g = -9.81f,
 		speedLimit, drag, jumpBufferTime = 0.1f, jumpBufferCount = 0,
-		staminaRegPerSecond= 10, staminaSprintPerSecond = 10;
+		staminaRegPerSecond= 10;
+	public float sprintPerSecond = -10;
 	public bool isGrounded, jump;
 	public Vector3 move, wishDir, vel;
 	float rotationX = 0f, mouseX, mouseY;
-	int staminaForJump = 10;
+	int staminaForJump = -10;
 	Rigidbody rb;
-	StaminaSystem stamSys;
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
-		stamSys = GetComponent<StaminaSystem>();
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 		speedLimit = walkSpeed;
@@ -42,18 +39,20 @@ public class PlayerMovement : MonoBehaviour
 		move = move.normalized;
 		mouseX = Input.GetAxis("Mouse X") * 2;
 		mouseY = Input.GetAxis("Mouse Y") * 2;
-
-		if (Input.GetKey(KeyCode.LeftShift) && stamSys.stamina > 0 && move!=Vector3.zero)
+		if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero)
 		{
 			//sprint
+
 			speedLimit = walkSpeed * runMultiplier;
-			stamSys.ChangeStaminaState(StaminaSystem.StaminaChangeType.Consumption, staminaSprintPerSecond);
+			if (!StaminaSystem.staminaPerSecondList.Contains(("sprint", sprintPerSecond, null)))
+				StaminaSystem.staminaPerSecondList.Add(("sprint", sprintPerSecond, null));
 		}
 		else
 		{
 			//dont sprint
 			speedLimit = walkSpeed;
-			stamSys.ChangeStaminaState(StaminaSystem.StaminaChangeType.Regeneration, staminaRegPerSecond);
+			if(StaminaSystem.staminaPerSecondList.Contains(("sprint", sprintPerSecond, null)))
+				StaminaSystem.staminaPerSecondList.Remove(("sprint", sprintPerSecond, null));
 		}
 	}
 	void FixedUpdate()
@@ -74,13 +73,13 @@ public class PlayerMovement : MonoBehaviour
 		g = -9.81f * gravityScale;
 		Physics.gravity = Vector3.up * g;
 
-		if (jump && isGrounded && stamSys.stamina >= staminaForJump) 
+		if (jump && isGrounded)
 		{
 			rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 			rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 			jump = false;
 			jumpBufferCount = 0;
-			stamSys.ChangeStaminaState(StaminaSystem.StaminaChangeType.Instant, -staminaForJump);
+			StaminaSystem.Instant(staminaForJump);
 		}
 
 		drag = Mathf.Clamp01(1f - daming * Time.deltaTime);
