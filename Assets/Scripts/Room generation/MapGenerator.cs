@@ -6,6 +6,7 @@ using Unity.AI.Navigation;
 using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
+	public GameObject[] Animals, Monsters, Phobias;
 	static public Action Finished;
 	void Awake()
 	{
@@ -15,6 +16,12 @@ public class MapGenerator : MonoBehaviour
 			GetComponent<NavMeshSurface>().BuildNavMesh();
 		Finished += () =>
 			PlayableBehavior.AddPLayers(LobbyManager.PlayersOnline);
+		Finished += () =>
+			SummonEnemies();
+	}
+	public void SummonEnemies()
+	{
+		Instantiate(Animals.RandomElement(rng), new Vector3(.12f,0,.16f), new());
 	}
 	static protected System.Random rng = new(0);
 	static public float slowering = 1f;

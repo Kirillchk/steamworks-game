@@ -7,7 +7,6 @@ public class FacilityGeneration : MapGenerator
 	[SerializeField] GameObject[] CoolRooms1;
 	[SerializeField] GameObject[] Section2;
 	[SerializeField] GameObject[] CoolRooms2;
-	[SerializeField] GameObject[] Enemies;
 	async void Start()
 	{
 		rng = new(2);
@@ -46,7 +45,5 @@ public class FacilityGeneration : MapGenerator
 		foreach (var d in RoomDoor.Doors)
 			d.GetComponent<RoomDoor>().Close();
 		Finished.Invoke();
-		foreach (var e in Enemies)
-			Instantiate(e, new Vector3(.12f,0,.16f), new());
 	}
 }

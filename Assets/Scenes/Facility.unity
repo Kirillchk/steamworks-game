@@ -949,6 +949,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8731a474b805534b9afeea4690862e01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Animals:
+  - {fileID: 6361718143054176815, guid: 219ad12a96994c3cdb84e70d25d3624d, type: 3}
+  Monsters: []
+  Phobias: []
   Section1:
   - {fileID: 6942087937448238840, guid: f3ac5246169dd64b183a99ddeef0171f, type: 3}
   - {fileID: 4584240482944381310, guid: 7c857b81a36cbbb83ac24ae1c4886b57, type: 3}
@@ -973,8 +977,6 @@ MonoBehaviour:
   - {fileID: 6798075591843152152, guid: b51674a2f36f9446785388f544e072a5, type: 3}
   - {fileID: 2188546066487889735, guid: 91f34bb9cc2e1c85fb1b78e61ef1af59, type: 3}
   - {fileID: 7178326232342634934, guid: c8d2770401200c83b84d2b29b88ad2b1, type: 3}
-  Enemies:
-  - {fileID: 4261611394888354341, guid: 8fa88427ec60c61eeb9eb41e37d5882c, type: 3}
 --- !u!114 &560397710
 MonoBehaviour:
   m_ObjectHideFlags: 0
