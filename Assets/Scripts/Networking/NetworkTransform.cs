@@ -51,7 +51,11 @@ public class NetworkTransform : MonoBehaviour
 		if (networkIdentity.isOwner)
 			return;
 		if (tp.newPos != null)
+		{
 			transform.position = Vector3.Lerp(transform.position, tp.newPos.Value, 0.5f);
+			//TODO: OH FUCK
+			GetComponent<UnityEngine.AI.NavMeshAgent>()?.Warp(tp.newPos.Value);
+		}
 		if (tp.newRot != null)
 			transform.rotation = tp.newRot.Value;
 		if (tp.newScl != null)
