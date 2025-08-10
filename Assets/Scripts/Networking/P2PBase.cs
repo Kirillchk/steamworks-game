@@ -124,7 +124,7 @@ public class P2PBase : P2PSteamBehaviour
 		=> ProcesData(TryReceive());
 	void Start()
 	{
-		InvokeRepeating(nameof(SendPackages),300, .2f);
+		InvokeRepeating(nameof(SendPackages), 0, .2f);
 	}
 }
 
