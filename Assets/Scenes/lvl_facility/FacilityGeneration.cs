@@ -47,6 +47,6 @@ public class FacilityGeneration : MapGenerator
 			d.GetComponent<RoomDoor>().Close();
 		Finished.Invoke();
 		foreach (var e in Enemies)
-			Instantiate(e);
+			Instantiate(e, new Vector3(.12f,0,.16f), new());
 	}
 }
