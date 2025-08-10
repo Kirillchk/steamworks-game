@@ -7,7 +7,6 @@ public class StatsUpdate : MonoBehaviour
     TextMeshProUGUI health;
     int previousStamina;
     int previousHealth;
-    float timer = 0;
     void Start()
     {
         health = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
@@ -15,11 +14,6 @@ public class StatsUpdate : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (timer <= 1)
-        {
-            timer+=Time.deltaTime;
-            return;
-        }
         if (StaminaSystem.stamina == previousStamina && StaminaSystem.health == previousHealth)
                 return;
 
