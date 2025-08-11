@@ -54,12 +54,19 @@ public class PlayerMovement : MonoBehaviour
 			if (StaminaSystem.staminaPerSecondList.Contains(("sprint", sprintPerSecond, null)))
 				StaminaSystem.staminaPerSecondList.Remove(("sprint", sprintPerSecond, null));
 		}
-		if (Input.GetKey(KeyCode.LeftControl))
+
+
+		if (Input.GetKeyDown(KeyCode.LeftControl))
+		{
 			transform.localScale = new Vector3(1, .5f, 1);
-		else
-			transform.localScale = new Vector3(1, 1, 1);
-		if(Input.GetKeyDown(KeyCode.LeftControl) && isGrounded)
 			rb.AddForce(Vector3.up * -5, ForceMode.VelocityChange);
+			rayCastLengh *= .5f;
+		}
+		if (Input.GetKeyUp(KeyCode.LeftControl))
+		{
+			transform.localScale = new Vector3(1, 1, 1);
+			rayCastLengh /= .5f;
+		}
 	}
 	void FixedUpdate()
 	{
