@@ -1,20 +1,10 @@
 using UnityEngine;
 public class SiluetBehaviour : EnemyBehaviour
 {
-	void Start()
-	{
-		InfrequentUpdate += () =>
-		{
-			if (!isObserved())
-			{
-				
-			}
-		};
-	}
 	void Update()
 	{
 		Vent();
-		if (isObserved())
+		if (CanSee(Camera.main.gameObject.transform.position))
 		{
 			//player.transform.LookAt(transform.position);
 			Camera.main.transform.parent.transform.LookAt(transform.position);
@@ -22,9 +12,10 @@ public class SiluetBehaviour : EnemyBehaviour
 			Vector3 currentRotation = Camera.main.transform.eulerAngles;
 			Vector3 newRotation = new Vector3(0f, currentRotation.y, currentRotation.z);
 			Camera.main.transform.eulerAngles = newRotation;
-
-			agent.SetDestination(getClosestPlayer().position);
 		}
+		// Chase
+		var plr = getClosestObserved();
+		if (plr != null)
+			agent.SetDestination(plr.position);
 	}
-	
 }

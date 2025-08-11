@@ -5,21 +5,19 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyBehaviour : NetworkActions
 {
-	public Transform Target;
 	protected NavMeshAgent agent;
 	protected System.Action InfrequentUpdate;
-	GameObject player;
 	//TODO: Free this hook somehow
 	void Awake()
 	{
 		agent = GetComponent<NavMeshAgent>();
-		player = Camera.main.gameObject;
-		InfrequentUpdate = () =>
+		InfrequentUpdate += () =>
 		{
-			if (agent.remainingDistance <= agent.stoppingDistance && agent.velocity.sqrMagnitude == 0)
+			// roam
+			if (isStill())
 				agent.SetDestination(RoamMark.GetFarthest(transform.position));
 		};
-		InvokeRepeating(nameof(InfrequentUpdate), 0, .25f);
+		InvokeRepeating(nameof(InfrequentUpdate), 0, 1);
 	}
 	protected void Vent()
 	{
@@ -30,7 +28,7 @@ public class EnemyBehaviour : NetworkActions
 		var area = agent.currentOffMeshLinkData.owner.GetComponent<NavMeshLink>().area;
 		if (area != NavMesh.GetAreaFromName("Vent")) return;
 		agent.Warp(agent.currentOffMeshLinkData.endPos);
-		agent.SetDestination(Target.position);
+		agent.SetDestination(agent.pathEndPosition);
 	}
 	// TODO: add some kind of invoke repeating
 	protected Transform getClosestPlayer()
@@ -48,19 +46,39 @@ public class EnemyBehaviour : NetworkActions
 		}
 		return t;
 	}
-	protected bool isObserved()
+	protected bool CanSee(Vector3 lookAt)
 	{
-		Vector3 direction = (transform.position - player.transform.position).normalized;
-		float distance = Vector3.Distance(player.transform.position, transform.position);
+		Vector3 direction = (transform.position - lookAt).normalized;
+		float distance = Vector3.Distance(lookAt, transform.position);
 
 		var isHit = Physics.Raycast(
-			player.transform.position,
+			lookAt,
 			direction,
 			out _,
 			distance,
 			~(1 << LayerMask.NameToLayer("Ignore Raycast")),
-    		QueryTriggerInteraction.Ignore
+			QueryTriggerInteraction.Ignore
 		);
 		return !isHit;
+	}
+	protected Transform getClosestObserved()
+	{
+		Transform t = null;
+		float maxDist = float.MaxValue;
+		foreach (var p in PlayableBehavior.Players)
+		{
+			if (CanSee(p.transform.position)) continue;
+			float dist = Vector3.Distance(transform.position, p.transform.position);
+			if (dist < maxDist)
+			{
+				maxDist = dist;
+				t = p.transform;
+			}
+		}
+		return t;
+	}
+	protected bool isStill()
+	{
+		return agent.remainingDistance <= agent.stoppingDistance && agent.velocity.sqrMagnitude == 0f;
 	}
 }

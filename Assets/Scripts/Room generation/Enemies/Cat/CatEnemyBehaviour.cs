@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-
 public class CatEnemyBehaviour : EnemyBehaviour
 {
 	float startleTimer = 0;
@@ -12,14 +10,13 @@ public class CatEnemyBehaviour : EnemyBehaviour
 	void FixedUpdate()
 	{
 		startleTimer -= .02f;
-		if (rend.isVisible && !(rend.isVisible && !isObserved()))
+		if (rend.isVisible && !(rend.isVisible && !CanSee(Camera.main.transform.position)))
 			this.Sync(Startle);
 		if (startleTimer > 0)
 			return;
 		agent.isStopped = false;
 		Vent();
-		Target = getClosestPlayer();
-		agent.SetDestination(Target.position);
+		agent.SetDestination(getClosestObserved().position);
 	}
 	[CanTriggerSync]
 	public void Startle()
