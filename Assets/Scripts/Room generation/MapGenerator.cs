@@ -16,12 +16,6 @@ public class MapGenerator : MonoBehaviour
 			GetComponent<NavMeshSurface>().BuildNavMesh();
 		Finished += () =>
 			PlayableBehavior.AddPLayers(LobbyManager.PlayersOnline);
-		Finished += () =>
-			SummonEnemies();
-	}
-	public void SummonEnemies()
-	{
-		Instantiate(Monsters.RandomElement(rng), RoamMark.GetFarthest(Vector3.zero) + Vector3.up * 3, new());
 	}
 	static protected System.Random rng = new(0);
 	static public float slowering = 1f;

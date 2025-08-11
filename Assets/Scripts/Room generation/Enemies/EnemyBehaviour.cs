@@ -6,29 +6,41 @@ using UnityEngine.AI;
 public class EnemyBehaviour : NetworkActions
 {
 	protected NavMeshAgent agent;
-	protected System.Action InfrequentUpdate;
 	//TODO: Free this hook somehow
 	void Awake()
 	{
 		agent = GetComponent<NavMeshAgent>();
-		InfrequentUpdate += () =>
-		{
-			// roam
-			if (isStill())
-				agent.SetDestination(RoamMark.GetFarthest(transform.position));
-		};
 		InvokeRepeating(nameof(InfrequentUpdate), 0, 1);
 	}
+	protected virtual void InfrequentUpdate()
+	{
+		if (isStill())
+			agent.SetDestination(GetRandomPointOnNavMesh());
+	}
+
+    public static Vector3 GetRandomPointOnNavMesh()
+    {
+		Vector3 center = Vector3.zero;
+		float maxDistance = float.MaxValue-9999;
+        Vector3 randomDirection = Random.insideUnitSphere * maxDistance;
+        randomDirection += center;
+
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDirection, out hit, maxDistance, NavMesh.AllAreas))
+            return hit.position;
+        return center;
+    }
 	protected void Vent()
 	{
 		if (!agent.isOnOffMeshLink) return;
+		var cache = agent.pathEndPosition;
 		//TODO: fuck in the ass creator of unitys documentation
 		//everything is either depricated or described with a single sentance
 		//why the fuck is link data still called offmesh if its depricated?????
 		var area = agent.currentOffMeshLinkData.owner.GetComponent<NavMeshLink>().area;
 		if (area != NavMesh.GetAreaFromName("Vent")) return;
 		agent.Warp(agent.currentOffMeshLinkData.endPos);
-		agent.SetDestination(agent.pathEndPosition);
+		agent.SetDestination(cache);
 	}
 	// TODO: add some kind of invoke repeating
 	protected Transform getClosestPlayer()
