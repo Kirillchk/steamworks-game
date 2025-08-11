@@ -9,7 +9,7 @@ public class FacilityGeneration : MapGenerator
 	[SerializeField] GameObject[] CoolRooms2;
 	async void Start()
 	{
-		rng = new(2);
+		rng = new(5);
 		for (int i = Section1.Length - 1; i >= 0; i--)
 		{
 			var door = RoomDoor.Doors.RandomElement(rng);

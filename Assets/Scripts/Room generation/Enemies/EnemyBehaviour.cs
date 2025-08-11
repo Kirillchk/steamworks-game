@@ -7,12 +7,19 @@ public class EnemyBehaviour : NetworkActions
 {
 	public Transform Target;
 	protected NavMeshAgent agent;
+	protected System.Action InfrequentUpdate;
 	GameObject player;
 	//TODO: Free this hook somehow
 	void Awake()
 	{
 		agent = GetComponent<NavMeshAgent>();
-		player = Camera.main.gameObject; 
+		player = Camera.main.gameObject;
+		InfrequentUpdate = () =>
+		{
+			if (agent.remainingDistance <= agent.stoppingDistance && agent.velocity.sqrMagnitude == 0)
+				agent.SetDestination(RoamMark.GetFarthest(transform.position));
+		};
+		InvokeRepeating(nameof(InfrequentUpdate), 0, .25f);
 	}
 	protected void Vent()
 	{
