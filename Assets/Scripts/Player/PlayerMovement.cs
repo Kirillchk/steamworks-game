@@ -51,9 +51,15 @@ public class PlayerMovement : MonoBehaviour
 		{
 			//dont sprint
 			speedLimit = walkSpeed;
-			if(StaminaSystem.staminaPerSecondList.Contains(("sprint", sprintPerSecond, null)))
+			if (StaminaSystem.staminaPerSecondList.Contains(("sprint", sprintPerSecond, null)))
 				StaminaSystem.staminaPerSecondList.Remove(("sprint", sprintPerSecond, null));
 		}
+		if (Input.GetKey(KeyCode.LeftControl))
+			transform.localScale = new Vector3(1, .5f, 1);
+		else
+			transform.localScale = new Vector3(1, 1, 1);
+		if(Input.GetKeyDown(KeyCode.LeftControl) && isGrounded)
+			rb.AddForce(Vector3.up * -5, ForceMode.VelocityChange);
 	}
 	void FixedUpdate()
 	{
