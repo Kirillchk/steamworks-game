@@ -8,12 +8,7 @@ public class HandsBehaviour : MonoBehaviour
 	public Quaternion HandRotation;
 	public KeyCode PickButton;
 	public int DragButton;
-	static Rigidbody rb;
 	SpringJoint HandJoint = null;
-	void Start()
-	{
-		rb = GetComponent<Rigidbody>();
-	}
     void Update()
     {
 		if (Input.GetMouseButtonDown(DragButton) && holding != null)
@@ -67,22 +62,22 @@ public class HandsBehaviour : MonoBehaviour
 			return;
 		HandJoint = PlayerRef.AddComponent<SpringJoint>();
 		HandJoint.autoConfigureConnectedAnchor = false;
-		HandJoint.spring = 310;
+		HandJoint.spring = 300;
 		HandJoint.connectedMassScale = 3;
 		HandJoint.massScale = 3;
 		HandJoint.maxDistance = .1f;
-		HandJoint.minDistance = .05f;
+		HandJoint.minDistance = 0;
 		HandJoint.anchor = new(0, 0, .5f);
-		HandJoint.damper = 50;
+		HandJoint.damper = 300;
 		if (target.GetComponent<Rigidbody>() != null)
 		{
-			HandJoint.connectedBody = target.GetComponent<Rigidbody>();
 			HandTexture = Instantiate(HandPref, point, HandRotation, target.transform);
+			HandJoint.connectedBody = target.GetComponent<Rigidbody>();
 		}
 		else
 		{
-			HandJoint.connectedAnchor = point;
 			HandTexture = Instantiate(HandPref, point, HandRotation);
+			HandJoint.connectedAnchor = point;
 		}
 	}
 	public void Relese()

@@ -10,18 +10,17 @@ public class EnemyBehaviour : NetworkActions
 	void Awake()
 	{
 		agent = GetComponent<NavMeshAgent>();
-		InvokeRepeating(nameof(InfrequentUpdate), 0, 1);
+		InvokeRepeating(nameof(InfrequentUpdate), 1, 1);
+		agent.SetDestination(GetRandomPointAround(Vector3.zero));
 	}
 	protected virtual void InfrequentUpdate()
 	{
 		if (isStill())
-			agent.SetDestination(GetRandomPointOnNavMesh());
+			agent.SetDestination(GetRandomPointAround(transform.position));
 	}
 
-    public static Vector3 GetRandomPointOnNavMesh()
+	public static Vector3 GetRandomPointAround(Vector3 center, float maxDistance = 200)
     {
-		Vector3 center = Vector3.zero;
-		float maxDistance = float.MaxValue-9999;
         Vector3 randomDirection = Random.insideUnitSphere * maxDistance;
         randomDirection += center;
 
@@ -41,22 +40,6 @@ public class EnemyBehaviour : NetworkActions
 		if (area != NavMesh.GetAreaFromName("Vent")) return;
 		agent.Warp(agent.currentOffMeshLinkData.endPos);
 		agent.SetDestination(cache);
-	}
-	// TODO: add some kind of invoke repeating
-	protected Transform getClosestPlayer()
-	{
-		Transform t = PlayableBehavior.Players[0].transform;
-		float maxDist = float.MaxValue;
-		foreach (var p in PlayableBehavior.Players)
-		{
-			float dist = Vector3.Distance(transform.position, p.transform.position);
-			if (dist < maxDist)
-			{
-				maxDist = dist;
-				t = p.transform;
-			}
-		}
-		return t;
 	}
 	protected bool CanSee(Vector3 lookAt)
 	{
@@ -79,7 +62,7 @@ public class EnemyBehaviour : NetworkActions
 		float maxDist = float.MaxValue;
 		foreach (var p in PlayableBehavior.Players)
 		{
-			if (CanSee(p.transform.position)) continue;
+			if (!CanSee(p.transform.position)) continue;
 			float dist = Vector3.Distance(transform.position, p.transform.position);
 			if (dist < maxDist)
 			{
@@ -89,8 +72,7 @@ public class EnemyBehaviour : NetworkActions
 		}
 		return t;
 	}
-	protected bool isStill()
-	{
-		return agent.remainingDistance <= agent.stoppingDistance && agent.velocity.sqrMagnitude == 0f;
-	}
+	protected bool isStill() =>
+		agent.remainingDistance <= agent.stoppingDistance && agent.velocity.sqrMagnitude == 0f;
+
 }

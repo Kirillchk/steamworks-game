@@ -12,10 +12,9 @@ public class SiluetBehaviour : EnemyBehaviour
 			Vector3 currentRotation = Camera.main.transform.eulerAngles;
 			Vector3 newRotation = new Vector3(0f, currentRotation.y, currentRotation.z);
 			Camera.main.transform.eulerAngles = newRotation;
-
-			var plr = getClosestObserved();
-			if (plr != null)
-				agent.SetDestination(plr.position);
 		}
+		var plr = getClosestObserved();
+		if (plr != null)
+			agent.SetDestination(plr.position);
 	}
 }
