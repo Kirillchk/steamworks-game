@@ -1,18 +1,22 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.TextCore;
 public class PlayerMovement : MonoBehaviour
 {
 	public float jumpForce = 8,
 		walkSpeed = 10, runMultiplier = 2, acceler,
 		daming = 5, penalty = 1, gravityScale = 3,
-		rayCastLengh = 1.01f, magnitude, g = -9.81f,
+		rayCastLengh = 1f, magnitude, g = -9.81f,
 		speedLimit, drag, jumpBufferTime = 0.1f, jumpBufferCount = 0,
-		staminaRegPerSecond= 10;
+		staminaRegPerSecond= 10, boost = 2;
 	public float sprintPerSecond = -10;
 	public bool isGrounded, jump;
 	public Vector3 move, wishDir, vel;
 	float rotationX = 0f, mouseX, mouseY;
 	int staminaForJump = -10;
+	Vector3 boxCastSize = new Vector3(.5f, .0625f, .5f);
 	Rigidbody rb;
+	RaycastHit rayHit;
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
@@ -28,7 +32,10 @@ public class PlayerMovement : MonoBehaviour
 		if (jumpBufferCount > 0)
 			jump = true;
 		else
+		{
 			jump = false;
+			jumpBufferCount = 0;
+		}
 
 
 		move = new(
@@ -58,14 +65,16 @@ public class PlayerMovement : MonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.LeftControl))
 		{
+			if(isGrounded)
+			    rb.AddForce(Vector3.up * -5, ForceMode.VelocityChange);
 			transform.localScale = new Vector3(1, .5f, 1);
-			rb.AddForce(Vector3.up * -5, ForceMode.VelocityChange);
-			rayCastLengh *= .5f;
+			
+			rayCastLengh = 1f * .5f;
 		}
-		if (Input.GetKeyUp(KeyCode.LeftControl))
+		else if (Input.GetKeyUp(KeyCode.LeftControl))
 		{
 			transform.localScale = new Vector3(1, 1, 1);
-			rayCastLengh /= .5f;
+			rayCastLengh = 1f;
 		}
 	}
 	void FixedUpdate()
@@ -76,14 +85,18 @@ public class PlayerMovement : MonoBehaviour
 		Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
 		transform.Rotate(Vector3.up * mouseX);
 
-		isGrounded = Physics.Raycast(
-			transform.position,
-			Vector3.down,
-			rayCastLengh,
-			LayerMask.GetMask("Default")
-		);
 
-		g = -9.81f * gravityScale;
+		isGrounded = Physics.BoxCast(
+			transform.position,
+			boxCastSize,
+			Vector3.down,
+			transform.rotation,
+			rayCastLengh);
+
+
+
+
+			g = -9.81f * gravityScale;
 		Physics.gravity = Vector3.up * g;
 
 		if (jump && isGrounded)
@@ -103,6 +116,17 @@ public class PlayerMovement : MonoBehaviour
 			transform.forward * move.z).normalized * acceler;
 		var XZSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 		float root = wishDir.magnitude;
+
+		if (Physics.Raycast(transform.position, Vector3.down, out rayHit, 1.3f))
+		{
+			float angle = Vector3.Angle(Vector3.up, rayHit.normal);
+			Debug.Log(angle);
+			if (angle < 70 && angle != 0)
+			{
+				Debug.Log("FORCEEEE");
+				// rb.AddForce(Vector3.ProjectOnPlane(wishDir, rayHit.normal).normalized * boost, ForceMode.VelocityChange);
+			}
+		}
 
 		
 		if (XZSpeed.magnitude < speedLimit && move != Vector3.zero)
@@ -136,12 +160,14 @@ public class PlayerMovement : MonoBehaviour
 		vel = new Vector3((float)System.Math.Round(rb.linearVelocity.x,2), (float)System.Math.Round(rb.linearVelocity.y,2),
 		(float)System.Math.Round(rb.linearVelocity.z,2));
     }
-    private void OnDrawGizmos()
+	private void OnDrawGizmos()
 	{
 		if (rb == null) return;
 		Vector3 startPos = transform.position;
 		Vector3 endPos = transform.position + rb.linearVelocity;
 		Gizmos.color = Color.red;
 		Gizmos.DrawLine(startPos, endPos);
+		
+		// Gizmos.DrawCube(transform.position + Vector3.down * rayCastLengh, boxCastSize);
 	}
 }
