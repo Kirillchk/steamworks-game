@@ -11,7 +11,6 @@ public class EnemyBehaviour : NetworkActions
 	{
 		agent = GetComponent<NavMeshAgent>();
 		InvokeRepeating(nameof(InfrequentUpdate), 1, 1);
-		agent.SetDestination(GetRandomPointAround(Vector3.zero));
 	}
 	protected virtual void InfrequentUpdate()
 	{

@@ -6,7 +6,6 @@ public class SiluetBehaviour : EnemyBehaviour
 		Vent();
 		if (CanSee(Camera.main.gameObject.transform.position))
 		{
-			//player.transform.LookAt(transform.position);
 			Camera.main.transform.parent.transform.LookAt(transform.position);
 			// TODO: Fix by modifying mouseX instead or smth like that 
 			Vector3 currentRotation = Camera.main.transform.eulerAngles;
